@@ -1,0 +1,13 @@
+### JupyterNotebook ###
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+### PyCharm ###
+.idea/
+
+### Mac files ###
+.DS_Store
