@@ -4,7 +4,7 @@ from sklearn.metrics import classification_report
 
 def evaluate_model(model, vectors_test, y_test, class_labels):
     """
-    Prints the F1 score and the classification report of the passed model on the training set.
+    Prints the F1 score and the classification report on the training set of the passed model.
     """
     predictions = model.predict(vectors_test)
     print('F1 score:', metrics.f1_score(y_test, predictions, average='macro'))

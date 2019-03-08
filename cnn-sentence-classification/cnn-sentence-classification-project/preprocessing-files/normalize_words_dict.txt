@@ -1,0 +1,12 @@
+{
+"US": "USA",
+"U.S": "USA",
+"U.S.": "USA",
+"U.S.A": "USA",
+"U.S.A.": "USA",
+
+"MS": "Microsoft",
+"DOS": "Disk Operating System",
+"MS-DOS": "Microsoft Disk Operating System",
+"MSDOS": "Microsoft Disk Operating System"
+}

@@ -2,6 +2,8 @@ from keras.layers import Input, Conv1D, Dropout, Dense, GlobalMaxPooling1D, MaxP
 from keras.models import Model
 import matplotlib.pyplot as plt
 
+from utils import pretty_print
+
 
 def print_keras_model_inputs_and_outputs(model):
     for layer in model.layers:
@@ -9,7 +11,7 @@ def print_keras_model_inputs_and_outputs(model):
               ". Output shape: " + str(layer.output_shape))
 
 
-def plot_loss_during_epochs(history):
+def plot_keras_model_loss_during_epochs(history):
     # Get training and test loss histories
     training_loss = history.history['loss']
     test_loss = history.history['val_loss']
@@ -26,7 +28,7 @@ def plot_loss_during_epochs(history):
     plt.show()
 
 
-def plot_accuracy_during_epochs(history):
+def plot_keras_model_accuracy_during_epochs(history):
     # Get training and test accuracy histories
     training_acc = history.history['acc']
     test_acc = history.history['val_acc']
@@ -43,42 +45,6 @@ def plot_accuracy_during_epochs(history):
     plt.show()
 
 
-# TODO: Meter dentro de la clase
-def train_and_evaluate_cnn_keras_example_model(embedding_layer, word_vectors_max_len, dataset_num_classes,
-                                               X_train, y_train, X_val, y_val, epochs):
-    # Create and train the cnn using keras
-    print('\n\nCreating the CNN-Keras-Example\n______________________________')
-    model = CNNKerasExample(embedding_layer, word_vectors_max_len, dataset_num_classes)
-    print('\n\nTraining the CNN-Keras-Example\n____________________')
-    history = model.train(X_train, y_train, epochs=epochs)
-    # Plot loss and accuracy
-    plot_loss_during_epochs(history)
-    plot_accuracy_during_epochs(history)
-    # Check results on the validation set
-    print('\n\nValidation results\n____________________')
-    val_loss, val_acc = model.evaluate(X_val, y_val)
-    print('Validation loss:', val_loss)
-    print('Validation accuracy:', val_acc)
-
-
-# TODO: Meter dentro de la clase
-def train_and_evaluate_cnn_sentence_classification_model(embedding_layer, word_vectors_max_len, dataset_num_classes,
-                                                         random_state, X_train, y_train, X_val, y_val, epochs):
-    # Create and train the cnn using keras
-    print('\n\nCreating the CNN-Sentence-classification with Keras\n______________________________')
-    model = CNNSentenceClassification(embedding_layer, word_vectors_max_len, dataset_num_classes, random_state)
-    print('\n\nTraining the CNN-Sentence-classification with Keras\n____________________')
-    history = model.train(X_train, y_train, epochs=epochs)
-    # Plot loss and accuracy
-    plot_loss_during_epochs(history)
-    plot_accuracy_during_epochs(history)
-    # Check results on the validation set
-    print('\n\nValidation results\n____________________')
-    val_loss, val_acc = model.evaluate(X_val, y_val)
-    print('Validation loss:', val_loss)
-    print('Validation accuracy:', val_acc)
-
-
 class CNNSentenceClassification:
     """
     This network uses the Kim topology
@@ -86,9 +52,8 @@ class CNNSentenceClassification:
     2. Max-over-time Pooling layer
     3. Fully conected softmax layer: it's output is the probability distribution over labels
 
-
-
-    - ReLU
+    Other characteristics:
+    - ReLU activation function
     - Filter windows of 3, 4, 5 with 100 feature maps each (num filters)
     - For regularization: Dropout on the penultimate layer with a constraint on l2-norms of the weight vectors.
                           Dropout rate of 0.50 with a L2 constraint of 3
@@ -151,10 +116,44 @@ class CNNSentenceClassification:
         """
         return self.model.evaluate(x_val, y_val, batch_size=batch_size)
 
+    # TODO: Meter a una clase base? El parametro random_state que está aqui pero no en Keras-Example se podria pasar como kwargs
+    @classmethod
+    def train_and_evaluate(cls, embedding_layer, word_vectors_max_len, dataset_num_classes,
+                           random_state, X_train, y_train, X_val, y_val, epochs):
+        """
+        Creates and trains the CNN, plots loss and accuracy, and check the results on the validation set.
+        :param embedding_layer: Embedding layer for the cnn keras model.
+        :param word_vectors_max_len: Max length of the word vectors.
+        :param dataset_num_classes: Number of classes of the dataset.
+        :param random_state: Random state for the dropout layer.
+        :param X_train: X data for training.
+        :param y_train: y data for training.
+        :param X_val: X data for validation.
+        :param y_val: y data for training.
+        :param epochs: Number of epochs
+        """
 
-class CNNKerasExample:  # TODO: Create a parent class
+        # Create and train the cnn
+        pretty_print('Creating the CNN-Sentence-classification')
+        model = cls(embedding_layer, word_vectors_max_len, dataset_num_classes, random_state)
+        pretty_print('Training the CNN-Sentence-classification')
+        history = model.train(X_train, y_train, epochs=epochs)
+
+        # Plot loss and accuracy
+        plot_keras_model_loss_during_epochs(history)
+        plot_keras_model_accuracy_during_epochs(history)
+
+        # Check results on the validation set
+        pretty_print('\n\nValidation results\n____________________')
+        val_loss, val_acc = model.evaluate(X_val, y_val)
+        print('Validation loss:', val_loss)
+        print('Validation accuracy:', val_acc)
+
+
+class CNNKerasExample:  # TODO: Create a parent class??
     """
-    This network follows the example explained in Keras.
+    This network follows the example explained in Keras:
+    https://github.com/keras-team/keras/blob/master/examples/pretrained_word_embeddings.py
     """
 
     __ACTIVATION_FUNCTION = 'relu'
@@ -213,3 +212,34 @@ class CNNKerasExample:  # TODO: Create a parent class
         :returns val_loss, val_acc, if the metrics passed in the __init__ where the default.
         """
         return self.model.evaluate(x_val, y_val, batch_size=batch_size)
+
+    @classmethod
+    def train_and_evaluate(cls, embedding_layer, word_vectors_max_len, dataset_num_classes,
+                           X_train, y_train, X_val, y_val, epochs):
+        """
+        Creates and trains the CNN, plots loss and accuracy, and check the results on the validation set.
+        :param embedding_layer: Embedding layer for the cnn keras model.
+        :param word_vectors_max_len: Max length of the word vectors.
+        :param dataset_num_classes: Number of classes of the dataset.
+        :param X_train: X data for training.
+        :param y_train: y data for training.
+        :param X_val: X data for validation.
+        :param y_val: y data for training.
+        :param epochs: Number of epochs
+        """
+
+        # Create and train the cnn
+        pretty_print('Creating the CNN-Keras-Example')
+        model = cls(embedding_layer, word_vectors_max_len, dataset_num_classes)
+        pretty_print('Training the CNN-Keras-Example')
+        history = model.train(X_train, y_train, epochs=epochs)
+
+        # Plot loss and accuracy
+        plot_keras_model_loss_during_epochs(history)
+        plot_keras_model_accuracy_during_epochs(history)
+
+        # Check results on the validation set
+        pretty_print('Validation results')
+        val_loss, val_acc = model.evaluate(X_val, y_val)
+        print('Validation loss:', val_loss)
+        print('Validation accuracy:', val_acc)

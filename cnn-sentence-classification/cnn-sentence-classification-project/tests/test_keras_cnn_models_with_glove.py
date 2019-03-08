@@ -1,38 +1,18 @@
 # %%
-from datasets import TwentyNewsGroupsDataset
-from preprocessing import get_first_k_words
-import preprocessing as pre
-from keras.preprocessing.sequence import pad_sequences
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from keras.utils.np_utils import to_categorical
-from models import *
-from embeddings import *
 from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+from keras.utils.np_utils import to_categorical
 from keras.layers import Embedding
 from keras.initializers import Constant
 
-
-def preprocess_dataset(dataset):
-    """
-    Apply all the preprocessing to the given TwentyNewsGroupsDataset dataset.
-    """
-    print('\n\nPreprocessing the dataset\n_____________________________')
-
-    dataset.apply_function_to_files(pre.to_lowercase_and_remove_stopwords)
-    dataset.apply_function_to_files(pre.substitute_punctuation)
-    dataset.apply_function_to_files(pre.lemmatize_words)
-
-
-def limit_documents_size(max_len):
-    """
-    Limits the number of words of each document,
-    and creates a column in the dataframe with the number of words of each document.
-    :param max_len: Max number of words of each document.
-    """
-    df['document'] = df['document'].apply(lambda x: get_first_k_words(x, max_len))
-    # Create a column with the number of words of each document
-    df['num_words'] = df['document'].apply(lambda x: len(x.split()))
+from datasets.twenty_news_groups import TwentyNewsGroupsDataset
+from preprocessing.dataset import preprocess_dataset
+from embeddings import Glove
+from models.classification import CNNSentenceClassification, CNNKerasExample
+from utils import pretty_print
 
 
 def encode_class(laber_encoder):
@@ -49,18 +29,18 @@ def encode_class(laber_encoder):
 
 def get_class_as_string_from_one_hot_encoding(laber_encoder, one_hot_vector):
     laber_encoder.inverse_transform(one_hot_vector)
-    # %%
+# %%
 
 
 if __name__ == '__main__':
     # %%
-    dataset = TwentyNewsGroupsDataset(remove_quotes=False, remove_footer=False)
+    dataset = TwentyNewsGroupsDataset()
 
     # Apply more preprocessing
-    preprocess_dataset(dataset)
+    dataset = preprocess_dataset(dataset)
 
     # Convert to a Pandas dataframe
-    print('\n\nConverting dataset to Pandas Dataframe\n______________________________________')
+    pretty_print('Converting dataset to Pandas Dataframe')
     df = dataset.as_dataframe()
 
     # %%
@@ -133,9 +113,9 @@ if __name__ == '__main__':
                                 trainable=False)
 
     # %%
-    train_and_evaluate_cnn_sentence_classification_model(embedding_layer, WORD_VECTORS_MAX_LEN, dataset.num_classes,
-                                                         RANDOM_STATE, X_train, y_train, X_val, y_val, epochs=20)
+    CNNSentenceClassification.train_and_evaluate(embedding_layer, WORD_VECTORS_MAX_LEN, dataset.num_classes,
+                                                 RANDOM_STATE, X_train, y_train, X_val, y_val, epochs=20)
 
     # %%
-    train_and_evaluate_cnn_keras_example_model(embedding_layer, WORD_VECTORS_MAX_LEN, dataset.num_classes,
-                                               X_train, y_train, X_val, y_val, epochs=20)
+    CNNKerasExample.train_and_evaluate(embedding_layer, WORD_VECTORS_MAX_LEN, dataset.num_classes,
+                                       X_train, y_train, X_val, y_val, epochs=20)

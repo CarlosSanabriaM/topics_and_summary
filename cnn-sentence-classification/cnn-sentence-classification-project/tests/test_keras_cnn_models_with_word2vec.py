@@ -1,24 +1,15 @@
 # %%
-from datasets import TwentyNewsGroupsDataset
-from preprocessing import get_first_k_words
-import preprocessing as pre
-from embeddings import Word2VecModel
-from keras.preprocessing.sequence import pad_sequences
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from keras.preprocessing.sequence import pad_sequences
 from keras.utils.np_utils import to_categorical
-from models import *
 
-
-def preprocess_dataset(dataset):
-    """
-    Apply all the preprocessing to the given TwentyNewsGroupsDataset dataset.
-    """
-    print('\n\nPreprocessing the dataset\n_____________________________')
-
-    dataset.apply_function_to_files(pre.to_lowercase_and_remove_stopwords)
-    dataset.apply_function_to_files(pre.substitute_punctuation)
-    dataset.apply_function_to_files(pre.lemmatize_words)
+from datasets.twenty_news_groups import TwentyNewsGroupsDataset
+from preprocessing.dataset import preprocess_dataset
+from preprocessing.text import get_first_k_words
+from embeddings import Word2VecModel
+from models.classification import CNNSentenceClassification, CNNKerasExample
+from utils import pretty_print
 
 
 def limit_documents_size(max_len):
@@ -64,18 +55,20 @@ def encode_class(laber_encoder):
 
 def get_class_as_string_from_one_hot_encoding(laber_encoder, one_hot_vector):
     laber_encoder.inverse_transform(one_hot_vector)
+
+
 # %%
 
 
 if __name__ == '__main__':
     # %%
-    dataset = TwentyNewsGroupsDataset(remove_quotes=False, remove_footer=False)  # TODO: Remove params in constructor??
+    dataset = TwentyNewsGroupsDataset()
 
     # Apply more preprocessing
-    preprocess_dataset(dataset)
+    dataset = preprocess_dataset(dataset)
 
     # Convert to a Pandas dataframe
-    print('\n\nConverting dataset to Pandas Dataframe\n______________________________________')
+    pretty_print('Converting dataset to Pandas Dataframe')
     df = dataset.as_dataframe()
 
     # Limit the size of each document to 200 words
@@ -84,7 +77,7 @@ if __name__ == '__main__':
 
     # %%
     # Create the word2vec model
-    print('\n\nCreating the Word2Vec model\n___________________________')
+    pretty_print('Creating the Word2Vec model')
     w2vmodel = Word2VecModel()
 
     # Obtain from the data the list of word indices of each document, padded if needed
@@ -104,9 +97,9 @@ if __name__ == '__main__':
     embedding_layer = w2vmodel.get_keras_embedding(train_embeddings=False)
 
     # %%
-    train_and_evaluate_cnn_sentence_classification_model(embedding_layer, WORD_VECTORS_MAX_LEN, dataset.num_classes,
-                                                         RANDOM_STATE, X_train, y_train, X_val, y_val, epochs=20)
+    CNNSentenceClassification.train_and_evaluate(embedding_layer, WORD_VECTORS_MAX_LEN, dataset.num_classes,
+                                                 RANDOM_STATE, X_train, y_train, X_val, y_val, epochs=20)
 
     # %%
-    train_and_evaluate_cnn_keras_example_model(embedding_layer, WORD_VECTORS_MAX_LEN, dataset.num_classes,
-                                               X_train, y_train, X_val, y_val, epochs=20)
+    CNNKerasExample.train_and_evaluate(embedding_layer, WORD_VECTORS_MAX_LEN, dataset.num_classes,
+                                       X_train, y_train, X_val, y_val, epochs=20)

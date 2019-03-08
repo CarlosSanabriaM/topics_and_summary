@@ -1,15 +1,19 @@
-import os
+from os import path
 import numpy as np
 from gensim.models import KeyedVectors
 
+from utils import get_abspath
+
 
 class Word2VecModel:
+    """Word2Vec word embedding model."""
     __MODEL_PATH = '../../word2vec/GoogleNews-vectors-negative300.bin.gz'
 
-    def __init__(self, model_path=__MODEL_PATH):
+    def __init__(self, model_path=get_abspath(__file__, __MODEL_PATH)):
         """
         Constructs a Word2Vec model using the gensim library.
-        :param model_path: The path of the binary word2vec model. Default is the 100 billion words model pretrained on Google News.
+        :param model_path: The path of the binary word2vec model.
+        Default is the 100 billion words model pretrained on Google News.
         """
         self.w2v_model = KeyedVectors.load_word2vec_format(model_path, binary=True)
 
@@ -25,21 +29,28 @@ class Word2VecModel:
         """
         Returns the index of the specified word.
         :param word:
-        :return: Index of the specified word. If the word isn't in the vocabulary of the model, returns the index of the UNK token.
+        :return: Index of the specified word. If the word isn't in the vocabulary of the model,
+        returns the index of the UNK token.
         """
         if self.w2v_model.vocab.get(word) is None:
             return self.w2v_model.vocab.get('UNK').index
         return self.w2v_model.vocab.get(word).index
 
     def get_keras_embedding(self, train_embeddings=False):
-        return self.w2v_model.get_keras_embedding(train_embeddings=False)
+        """
+        :param train_embeddings: If True, the embedding layer weights are updated during training.
+        :return: The keras embedding layer using the Word2Vec model.
+        """
+        return self.w2v_model.get_keras_embedding(train_embeddings=train_embeddings)
 
 
 class Glove:
+    """Glove word embedding model."""
     __GLOVE_DIR = '../../glove/glove.6B'
     __GLOVE_VECTORS_DIM = 100
 
-    def __init__(self, vectors_dim=__GLOVE_VECTORS_DIM, glove_dir=__GLOVE_DIR):
+    def __init__(self, vectors_dim=__GLOVE_VECTORS_DIM,
+                 glove_dir=get_abspath(__file__, __GLOVE_DIR)):
         """
         Reads a glove file where contains in each row, in the first position the word,
         and in the rest of the line the elements of the word vector.
@@ -51,7 +62,7 @@ class Glove:
         # A dict where keys are words and values are their corresponding word vectors
         self.embeddings_index = {}
 
-        with open(os.path.join(glove_dir, 'glove.6B.' + str(vectors_dim) + 'd.txt')) as f:
+        with open(path.join(glove_dir, 'glove.6B.' + str(vectors_dim) + 'd.txt')) as f:
             for line in f:
                 # Each line contains: word number_of_the_word_vector.
                 # P. e. the 0.418 0.24968 -0.41242 0.1217 0.34527 ...

@@ -1,23 +1,16 @@
-import os
+from os import listdir, path
 import re
 import pandas as pd
 
-
-def get_file_content(file_path, encoding):
-    """
-    Returns the content os the specified file as a string.
-    :param file_path: Path of the file to be converted into a string (String).
-    :param encoding: Encoding of the file (String).
-    :return: The content of the file as a string.
-    """
-    with open(file_path, encoding=encoding) as f:
-        return f.read()
+from datasets.common import get_file_content, Document
+from utils import pretty_print, get_abspath
 
 
 class TwentyNewsGroupsDataset:
-    __DATASET_PATH = '../../text-preprocessing/20_newsgroups'
+    __DATASET_PATH = '../../../text-preprocessing/20_newsgroups'
 
-    def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=__DATASET_PATH):
+    def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True,
+                 dataset_path=get_abspath(__file__, __DATASET_PATH)):
         """
         Loads the 20 newsgroups dataset in a dict.
         It can appy a first preprocessing on the dataset files.
@@ -26,46 +19,47 @@ class TwentyNewsGroupsDataset:
         :param remove_quotes: If true, it removes the quotes of all files.
         :param dataset_path: Path to the dataset.
         """
-        self.dataset_path = dataset_path;
-        # The key is the parent folder and the value of each key is
-        # a list of strings containing each file in a string format
-        self.files_dict = {}
+        self.dataset_path = dataset_path
+        self.files_dict = {}  # The key is the parent folder and the value of each key is a list of document objects
         self._load_files()  # Load the files in the previous dict
         self.classes = list(self.files_dict.keys())
         self.num_classes = len(self.files_dict)
 
         # Apply a first preprocessing
-        if remove_header: self._strip_header()
-        if remove_footer: self._strip_footer()
-        if remove_quotes: self._strip_quotes()
+        if remove_header:
+            self._strip_header()
+        if remove_footer:
+            self._strip_footer()
+        if remove_quotes:
+            self._strip_quotes()
 
     def _load_files(self):
         """
-        Load the files in the files_dict with the keys being the class to predict,
-        and the values being a list of strings, where each string is a file of that class.
+        Load the files in the files_dict with the keys being the category of the files,
+        and the values being a list of document objects, where each document is a file of that category.
         """
-        for directory in os.listdir(self.dataset_path):
+        for directory in listdir(self.dataset_path):
             # Skip Mac file
             if directory == '.DS_Store':
                 continue
 
             self.files_dict[directory] = []
 
-            for file in os.listdir(self.dataset_path + '/' + directory):
+            # Add each file in the category to the dict
+            for file_name in listdir(self.dataset_path + '/' + directory):
                 file_content = get_file_content(
-                    self.dataset_path + '/' + directory + '/' + file, 'latin1')
-                self.files_dict[directory].append(file_content)
+                    self.dataset_path + '/' + directory + '/' + file_name, 'latin1')
+                self.files_dict[directory].append(Document(file_name, file_content))
 
     def apply_function_to_files(self, func):
         """
         Applies the given function to each of the text files in the corpus.
         :param func: The function to be applied to each text file.
         """
-        for files_class in self.files_dict:
-            self.files_dict[files_class] = [func(file)
-                                            for file in self.files_dict[files_class]]
+        for category in self.files_dict:
+            for file in self.files_dict[category]:
+                file.content = func(file.content)
 
-    # TODO: Or @staticmethod??
     @classmethod
     def __strip_header(cls, file_text):
         """
@@ -130,36 +124,63 @@ class TwentyNewsGroupsDataset:
         """
         self.apply_function_to_files(self.__strip_footer)
 
+    def remove_document(self, category, index_in_category):
+        """
+        Removes from the dataset the document in the given category with the given index inside that category.
+        :param category: Category of the document.
+        :param index_in_category: Index of the document inside that category.
+        """
+        del self.files_dict[category][index_in_category]
+
     def as_dataframe(self):
         """
         Returns the files_dict as a pandas DataFrame.
         """
         i = 0
         dataframe_dict = {}
-        for file_class, files_list in self.files_dict.items():
+        for category, files_list in self.files_dict.items():
             for file in files_list:
-                dataframe_dict[i] = [file, file_class]
+                dataframe_dict[i] = [file.content, category, file.name]
                 i += 1
 
-        return pd.DataFrame.from_dict(dataframe_dict, orient='index', columns=['document', 'class'])
+        return pd.DataFrame.from_dict(dataframe_dict, orient='index', columns=['document', 'class', 'document_name'])
 
     def as_documents_list(self, tokenize_words=True):
         """
         Returns a list of the documents in the dataset.
         :param tokenize_words: If true, each document is converted into a list of words.
-        :return:
+        :return: List of the documents in the dataset.
         """
         if tokenize_words:
-            return [item.split() for sublist in list(self.files_dict.values()) for item in sublist]
-        return [item for sublist in list(self.files_dict.values()) for item in sublist]
+            return [file.content.split() for files_list in list(self.files_dict.values()) for file in files_list]
+        return [file.content for files_list in list(self.files_dict.values()) for file in files_list]
+
+    def get_document_index(self, category, doc_name):
+        """
+        Returns the index of the specified document.
+        :param category: Category of the document.
+        :param doc_name: Name of the document.
+        :return: Returns the index of the specified document or -1 if the documents isn't in the dataset.
+        """
+        # TODO: Is there a way to make it simpler?
+        try:
+            # Get the document with that name inside that category
+            f = filter(lambda doc: doc.name == doc_name, self.files_dict[category])
+            doc = next(f)
+        except StopIteration:
+            # If the filter has 0 elements and we use next(), StopIteration is raised, so we return -1
+            return -1
+
+        # If the document exists, we return it's index inside the specified category
+        return self.files_dict[category].index(doc)
 
     def print_some_files(self):
         """
         Prints some text files from the corpus.
         """
-        print('File 1\n_______\n')
-        print(self.files_dict['sci.med'][1])
-        print('\n\nFile 2\n_______\n')
-        print(self.files_dict['sci.electronics'][0])
-        print('\n\nFile 3\n_______\n')
-        print(self.files_dict['rec.autos'][16])
+        pretty_print('File 1')
+        print(self.files_dict['sci.med'][1].content)
+        pretty_print('File 2')
+        print(self.files_dict['sci.electronics'][0].content)
+        pretty_print('File 3')
+        print(self.files_dict['rec.autos'][16].content)

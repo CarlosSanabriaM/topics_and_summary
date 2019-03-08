@@ -1,0 +1,11 @@
+talk.politics.guns 54380
+comp.os.ms-windows.misc 9543
+comp.os.ms-windows.misc 9544
+comp.os.ms-windows.misc 9977
+comp.os.ms-windows.misc 10140
+comp.windows.x 67988
+comp.sys.mac.hardware 52332
+comp.sys.mac.hardware 52094
+comp.sys.mac.hardware 51888
+comp.sys.mac.hardware 52208
+comp.sys.mac.hardware 51806
