@@ -12,5 +12,9 @@ __pycache__/
 ### Mac files ###
 .DS_Store
 
-saved-models/
-tests/lda_results
+.text-preprocessing/20_newsgroups/
+.cnn-sentence-classification/cnn-sentence-classification-project/saved-models/
+.cnn-sentence-classification/cnn-sentence-classification-project/tests/lda_results
+.mallet-2.0.8/
+.word2vec/
+.glove/
