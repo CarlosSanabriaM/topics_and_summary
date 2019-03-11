@@ -212,6 +212,7 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
     Creates a copy of the given dataset and returns the copy with the specified preprocessing.
     The original dataset is not modified.
     :param dataset: Dataset to copy and apply preprocessing.
+    :param trash_docs: Remove specified docs. By default is True.
     :param normalize: Normalize words. By default is True.
     :param lowercase: Transform to lowercase. By default is True.
     :param contractions: Expand contractions. By default is True.
@@ -224,7 +225,6 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
     :param lemmatize: Lemmatize words. By default is True.
     :param stem: Stemm words. By default is False.
     :param trash_words: Remove documents with any of the 'trash words'. By default is True.
-    :param trash_docs: Remove specified docs. By default is True.
     :param chars: Remove single chars. By default is True.
     :param empty_docs: Remove empty docs. By default is True.
     :return: The dataset with the preprocessing applied.
@@ -234,6 +234,8 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
     dataset_copy = deepcopy(dataset)
 
     # TODO: Revise order of functions
+    if trash_docs:
+        remove_trash_docs_specified_in_file(dataset_copy)
     if normalize:
         # TODO: Pasamos de tener 246 apariciones de 'usa' a tener 1231.
         # TODO: Problem: Here we can have 'USA,' and 'USA' doesn't detect that.
@@ -263,8 +265,6 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
         dataset_copy.apply_function_to_files(stem_words)
     if trash_words:
         remove_docs_that_contain_any_of_the_words_in_file(dataset_copy)
-    if trash_docs:
-        remove_trash_docs_specified_in_file(dataset_copy)
     # TODO: remove apostrophes here?? we have things like god's
     if chars:
         dataset_copy.apply_function_to_files(remove_single_chars)

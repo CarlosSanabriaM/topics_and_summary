@@ -222,7 +222,7 @@ if __name__ == '__main__':
     # Compute and plot coherence values to check which number of topics is the optimum
     pretty_print('Computing the coherence values')
     START, STOP, STEP = 10, 20, 1
-    lda_models_list, coherence_values = compute_coherence_values(terms_dictionary, doc_term_matrix, documents,
+    models_list, coherence_values = compute_coherence_values(terms_dictionary, doc_term_matrix, documents,
                                                                  start=START, stop=STOP, step=STEP)
     plot_coherence_score_values(coherence_values, START, STOP, STEP)
 
@@ -230,7 +230,7 @@ if __name__ == '__main__':
     # Select the best LDA model
     pretty_print('Selecting the final LDA model')
     index_max_coherence_value = coherence_values.index(max(coherence_values))
-    lda_model = lda_models_list[index_max_coherence_value]
+    lda_model = models_list[index_max_coherence_value]
     print_topics(lda_model, NUM_WORDS_EACH_TOPIC_TO_BE_PRINTED)
 """
 

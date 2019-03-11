@@ -3,8 +3,8 @@ import abc
 from tqdm import tqdm
 import datetime
 import gensim
-import pyLDAvis.gensim
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from utils import get_abspath, RANDOM_STATE
 
@@ -41,7 +41,7 @@ def get_corpus(dictionary, documents):
 class TopicsModel(metaclass=abc.ABCMeta):
     """Base class for a single topics model."""
 
-    __SAVE_PATH = '../saved-models/lda/'  # Path where the models will be saved
+    __SAVE_PATH = '../saved-models/topics/'  # Path where the models will be saved
 
     def __init__(self, documents, dictionary=None, corpus=None, num_topics=20, model=None, **kwargs):
         """
@@ -120,7 +120,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :return:
         """
         model = cls._load_gensim_model(model_dir_path + model_name + "/" + model_name)
-        return cls(documents, num_topics=model.num_topics, model=model)
+        return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name)
 
     @classmethod
     @abc.abstractmethod
@@ -146,7 +146,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         for topic in topics_sequence:
             print('Topic ' + str(topic[0]) + ': ' + topic[1])
 
-    def get_dominant_topics_of_document(self, document_index, num_best_topics, num_best_keywords):
+    def get_k_dominant_topics_of_document(self, document_index, num_best_topics=3, num_best_keywords=10):
         document = self.corpus[document_index]  # Document as a term_id-frequency list
         document_topics_contrib = self.model[document]  # List of tuples (topic_index, document_topic_contribution)
 
@@ -162,14 +162,28 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return dominant_topics
 
+    def get_dominant_topic_of_document_each_doc_as_df(self):
+        docs_topics_df = pd.DataFrame(columns=['Dominant_Topic_Index', 'Topic_Contribution', 'Topic_Keywords'])
+
+        for doc_index in range(self.documents):
+            docs_topics_df = docs_topics_df.append(
+                pd.Series(self.get_k_dominant_topics_of_document(doc_index, num_best_topics=1)))
+
+        # Add original text of the documents to the end of the output
+        docs_text = pd.Series(self.documents)
+        docs_topics_df = pd.concat([docs_topics_df, docs_text], axis=1, names=['Doc_Text'])
+        return docs_topics_df
+
 
 class LdaMalletModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use."""
 
-    __MALLET_PATH = '../../../mallet-2.0.8/bin/mallet'
+    __MALLET_SOURCE_CODE_PATH = '../../../mallet-2.0.8/bin/mallet'
+    __MALLET_SAVED_MODELS_PATH = '../saved-models/topics/lda_mallet/'
 
     def __init__(self, documents, dictionary=None, corpus=None, num_topics=20,
-                 model=None, mallet_path=get_abspath(__file__, __MALLET_PATH), **kwargs):
+                 model=None, mallet_path=get_abspath(__file__, __MALLET_SOURCE_CODE_PATH),
+                 model_name=None, **kwargs):
         """
         Encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use.
         :param documents: List of lists of strings. Each one of the nested lists represents a document,
@@ -179,9 +193,16 @@ class LdaMalletModel(TopicsModel):
         :param num_topics: Number of topics.
         :param model: Pre-created model. If is None, a model is created.
         :param mallet_path: Path to the mallet source code.
+        :param model_name: Name of the folder where all mallet files will be saved. That folder will be created
+        inside __MALLET_SAVED_MODELS_PATH directory. This param is obligatory.
         :param kwargs: Additional keyword arguments that want to be used in the gensim.models.wrappers.LdaMallet
         __init__ method.
         """
+        if model_name is None:
+            raise ValueError('model_name parameter is obligatory')
+
+        self.model_name = model_name
+
         super().__init__(documents, dictionary, corpus, num_topics, model, mallet_path=mallet_path, **kwargs)
 
     def _create_model(self, **kwargs):
@@ -191,9 +212,19 @@ class LdaMalletModel(TopicsModel):
         mallet_path argument is obligatory.
         :return: The gensim.models.wrappers.LdaMallet model created.
         """
+        # Create the folder where the mallet files will be stored
+        prefix = get_abspath(__file__, self.__MALLET_SAVED_MODELS_PATH + self.model_name)
+        os.mkdir(prefix)
+
+        # Add the model_name again to the prefix. Mallet expects the prexis to be the name of a file
+        # inside the folder where the mallet files will be saved. For that reason, we add to the folder
+        # path the model name, and we will use later the prefix to store the final model.
+        prefix += '/' + self.model_name
+
         return gensim.models.wrappers.LdaMallet(corpus=self.corpus,
                                                 id2word=self.dictionary,
                                                 num_topics=self.num_topics,
+                                                prefix=prefix,
                                                 **kwargs)  # mallet_path is passed here
 
     @classmethod
@@ -205,9 +236,21 @@ class LdaMalletModel(TopicsModel):
         """
         return gensim.models.wrappers.LdaMallet.load(get_abspath(__file__, path))
 
+    def save(self):
+        """
+        Saves the mallet model to the path specified in self.model.prefix.
+        """
+        self.model.save(self.model.prefix)
+
+    @classmethod
+    def load(cls, model_name, documents, model_dir_path=__MALLET_SAVED_MODELS_PATH):
+        return super(LdaMalletModel, cls).load(model_name, documents, model_dir_path)
+
 
 class LdaModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LdaModel, making it easier to use."""
+
+    __LDA_SAVED_MODELS_PATH = '../saved-models/topics/lda/'
 
     def __init__(self, documents, dictionary=None, corpus=None, num_topics=20,
                  model=None, random_state=RANDOM_STATE, **kwargs):
@@ -231,10 +274,22 @@ class LdaModel(TopicsModel):
         random_state argument is obligatory.
         :return: The gensim.models.LdaModel model created.
         """
+
+        # model_name kwargs can't be passed to LdaModel __init__()
+        # TODO: This can be done better removing from kwargs all the keys that aren't in the __init__() method below
+        del kwargs['model_name']
+
         return gensim.models.LdaModel(corpus=self.corpus,
                                       id2word=self.dictionary,
                                       num_topics=self.num_topics,
                                       **kwargs)  # random_state is passed here
+
+    def save(self, base_name, path=__LDA_SAVED_MODELS_PATH):
+        super(LdaModel, self).save(base_name, path)
+
+    @classmethod
+    def load(cls, model_name, documents, model_dir_path=__LDA_SAVED_MODELS_PATH):
+        return super(LdaModel, cls).load(model_name, documents, model_dir_path)
 
     @classmethod
     def _load_gensim_model(cls, path):
@@ -248,6 +303,8 @@ class LdaModel(TopicsModel):
 
 class LsaModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LsiModel, making it easier to use."""
+
+    __LSA_SAVED_MODELS_PATH = '../saved-models/topics/lsa/'
 
     def __init__(self, documents, dictionary=None, corpus=None, num_topics=20, model=None, **kwargs):
         """
@@ -268,10 +325,22 @@ class LsaModel(TopicsModel):
         :param kwargs: Keyword arguments that want to be used in the gensim.models.LdaModel.
         :return: The gensim.models.LsiModel model created.
         """
+
+        # model_name kwargs can't be passed to LdaModel __init__()
+        # TODO: This can be done better removing from kwargs all the keys that aren't in the __init__() method below
+        del kwargs['model_name']
+
         return gensim.models.LsiModel(corpus=self.corpus,
                                       id2word=self.dictionary,
                                       num_topics=self.num_topics,
                                       **kwargs)
+
+    @classmethod
+    def load(cls, model_name, documents, model_dir_path=__LSA_SAVED_MODELS_PATH):
+        return super(LsaModel, cls).load(model_name, documents, model_dir_path)
+
+    def save(self, base_name, path=__LSA_SAVED_MODELS_PATH):
+        super(LsaModel, self).save(base_name, path)
 
     @classmethod
     def _load_gensim_model(cls, path):
@@ -285,6 +354,8 @@ class LsaModel(TopicsModel):
 
 class TopicsModelsList(metaclass=abc.ABCMeta):
     """Base class for a list of topics models."""
+
+    __SAVE_PATH = '../saved-models/topics/'  # Path where the models will be saved
 
     def __init__(self, documents):
         self.documents = documents
@@ -354,14 +425,14 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
             print("Num Topics =", num_topics, " has Coherence Value of", round(coherence_value, 4))
 
         # Plot the coherence scores
-        plt.plot(num_topics_list, coherence_values)
+        plt.plot(list(num_topics_list), coherence_values)
         plt.xlabel("Number of Topics")
         plt.ylabel("Coherence score")
         plt.legend("coherence_values", loc='best')
         plt.title(title)
         plt.show()
 
-    def save(self, base_name, path='../saved-models/lda/', index=None):
+    def save(self, base_name, path=__SAVE_PATH, index=None):
         """
         If index parameter is None, saves all the models to disk.
         If is a number, saves only the model with that index.
@@ -378,7 +449,7 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
                 model.save(base_name, path)
 
 
-class LdaMalletModels(TopicsModelsList):
+class LdaMalletModelsList(TopicsModelsList):
 
     def __init__(self, documents):
         super().__init__(documents)
@@ -387,7 +458,7 @@ class LdaMalletModels(TopicsModelsList):
         return LdaMalletModel(self.documents, self.dictionary, self.corpus, num_topics, **kwargs)
 
 
-class LdaModels(TopicsModelsList):
+class LdaModelsList(TopicsModelsList):
 
     def __init__(self, documents):
         super().__init__(documents)
@@ -396,7 +467,7 @@ class LdaModels(TopicsModelsList):
         return LdaModel(self.documents, self.dictionary, self.corpus, num_topics, random_state, **kwargs)
 
 
-class LsaModels(TopicsModelsList):
+class LsaModelsList(TopicsModelsList):
 
     def __init__(self, documents):
         super().__init__(documents)
