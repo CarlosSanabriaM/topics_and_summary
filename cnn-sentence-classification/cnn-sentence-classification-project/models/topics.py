@@ -162,17 +162,82 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return dominant_topics
 
+    # TODO: This method hasn't been tested
     def get_dominant_topic_of_document_each_doc_as_df(self):
-        docs_topics_df = pd.DataFrame(columns=['Dominant_Topic_Index', 'Topic_Contribution', 'Topic_Keywords'])
+        """
+        Returns a pandas DataFrame with the following columns: Doc_Index, Dominant_Topic_Index, Topic_Contribution,
+        Topic_Keywords and Doc_Text. This method can take to much time to execute if the dataset is big.
+        :return: pandas DataFrame.
+        """
+        docs_topics_df = pd.DataFrame(
+            columns=['Doc_Index', 'Dominant_Topic_Index', 'Topic_Contribution', 'Topic_Keywords'])
 
-        for doc_index in range(self.documents):
+        for doc_index in tqdm(range(len(self.documents))):
+            dominant_topic = self.get_k_dominant_topics_of_document(doc_index, num_best_topics=1)[0]
             docs_topics_df = docs_topics_df.append(
-                pd.Series(self.get_k_dominant_topics_of_document(doc_index, num_best_topics=1)))
+                pd.Series([doc_index, dominant_topic[0], dominant_topic[1], dominant_topic[2]]), ignore_index=True)
 
         # Add original text of the documents to the end of the output
         docs_text = pd.Series(self.documents)
         docs_topics_df = pd.concat([docs_topics_df, docs_text], axis=1, names=['Doc_Text'])
+
         return docs_topics_df
+
+    # TODO: This method hasn't been tested
+    def get_most_representative_doc_for_each_topic_as_df(self, docs_topics_df=None):
+        """
+        Returns a DataFrame where each row contains a topic and the most representative document of that topic.
+        :param docs_topics_df: DataFrame previously created with the method
+        get_dominant_topic_of_document_each_doc_as_df(). If is None, that method is call, and that can take be slow.
+        :return: A pandas DataFrame with the following columns: Topic_Index, Topic_Contribution, Topic_Keywords and
+        Doc_Text.
+        """
+        if docs_topics_df is None:
+            docs_topics_df = self.get_dominant_topic_of_document_each_doc_as_df()
+
+        most_repr_doc_each_topic_df = pd.DataFrame()
+
+        doc_topics_grouped_by_topic_df = docs_topics_df.groupby('Dominant_Topic_Index')
+
+        for i, group in doc_topics_grouped_by_topic_df:
+            most_repr_doc_each_topic_df = pd.concat([most_repr_doc_each_topic_df,
+                                                     group.sort_values(['Topic_Contribution'], ascending=[0]).head(1)],
+                                                    axis=0)
+
+        most_repr_doc_each_topic_df.reset_index(drop=True, inplace=True)
+        most_repr_doc_each_topic_df.columns = ['Topic_Index', "Topic_Contribution", "Topic_Keywords", "Doc_Text"]
+
+        return most_repr_doc_each_topic_df
+
+    # TODO: This method hasn't been tested
+    def get_topic_distribution_as_df(self, docs_topics_df=None):
+        """
+        Returns a DataFrame where each row contains a topic, the number of documents of that topic (the topic
+        is the dominant topic of those documents), and the percentage of documents of that topic.
+        :param docs_topics_df: DataFrame previously created with the method
+        get_dominant_topic_of_document_each_doc_as_df(). If is None, that method is call, and that can take be slow.
+        :return: A pandas DataFrame with the following columns: Dominant_Topic_Index, Topic_Keywords, Num_Documents and
+        Percentage_Documents.
+        """
+        if docs_topics_df is None:
+            docs_topics_df = self.get_dominant_topic_of_document_each_doc_as_df()
+
+        # Number of Documents for Each Topic
+        topic_counts = docs_topics_df['Dominant_Topic_Index'].value_counts()
+
+        # Percentage of Documents for Each Topic
+        topic_contribution = round(topic_counts / topic_counts.sum(), 4)
+
+        # Topic Number and Keywords
+        topic_num_keywords = docs_topics_df[['Dominant_Topic_Index', 'Topic_Keywords']]
+
+        # Concatenate Column wise
+        df_dominant_topics = pd.concat([topic_num_keywords, topic_counts, topic_contribution], axis=1)
+
+        # Change Column names
+        df_dominant_topics.columns = ['Dominant_Topic_Index', 'Topic_Keywords', 'Num_Documents', 'Percentage_Documents']
+
+        return df_dominant_topics
 
 
 class LdaMalletModel(TopicsModel):

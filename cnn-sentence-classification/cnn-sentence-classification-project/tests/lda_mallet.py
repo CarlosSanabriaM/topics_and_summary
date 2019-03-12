@@ -2,7 +2,6 @@ from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from preprocessing.dataset import preprocess_dataset
 from models.topics import LdaMalletModel, LdaMalletModelsList
 from utils import pretty_print
-from pprint import pprint
 
 
 if __name__ == '__main__':
@@ -51,10 +50,11 @@ if __name__ == '__main__':
 
     # %%
     # Finding the dominant topics of documents
-    documents_indices = range(0, 20001, 1000)
-    for doc_index in documents_indices:
-        pretty_print("\nDocument index: " + str(doc_index))
-        pprint(best_model.get_k_dominant_topics_of_document(doc_index, 3, 10))
+    # documents_indices = range(0, 20001, 1000)
+    # for doc_index in documents_indices:
+    #     pretty_print("\nDocument index: " + str(doc_index))
+    #     print(documents[doc_index])
+    #     pprint(best_model.get_k_dominant_topics_of_document(doc_index, 3, 10))
 
     # Do the same for all the docs, returning a pd DataFrame
     docs_topics_df = best_model.get_dominant_topic_of_document_each_doc_as_df()
