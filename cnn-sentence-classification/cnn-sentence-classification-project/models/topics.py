@@ -312,7 +312,7 @@ class LdaMalletModel(TopicsModel):
         return super(LdaMalletModel, cls).load(model_name, documents, model_dir_path)
 
 
-class LdaModel(TopicsModel):
+class LdaGensimModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LdaModel, making it easier to use."""
 
     __LDA_SAVED_MODELS_PATH = '../saved-models/topics/lda/'
@@ -342,7 +342,8 @@ class LdaModel(TopicsModel):
 
         # model_name kwargs can't be passed to LdaModel __init__()
         # TODO: This can be done better removing from kwargs all the keys that aren't in the __init__() method below
-        del kwargs['model_name']
+        if kwargs.__contains__('model_name'):
+            del kwargs['model_name']
 
         return gensim.models.LdaModel(corpus=self.corpus,
                                       id2word=self.dictionary,
@@ -350,11 +351,11 @@ class LdaModel(TopicsModel):
                                       **kwargs)  # random_state is passed here
 
     def save(self, base_name, path=__LDA_SAVED_MODELS_PATH):
-        super(LdaModel, self).save(base_name, path)
+        super(LdaGensimModel, self).save(base_name, path)
 
     @classmethod
     def load(cls, model_name, documents, model_dir_path=__LDA_SAVED_MODELS_PATH):
-        return super(LdaModel, cls).load(model_name, documents, model_dir_path)
+        return super(LdaGensimModel, cls).load(model_name, documents, model_dir_path)
 
     @classmethod
     def _load_gensim_model(cls, path):
@@ -366,7 +367,7 @@ class LdaModel(TopicsModel):
         return gensim.models.LdaModel.load(get_abspath(__file__, path))
 
 
-class LsaModel(TopicsModel):
+class LsaGensimModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LsiModel, making it easier to use."""
 
     __LSA_SAVED_MODELS_PATH = '../saved-models/topics/lsa/'
@@ -393,7 +394,8 @@ class LsaModel(TopicsModel):
 
         # model_name kwargs can't be passed to LdaModel __init__()
         # TODO: This can be done better removing from kwargs all the keys that aren't in the __init__() method below
-        del kwargs['model_name']
+        if kwargs.__contains__('model_name'):
+            del kwargs['model_name']
 
         return gensim.models.LsiModel(corpus=self.corpus,
                                       id2word=self.dictionary,
@@ -402,10 +404,10 @@ class LsaModel(TopicsModel):
 
     @classmethod
     def load(cls, model_name, documents, model_dir_path=__LSA_SAVED_MODELS_PATH):
-        return super(LsaModel, cls).load(model_name, documents, model_dir_path)
+        return super(LsaGensimModel, cls).load(model_name, documents, model_dir_path)
 
     def save(self, base_name, path=__LSA_SAVED_MODELS_PATH):
-        super(LsaModel, self).save(base_name, path)
+        super(LsaGensimModel, self).save(base_name, path)
 
     @classmethod
     def _load_gensim_model(cls, path):
@@ -529,7 +531,7 @@ class LdaModelsList(TopicsModelsList):
         super().__init__(documents)
 
     def _create_model(self, num_topics, random_state=RANDOM_STATE, **kwargs):
-        return LdaModel(self.documents, self.dictionary, self.corpus, num_topics, random_state, **kwargs)
+        return LdaGensimModel(self.documents, self.dictionary, self.corpus, num_topics, random_state, **kwargs)
 
 
 class LsaModelsList(TopicsModelsList):
@@ -538,4 +540,4 @@ class LsaModelsList(TopicsModelsList):
         super().__init__(documents)
 
     def _create_model(self, num_topics, **kwargs):
-        return LsaModel(self.documents, self.dictionary, self.corpus, num_topics, **kwargs)
+        return LsaGensimModel(self.documents, self.dictionary, self.corpus, num_topics, **kwargs)

@@ -15,7 +15,7 @@ if __name__ == '__main__':
     # Create the Lda Mallet model
     pretty_print('Creating the Lda Mallet model')
     documents = dataset.as_documents_list()
-    model = LdaMalletModel(documents, num_topics=20, model_name='test')
+    model = LdaMalletModel(documents, num_topics=20, model_name='lda_mallet_test')
 
     #%%
     # Print topics and coherence score

@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.colors as mcolors
-from models.topics import TopicsModel
 
 
 def plot_distribution_of_doc_word_counts(documents):

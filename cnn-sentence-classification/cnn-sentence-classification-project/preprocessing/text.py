@@ -4,7 +4,8 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
-from utils import get_abspath
+from preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, make_trigrams_and_get_trigram_model_func
+from utils import get_abspath, pretty_print
 
 __BASIC_STOPWORDS = set(stopwords.words('english'))
 __EMAILS_RE = re.compile(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)")
@@ -208,3 +209,67 @@ def remove_single_chars(text):
     """
     return ' '.join(word for word in text.split()
                     if len(word) > 1)
+
+
+def preprocess_text(text, normalize=True, lowercase=True, contractions=True, vulgar_words=True,
+                    stopwords=True, emails=True, punctuation=True, ngrams='uni', ngrams_model_func=None,
+                    lemmatize=True, stem=False, chars=True):
+    """
+    Receives a str containing a text and returns a list of words after applying the specified preprocessing.
+    The original dataset is not modified.
+    :type text: str
+    :param text: Text to be preprocessed.
+    :param normalize: Normalize words. By default is True.
+    :param lowercase: Transform to lowercase. By default is True.
+    :param contractions: Expand contractions. By default is True.
+    :param vulgar_words: Substitute vulgar words. By default is True.
+    :param stopwords: Remove stopwords. By default is True.
+    :param emails: Remove emails. By default is True.
+    :param punctuation: Remove punctuation. By default is True.
+    :param ngrams: If 'uni' uses unigrams. If 'bi' create bigrams. If 'tri' creates trigrams. By default is 'uni'.
+    If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
+    :param ngrams_model_func: Function that receives a list of words and returns a list of words with
+    possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function
+    is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions in
+    the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
+    :param lemmatize: Lemmatize words. By default is True.
+    :param stem: Stemm words. By default is False.
+    :param chars: Remove single chars. By default is True.
+    :return: List of str.
+    Note that lemmatize and stem shouldn't be both True.
+    """
+
+    # TODO: Revise order of functions
+    if normalize:
+        # TODO: Problem: Here we can have 'USA,' and 'USA' doesn't detect that.
+        text = normalize_words(text)
+    if lowercase:
+        text = to_lowercase(text)
+    if stopwords:  # TODO: Remove also STOPWORDS here??
+        text = remove_stopwords(text)
+    if contractions:  # TODO: Some of the keys in the file are also in the STOPWORDS. What to do??
+        text = expand_contractions(text)
+    if vulgar_words:  # TODO: remove this and put the words in that dict in 'normalize_words_dict.txt'????
+        text = substitute_vulgar_words(text)
+    if emails:
+        text = remove_emails(text)
+    if punctuation:
+        text = substitute_punctuation(text)
+    if stopwords:
+        text = remove_stopwords(text)
+    if ngrams == 'bi' or ngrams == 'tri':
+        text = ' '.join(ngrams_model_func(text.split()))
+    if lemmatize:
+        text = lemmatize_words(text)
+    elif stem:
+        text = stem_words(text)
+    # TODO: remove apostrophes here?? we have things like god's
+    if chars:
+        text = remove_single_chars(text)
+
+    # TODO: Posible stopwords: people, thing, time, mr, de, st, make
+    # TODO: Problems with removing '.'  For example: 'A.M.O.R.C' converts in 'a m o r c'. Try to maintain that letter together and removing '.'.
+    # TODO: Windows lemmatizes to window
+    # TODO: Where are the numbers removed??
+
+    return text
