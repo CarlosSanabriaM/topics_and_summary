@@ -45,7 +45,7 @@ def prepare_corpus(documents):  # TODO: Implementation is repeted from test_lsa.
 
 def print_topics(lda_model, num_words_each_topic, num_topics=None):  # TODO: Implementation is repeted from test_lsa.py
     """
-    Prints the topics of the given lda_model.
+    Prints the topics of the given model.
     :param lda_model:
     :param num_words_each_topic:
     :param num_topics: If not specified, default is the num topics in the lsa model.
@@ -230,8 +230,8 @@ if __name__ == '__main__':
     # Select the best LDA model
     pretty_print('Selecting the final LDA model')
     index_max_coherence_value = coherence_values.index(max(coherence_values))
-    lda_model = models_list[index_max_coherence_value]
-    print_topics(lda_model, NUM_WORDS_EACH_TOPIC_TO_BE_PRINTED)
+    model = models_list[index_max_coherence_value]
+    print_topics(model, NUM_WORDS_EACH_TOPIC_TO_BE_PRINTED)
 """
 
 

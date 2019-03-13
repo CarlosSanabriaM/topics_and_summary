@@ -52,7 +52,7 @@ def compute_coherence_values(terms_dictionary, doc_term_matrix, documents, stop,
     coherence_values = []
     lsa_models_list = []
     for num_topics in range(start, stop, step):
-        # generate LSA lda_model
+        # generate LSA model
         lsa_model = LsiModel(doc_term_matrix, num_topics=num_topics, id2word=terms_dictionary)
         lsa_models_list.append(lsa_model)
         # Create the coherence model and evaluate the LSA model
@@ -73,7 +73,7 @@ def plot_coherence_score_values(coherence_values, start, stop, step):
 
 def print_topics(lsa_model, num_words_each_topic, num_topics=None):
     """
-    Prints the topics of the given lda_model.
+    Prints the topics of the given model.
     :param lsa_model:
     :param num_words_each_topic:
     :param num_topics: If not specified, default is the num topics in the lsa model.

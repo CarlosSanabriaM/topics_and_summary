@@ -14,20 +14,20 @@ if __name__ == '__main__':
     # Create the Lda model
     pretty_print('Creating the Lda model')
     documents = dataset.as_documents_list()
-    lda_model = LdaGensimModel(documents, num_topics=20, random_state=RANDOM_STATE)
+    model = LdaGensimModel(documents, num_topics=20, random_state=RANDOM_STATE)
 
     # %%
     # Print topics and coherence score
     pretty_print('\nTopics')
     NUM_WORDS_EACH_TOPIC_TO_BE_PRINTED = 15
-    lda_model.print_topics(NUM_WORDS_EACH_TOPIC_TO_BE_PRINTED)
-    coherence_score = lda_model.compute_coherence_value()
+    model.print_topics(NUM_WORDS_EACH_TOPIC_TO_BE_PRINTED)
+    coherence_score = model.compute_coherence_value()
     pretty_print('Coherence Score')
     print(coherence_score)
 
     # %%
     # Save model to disk.
-    lda_model.save('lda_test')
+    model.save('lda_test')
 
     # %%
     # Query the model using new, unseen documents
@@ -54,51 +54,33 @@ if __name__ == '__main__':
         "objectives by allowing the weapons deals, according to experts."
     ]
 
-    # TODO: Included this on the TopicsModel, to allow it to predict the topics of new texts
     pretty_print("Texts before preprocessing")
     for doc in test_docs:
         print('\n' + doc)
 
-    test_docs = [preprocess_text(doc) for doc in test_docs]
+    preprocessed_test_docs = [preprocess_text(doc) for doc in test_docs]
 
     pretty_print("Texts after preprocessing")
-    for doc in test_docs:
+    for doc in preprocessed_test_docs:
         print('\n' + doc)
 
-    test_doc_0_as_bow = lda_model.dictionary.doc2bow(test_docs[0].split())
-    test_doc_1_as_bow = lda_model.dictionary.doc2bow(test_docs[1].split())
-    test_doc_2_as_bow = lda_model.dictionary.doc2bow(test_docs[2].split())
-
     # get topic probability distribution for each document
-    topic_prob_vector_test_doc_0 = lda_model.model[test_doc_0_as_bow]
-    topic_prob_vector_test_doc_1 = lda_model.model[test_doc_1_as_bow]
-    topic_prob_vector_test_doc_2 = lda_model.model[test_doc_2_as_bow]
-
-    print(topic_prob_vector_test_doc_0)
-    print(topic_prob_vector_test_doc_1)
-    print(topic_prob_vector_test_doc_2)
-
-    print(lda_model.model.print_topic(13))
-    print(lda_model.model.print_topic(1))
-    print(lda_model.model.print_topic(3))
-
-    # test_corpus[0]
-    # terms_dictionary.id2token[1852]
-    # topic_prob_vector_test_doc_0
-    # lda_model.print_topic(7)
+    print("Topic prob vector doc 0:", model.predict_topic_prob_on_text(preprocessed_test_docs[0]))
+    print("Topic prob vector doc 1:", model.predict_topic_prob_on_text(preprocessed_test_docs[1]))
+    print("Topic prob vector doc 2:", model.predict_topic_prob_on_text(preprocessed_test_docs[2]))
 
     # %%
     # Update the model by incrementally training on the new corpus (Online training)
-    # lda_model.update(test_corpus)
-    # topic_prob_vector_test_doc_1_updated = lda_model[test_corpus[1]]
+    # model.update(test_corpus)
+    # topic_prob_vector_test_doc_1_updated = model[test_corpus[1]]
 
     # %%
     # Load model from disk
-    lda_model_from_disk = LdaGensimModel.load(
-        'lda_test_2019-03-12 12:39:22.114657 topics_20 coherence_0.4666285571172143', documents)
+    model_from_disk = LdaGensimModel.load(
+        'lda_test_2019-03-13 08:49:25.022155 topics_20 coherence_0.4666285571172143', documents)
 
-    print(lda_model_from_disk.num_topics)
-    print(lda_model_from_disk.compute_coherence_value())
+    print(model_from_disk.num_topics)
+    print(model_from_disk.compute_coherence_value())
 
 # TODO:
 """

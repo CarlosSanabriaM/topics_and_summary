@@ -9,7 +9,7 @@ from utils import get_abspath, pretty_print
 
 __BASIC_STOPWORDS = set(stopwords.words('english'))
 __EMAILS_RE = re.compile(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)")
-__PUNCTUATION_RE = re.compile('[ºª#$€%&*+-_.·,;:<=>@/¡!¿?^¨`´\"(){|}~[\\]]')
+__PUNCTUATION_RE = re.compile('[—ºª#$€%&*+-_.·,;:<=>@/¡!¿?^¨`´\"(){|}~[\\]]')
 __PREPROCESSING_FILES_DIR = '../preprocessing-files/'
 __ADDITIONAL_STOPWORDS_PATH = __PREPROCESSING_FILES_DIR + 'stopwords.txt'
 __EXPAND_CONTRACTIONS_DICT_PATH = __PREPROCESSING_FILES_DIR + 'expand_contractions_dict.txt'

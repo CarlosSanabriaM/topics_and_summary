@@ -239,6 +239,7 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
     if normalize:
         # TODO: Pasamos de tener 246 apariciones de 'usa' a tener 1231.
         # TODO: Problem: Here we can have 'USA,' and 'USA' doesn't detect that.
+        # TODO: Problem: It only can transform words. You can't transform 'United States' to 'USA'
         dataset_copy.apply_function_to_files(normalize_words)
     if lowercase:
         dataset_copy.apply_function_to_files(to_lowercase)

@@ -5,6 +5,7 @@ import datetime
 import gensim
 import matplotlib.pyplot as plt
 import pandas as pd
+from texttable import Texttable
 
 from utils import get_abspath, RANDOM_STATE
 
@@ -161,6 +162,37 @@ class TopicsModel(metaclass=abc.ABCMeta):
             dominant_topics.append((topic_index, contrib, topic_kewywords))
 
         return dominant_topics
+
+    def predict_topic_prob_on_text(self, text, print_table=True):
+        """
+        Predicts the probability of each topic to be related to the given text.
+        The text should be preprocessed first. See preprocessing.text.preprocess_text().
+        :param text: Preprocessed text.
+        :param print_table: If True, this method also prints a table with the topics indices,
+        their probabilities, and their keywords.
+        :return: Topic probability vector.
+        """
+        text_as_bow = self.dictionary.doc2bow(text.split())
+        topic_prob_vector = self.model[text_as_bow]
+        topic_prob_vector = sorted(topic_prob_vector, key=lambda x: (x[1]), reverse=True)
+
+        if print_table:
+            table = Texttable()
+            table.set_cols_width([10, 10, 40])
+            table.set_cols_align(['c', 'c', 'l'])
+
+            # Specify header
+            table.set_header_align(['c', 'c', 'c'])
+            table.header(['Topic index', 'Topic probability', 'Topic keywords'])
+
+            for topic_prob_pair in topic_prob_vector:
+                topic_index = topic_prob_pair[0]
+                topic_prob = topic_prob_pair[1]
+                table.add_row([topic_index, topic_prob, self.model.print_topic(topic_index)])
+
+            print(table.draw())
+
+        return topic_prob_vector
 
     # TODO: This method hasn't been tested
     def get_dominant_topic_of_document_each_doc_as_df(self):
