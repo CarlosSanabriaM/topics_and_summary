@@ -65,9 +65,13 @@ if __name__ == '__main__':
         print('\n' + doc)
 
     # get topic probability distribution for each document
-    print("Topic prob vector doc 0:", model.predict_topic_prob_on_text(preprocessed_test_docs[0]))
-    print("Topic prob vector doc 1:", model.predict_topic_prob_on_text(preprocessed_test_docs[1]))
-    print("Topic prob vector doc 2:", model.predict_topic_prob_on_text(preprocessed_test_docs[2]))
+    print("Topic prob vector doc 0:", model.predict_topic_prob_on_text(preprocessed_test_docs[0], preprocess=False))
+    print("Topic prob vector doc 1:", model.predict_topic_prob_on_text(preprocessed_test_docs[1], preprocess=False))
+    print("Topic prob vector doc 2:", model.predict_topic_prob_on_text(preprocessed_test_docs[2], preprocess=False))
+
+    # %%
+    # TODO
+    docs_topics_df = model.get_dominant_topic_of_each_doc_as_df()
 
     # %%
     # Update the model by incrementally training on the new corpus (Online training)
@@ -82,9 +86,33 @@ if __name__ == '__main__':
     print(model_from_disk.num_topics)
     print(model_from_disk.compute_coherence_value())
 
-# TODO:
-"""
-per_word_topics (bool) – If True, the model also computes a list of topics, 
-sorted in descending order of most likely topics for each word, along with 
-their phi values multiplied by the feature length (i.e. word count).
-"""
+    # %%
+    # Using the per_word_topics option while creating gensim lda model. This option is only available in lda model.
+    model_using_per_word_topics = LdaGensimModel(documents, num_topics=20, random_state=RANDOM_STATE,
+                                                 per_word_topics=True)
+
+    # Doesn't seem to be very useful
+    model_using_per_word_topics.model.get_document_topics(model.dictionary.doc2bow(preprocessed_test_docs[0].split()),
+                                                          per_word_topics=True)
+    """
+    Out[11]:
+    ([(13, 0.90500003)],
+     [(664, [13]),
+      (1068, [13]),
+      (1076, [13]),
+      (1853, [13]),
+      (3604, [13]),
+      (10060, [13]),
+      (15219, [13]),
+      (17171, [13]),
+      (17271, [13])],
+     [(664, [(13, 1.0)]),
+      (1068, [(13, 0.99999994)]),
+      (1076, [(13, 1.0)]),
+      (1853, [(13, 0.99999994)]),
+      (3604, [(13, 0.99999994)]),
+      (10060, [(13, 1.0)]),
+      (15219, [(13, 1.0)]),
+      (17171, [(13, 1.0)]),
+      (17271, [(13, 1.0)])])
+    """

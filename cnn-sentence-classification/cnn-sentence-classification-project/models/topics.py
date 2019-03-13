@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from texttable import Texttable
 
+from preprocessing.text import preprocess_text
 from utils import get_abspath, RANDOM_STATE
 
 
@@ -147,73 +148,82 @@ class TopicsModel(metaclass=abc.ABCMeta):
         for topic in topics_sequence:
             print('Topic ' + str(topic[0]) + ': ' + topic[1])
 
-    def get_k_dominant_topics_of_document(self, document_index, num_best_topics=3, num_best_keywords=10):
-        document = self.corpus[document_index]  # Document as a term_id-frequency list
-        document_topics_contrib = self.model[document]  # List of tuples (topic_index, document_topic_contribution)
-
-        # Order the topics by the contribution percentage of the topic in that document
-        sorted_document_topics_contrib = sorted(document_topics_contrib, key=lambda x: (x[1]), reverse=True)
-
-        dominant_topics = []
-        for i in range(num_best_topics):
-            topic_index, contrib = sorted_document_topics_contrib[i]
-            # List of tuples (keyword_name, contribution_of_that_keyword_to_the_topic)
-            topic_kewywords = self.model.show_topic(topic_index, num_best_keywords)
-            dominant_topics.append((topic_index, contrib, topic_kewywords))
-
-        return dominant_topics
-
-    def predict_topic_prob_on_text(self, text, print_table=True):
+    def predict_topic_prob_on_text(self, text, num_best_topics=None, preprocess=True, print_table=True):
         """
         Predicts the probability of each topic to be related to the given text.
-        The text should be preprocessed first. See preprocessing.text.preprocess_text().
-        :param text: Preprocessed text.
+        The probabilities sum 1. When the probability of a topic is very high, the other
+        topics may not appear in the results.
+        :param text: Text.
+        :param num_best_topics: Number of topics to return. If is None, returns all the topics that the model returns.
+        :param preprocess: If true, applies preprocessing to the given text using preprocessing.text.preprocess_text().
         :param print_table: If True, this method also prints a table with the topics indices,
         their probabilities, and their keywords.
         :return: Topic probability vector.
         """
+        if preprocess:
+            text = preprocess_text(text)
+
         text_as_bow = self.dictionary.doc2bow(text.split())
         topic_prob_vector = self.model[text_as_bow]
-        topic_prob_vector = sorted(topic_prob_vector, key=lambda x: (x[1]), reverse=True)
+        topic_prob_vector = sorted(topic_prob_vector, key=lambda x: x[1], reverse=True)
+
+        if num_best_topics is None:
+            num_best_topics = len(topic_prob_vector)
 
         if print_table:
             table = Texttable()
-            table.set_cols_width([10, 10, 40])
+            table.set_cols_width([10, 10, 80])
             table.set_cols_align(['c', 'c', 'l'])
 
             # Specify header
             table.set_header_align(['c', 'c', 'c'])
-            table.header(['Topic index', 'Topic probability', 'Topic keywords'])
+            table.header(['Topic index', 'Topic prob', 'Topic keywords'])
 
-            for topic_prob_pair in topic_prob_vector:
+            for topic_prob_pair in topic_prob_vector[:num_best_topics]:
                 topic_index = topic_prob_pair[0]
                 topic_prob = topic_prob_pair[1]
                 table.add_row([topic_index, topic_prob, self.model.print_topic(topic_index)])
 
             print(table.draw())
 
-        return topic_prob_vector
+        return topic_prob_vector[:num_best_topics]
 
-    # TODO: This method hasn't been tested
-    def get_dominant_topic_of_document_each_doc_as_df(self):
+    def get_related_documents(self, text, max_num_docs=None, max_num_docs_per_topic=None,
+                              preprocess=True, print_table=True):
+        # TODO
+        # 1. Obtain the list of topics more related with the text
+        topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess,
+                                                            print_table)  # TODO: Maybe print_table = False. Only print table of this method?
+
+        # 2. Obtain a list with the ids of the documents more related with the topics in the previous step
+        related_docs_ids = []
+        # self.get_most_representative_doc_for_each_topic_as_df()
+
+    def get_dominant_topic_of_each_doc_as_df(self):
         """
         Returns a pandas DataFrame with the following columns: Doc_Index, Dominant_Topic_Index, Topic_Contribution,
         Topic_Keywords and Doc_Text. This method can take to much time to execute if the dataset is big.
         :return: pandas DataFrame.
         """
-        docs_topics_df = pd.DataFrame(
-            columns=['Doc_Index', 'Dominant_Topic_Index', 'Topic_Contribution', 'Topic_Keywords'])
+        # Iteratively appending rows to a DataFrame can be more computationally intensive than a single concatenate.
+        # A better solution is to append those rows to a list and then concatenate the list with the original
+        # DataFrame all at once.
+        rows_list = []
 
-        for doc_index in tqdm(range(len(self.documents))):
-            dominant_topic = self.get_k_dominant_topics_of_document(doc_index, num_best_topics=1)[0]
-            docs_topics_df = docs_topics_df.append(
-                pd.Series([doc_index, dominant_topic[0], dominant_topic[1], dominant_topic[2]]), ignore_index=True)
+        for doc_index, doc_as_bow in enumerate(tqdm(self.corpus)):
+            dominant_topic = sorted(self.model[doc_as_bow], key=lambda x: x[1], reverse=True)[0]
+            dominant_topic_index = dominant_topic[0]
+            dominant_topic_prob = dominant_topic[1]
+            dominant_topic_kws = self.model.show_topic(dominant_topic_index)
 
-        # Add original text of the documents to the end of the output
-        docs_text = pd.Series(self.documents)
-        docs_topics_df = pd.concat([docs_topics_df, docs_text], axis=1, names=['Doc_Text'])
+            rows_list.append(
+                pd.DataFrame([
+                    [doc_index, dominant_topic_index, dominant_topic_prob, dominant_topic_kws,
+                     ' '.join(self.documents[doc_index])]
+                ], columns=['Doc index', 'Dominant topic index', 'Topic prob', 'Topic keywords', 'Doc text'])
+            )
 
-        return docs_topics_df
+        return pd.concat(rows_list)
 
     # TODO: This method hasn't been tested
     def get_most_representative_doc_for_each_topic_as_df(self, docs_topics_df=None):
