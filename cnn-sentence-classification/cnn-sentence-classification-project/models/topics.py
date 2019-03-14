@@ -190,16 +190,57 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return topic_prob_vector[:num_best_topics]
 
-    def get_related_documents(self, text, max_num_docs=None, max_num_docs_per_topic=None,
-                              preprocess=True, print_table=True):
-        # TODO
+    def get_related_documents_as_df(self, text, preprocess=True):
+        """
+        Given a text, this method returns a df with the index and the content of the most similar documents
+        in the corpus. The similar/related documents are obtained as follows:
+        1. Obtain the topics more related with the given text.
+        2. Obtain the documents more related with the topics obtained in step 1.
+        The returned df contains the documents indices, it's content, and the probability of that document
+        being related with the given text (with the topics and the documents we have).
+        That probability is obtained as follows: Probability of the text being related with the topic * Probability
+        that the document influence the topic.
+        :param text: String.
+        :param preprocess: If True, apply preprocessing to the text.
+        :return: The pandas DataFrame.
+        """
         # 1. Obtain the list of topics more related with the text
-        topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess,
-                                                            print_table)  # TODO: Maybe print_table = False. Only print table of this method?
+        topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess=preprocess, print_table=False)
+        topics = list(map(lambda x: x[0], topic_prob_vector))
 
-        # 2. Obtain a list with the ids of the documents more related with the topics in the previous step
-        topics_most_repr_doc_df = self.get_most_representative_doc_per_topic_as_df()
-        related_docs_ids = []
+        # 2. Obtain a df with the documents more related with the topics in the previous step
+        if self.most_repr_doc_per_topic_df is None:
+            self.get_most_representative_doc_per_topic_as_df()
+        related_docs_df = self.most_repr_doc_per_topic_df.loc[
+            self.most_repr_doc_per_topic_df['Topic index'].isin(topics)]
+
+        # 3. Transform the df to have the following columns: Doc index, Doc prob, Doc text
+        # Doc prob = prob of the text being related with the topic * prob that the doc influence the topic
+        def get_prob_of_topic(topic_index):
+            return next(filter(lambda x: x[0] == topic_index, topic_prob_vector))[1]
+
+        # Iterate for each row, get the prob text-topic from the topic_prob_vector using the 'Topic index' of that row,
+        # get the prob doc-topic from that row, and multiply them.
+        doc_prob_column = related_docs_df.apply(lambda row:
+                                                get_prob_of_topic(row['Topic index']) * row['Topic prob'],
+                                                axis='columns')
+
+        # Remove other columns
+        related_docs_df = related_docs_df.drop(columns=['Topic index', 'Topic prob', 'Topic keywords'])
+
+        # Add the 'Doc prob' column
+        related_docs_df.insert(2, 'Doc prob', doc_prob_column, allow_duplicates=True)
+
+        # Change columns order
+        related_docs_df = related_docs_df[['Doc index', 'Doc prob', 'Doc text']]
+
+        # Order by 'Doc prob' column in descending order
+        related_docs_df = related_docs_df.sort_values(['Doc prob'], ascending=[False])
+
+        # Reset the indices
+        related_docs_df.reset_index(drop=True, inplace=True)
+
+        return related_docs_df
 
     def get_dominant_topic_of_each_doc_as_df(self):
         """
