@@ -1,7 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from wordcloud import WordCloud, STOPWORDS
 import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
+import numpy as np
+from wordcloud import WordCloud, STOPWORDS
+
+from models.topics import TopicsModel
 
 
 def plot_distribution_of_doc_word_counts(documents):
@@ -30,10 +32,16 @@ def plot_distribution_of_doc_word_counts(documents):
 def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_keywords=10):
     """
     Plots word clouds for the specified number of topics in the given model.
+    :type topics_model: TopicsModel or gensim.models.wrappers.LdaMallet or gensim.models.LdaModel
+    or gensim.models.LsiModel.
     :param topics_model: gensim models (lda, lsa or lda_mallet)
     :param num_topics: Number of topics to be plotted. If is None, the num_topics of the model are used.
     :param num_keywords: Number of keywords in each topic to be plotted.
     """
+
+    # If topics_model is a TopicsModel, obtain the gensim model inside it.
+    if isinstance(topics_model, TopicsModel):
+        topics_model = topics_model.model
 
     colors = [color for color in mcolors.TABLEAU_COLORS.values()]  # List of colors
     # Index of the current topic to be plotted.

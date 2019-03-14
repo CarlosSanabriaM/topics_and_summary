@@ -1,11 +1,12 @@
-import os
 import abc
-from tqdm import tqdm
 import datetime
+import os
+
 import gensim
 import matplotlib.pyplot as plt
 import pandas as pd
 from texttable import Texttable
+from tqdm import tqdm
 
 from preprocessing.text import preprocess_text
 from utils import get_abspath, RANDOM_STATE
@@ -58,6 +59,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
         self.documents = documents
         self.num_topics = num_topics
         self.coherence_value = None
+        self.docs_topics_df = None
+        self.most_repr_doc_per_topic_df = None
 
         if dictionary is None or corpus is None:
             self.dictionary, self.corpus = prepare_corpus(documents)
@@ -103,9 +106,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
             self.compute_coherence_value()
 
         now = str(datetime.datetime.now())
-        model_name = base_name + "_" + now \
-                     + " topics_" + str(self.model.num_topics) \
-                     + " coherence_" + str(self.coherence_value)
+        model_name = "{0}_{1} topics_{2} coherence_{3}".format(base_name, now, str(self.model.num_topics),
+                                                               str(self.coherence_value))
 
         os.mkdir(path + model_name)
         path = get_abspath(__file__, path + model_name + "/" + model_name)
@@ -196,15 +198,16 @@ class TopicsModel(metaclass=abc.ABCMeta):
                                                             print_table)  # TODO: Maybe print_table = False. Only print table of this method?
 
         # 2. Obtain a list with the ids of the documents more related with the topics in the previous step
+        topics_most_repr_doc_df = self.get_most_representative_doc_per_topic_as_df()
         related_docs_ids = []
-        # self.get_most_representative_doc_for_each_topic_as_df()
 
     def get_dominant_topic_of_each_doc_as_df(self):
         """
-        Returns a pandas DataFrame with the following columns: Doc_Index, Dominant_Topic_Index, Topic_Contribution,
-        Topic_Keywords and Doc_Text. This method can take to much time to execute if the dataset is big.
+        Returns a pandas DataFrame with the following columns: Doc index, Dominant topic index, Topic prob,
+        Topic keywords, Doc text. This method can take to much time to execute if the dataset is big.
         :return: pandas DataFrame.
         """
+
         # Iteratively appending rows to a DataFrame can be more computationally intensive than a single concatenate.
         # A better solution is to append those rows to a list and then concatenate the list with the original
         # DataFrame all at once.
@@ -223,33 +226,43 @@ class TopicsModel(metaclass=abc.ABCMeta):
                 ], columns=['Doc index', 'Dominant topic index', 'Topic prob', 'Topic keywords', 'Doc text'])
             )
 
-        return pd.concat(rows_list)
+        # Concat the dfs to a one df, store it, and return it
+        self.docs_topics_df = pd.concat(rows_list)
+        return self.docs_topics_df
 
-    # TODO: This method hasn't been tested
-    def get_most_representative_doc_for_each_topic_as_df(self, docs_topics_df=None):
+    def get_most_representative_doc_per_topic_as_df(self):
         """
         Returns a DataFrame where each row contains a topic and the most representative document of that topic.
-        :param docs_topics_df: DataFrame previously created with the method
         get_dominant_topic_of_document_each_doc_as_df(). If is None, that method is call, and that can take be slow.
         :return: A pandas DataFrame with the following columns: Topic_Index, Topic_Contribution, Topic_Keywords and
         Doc_Text.
         """
-        if docs_topics_df is None:
-            docs_topics_df = self.get_dominant_topic_of_document_each_doc_as_df()
+        if self.docs_topics_df is None:
+            self.get_dominant_topic_of_each_doc_as_df()
 
-        most_repr_doc_each_topic_df = pd.DataFrame()
+        most_repr_doc_per_topic_df = pd.DataFrame()
 
-        doc_topics_grouped_by_topic_df = docs_topics_df.groupby('Dominant_Topic_Index')
+        # Group rows by the topic index
+        doc_topics_grouped_by_topic_df = self.docs_topics_df.groupby('Dominant topic index')
 
-        for i, group in doc_topics_grouped_by_topic_df:
-            most_repr_doc_each_topic_df = pd.concat([most_repr_doc_each_topic_df,
-                                                     group.sort_values(['Topic_Contribution'], ascending=[0]).head(1)],
-                                                    axis=0)
+        # For each topic, group the docs by the 'Topic prob' and select the first one
+        for topic, group in tqdm(doc_topics_grouped_by_topic_df):
+            most_repr_doc = group.sort_values(['Topic prob'], ascending=[False]).head(1)
+            most_repr_doc_per_topic_df = pd.concat([most_repr_doc_per_topic_df, most_repr_doc],
+                                                   axis=0)
 
-        most_repr_doc_each_topic_df.reset_index(drop=True, inplace=True)
-        most_repr_doc_each_topic_df.columns = ['Topic_Index', "Topic_Contribution", "Topic_Keywords", "Doc_Text"]
+        most_repr_doc_per_topic_df.reset_index(drop=True, inplace=True)
+        # Change columns names
+        most_repr_doc_per_topic_df.columns = ['Doc index', 'Topic index', 'Topic prob', 'Topic keywords', 'Doc text']
+        # Change columns order
+        most_repr_doc_per_topic_df = \
+            most_repr_doc_per_topic_df[['Topic index', 'Doc index', 'Topic prob', 'Topic keywords', 'Doc text']]
+        # Order rows by topic index
+        most_repr_doc_per_topic_df = most_repr_doc_per_topic_df.sort_values(['Topic index'], ascending=[True])
 
-        return most_repr_doc_each_topic_df
+        # Store the df and return it
+        self.most_repr_doc_per_topic_df = most_repr_doc_per_topic_df
+        return self.most_repr_doc_per_topic_df
 
     # TODO: This method hasn't been tested
     def get_topic_distribution_as_df(self, docs_topics_df=None):
@@ -262,7 +275,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         Percentage_Documents.
         """
         if docs_topics_df is None:
-            docs_topics_df = self.get_dominant_topic_of_document_each_doc_as_df()
+            docs_topics_df = self.get_dominant_topic_of_each_doc_as_df()
 
         # Number of Documents for Each Topic
         topic_counts = docs_topics_df['Dominant_Topic_Index'].value_counts()
@@ -343,6 +356,7 @@ class LdaMalletModel(TopicsModel):
         """
         return gensim.models.wrappers.LdaMallet.load(get_abspath(__file__, path))
 
+    # noinspection PyMethodOverriding
     def save(self):
         """
         Saves the mallet model to the path specified in self.model.prefix.

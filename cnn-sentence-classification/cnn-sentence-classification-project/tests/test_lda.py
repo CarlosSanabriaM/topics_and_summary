@@ -2,7 +2,7 @@ from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from models.topics import LdaGensimModel
 from preprocessing.dataset import preprocess_dataset
 from preprocessing.text import preprocess_text
-from utils import pretty_print, get_abspath, RANDOM_STATE
+from utils import pretty_print, RANDOM_STATE
 
 if __name__ == '__main__':
     # %%
@@ -28,6 +28,11 @@ if __name__ == '__main__':
     # %%
     # Save model to disk.
     model.save('lda_test')
+
+    # %%
+    # Get insights about the topics
+    docs_topics_df = model.get_dominant_topic_of_each_doc_as_df()
+    most_repr_doc_per_topic_df = model.get_most_representative_doc_per_topic_as_df()
 
     # %%
     # Query the model using new, unseen documents
@@ -68,10 +73,6 @@ if __name__ == '__main__':
     print("Topic prob vector doc 0:", model.predict_topic_prob_on_text(preprocessed_test_docs[0], preprocess=False))
     print("Topic prob vector doc 1:", model.predict_topic_prob_on_text(preprocessed_test_docs[1], preprocess=False))
     print("Topic prob vector doc 2:", model.predict_topic_prob_on_text(preprocessed_test_docs[2], preprocess=False))
-
-    # %%
-    # TODO
-    docs_topics_df = model.get_dominant_topic_of_each_doc_as_df()
 
     # %%
     # Update the model by incrementally training on the new corpus (Online training)
