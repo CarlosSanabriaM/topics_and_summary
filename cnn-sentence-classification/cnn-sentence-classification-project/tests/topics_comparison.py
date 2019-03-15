@@ -2,7 +2,7 @@ from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from models.topics import LdaGensimModel
 from preprocessing.dataset import preprocess_dataset
 from utils import pretty_print, RANDOM_STATE
-from visualizations import plot_word_clouds_k_keywords_each_topic
+from visualizations import plot_word_clouds_k_keywords_each_topic, tsne_clustering_chart
 
 if __name__ == '__main__':
     # Load dataset and apply preprocessing
@@ -13,6 +13,11 @@ if __name__ == '__main__':
     pretty_print('Creating the Lda model')
     documents = dataset.as_documents_list()
     model = LdaGensimModel(documents, num_topics=20, random_state=RANDOM_STATE)
+
+    # Visualize with tsne
+    tsne_clustering_chart(model)
+
+    # %%
 
     # Print topics and coherence score
     pretty_print('\nTopics')

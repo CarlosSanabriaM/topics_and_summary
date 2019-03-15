@@ -1,15 +1,15 @@
 import abc
-import datetime
 import os
 
 import gensim
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from texttable import Texttable
 from tqdm import tqdm
 
 from preprocessing.text import preprocess_text
-from utils import get_abspath, RANDOM_STATE
+from utils import get_abspath, RANDOM_STATE, now_as_str
 
 
 def prepare_corpus(documents):
@@ -104,7 +104,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         if self.coherence_value is None:
             self.compute_coherence_value()
 
-        now = str(datetime.datetime.now())
+        now = now_as_str()
         model_name = "{0}_{1} topics_{2} coherence_{3}".format(base_name, now, str(self.model.num_topics),
                                                                str(self.coherence_value))
 
@@ -341,6 +341,29 @@ class TopicsModel(metaclass=abc.ABCMeta):
         df_dominant_topics.columns = ['Dominant topic index', 'Num docs', 'Percentage docs', 'Topic keywords']
 
         return df_dominant_topics
+
+    def get_doc_topic_prob_matrix(self):
+        """
+        :return: Returns a numpy matrix where the rows are documents and columns are topics.
+        Each cell represents the probability of the document in that row being related with the topic in that column.
+        """
+        num_docs = len(self.documents)
+        num_topics = self.num_topics
+        doc_topic_prob_matrix = np.zeros((num_docs, num_topics))
+
+        for i in tqdm(range(doc_topic_prob_matrix.shape[0])):
+            weights = self.model[self.corpus[i]]
+            for topic_index, topic_prob in weights:
+                doc_topic_prob_matrix.itemset((i, topic_index), topic_prob)
+
+        return doc_topic_prob_matrix
+
+    def get_k_kws_per_topic_as_str(self, topic, k):
+        """
+        :param k: Num keywords per topic.
+        :return: k keywords from the given topic as a str.
+        """
+        return ' '.join(list(map(lambda x: x[0], self.model.show_topic(topic)))[:k])
 
 
 class LdaMalletModel(TopicsModel):

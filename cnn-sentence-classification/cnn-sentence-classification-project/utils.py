@@ -1,3 +1,4 @@
+from datetime import datetime
 from os import path
 
 RANDOM_STATE = 100
@@ -18,3 +19,7 @@ def get_abspath(module__file__, file_path):
     :return: The absolute path to the relative path specified in a module.
     """
     return path.abspath(path.join(path.dirname(module__file__), file_path))
+
+
+def now_as_str():
+    return str(datetime.now())
