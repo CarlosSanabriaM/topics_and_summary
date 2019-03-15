@@ -97,19 +97,26 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
         plt.show()
 
 
+__TSNE_SAVE_PATH = 'saved-models/topics/tsne/'
+
+
 def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_threshold=0,
-                          plot_keywords=True, num_keywords=5, plot_name=None):
+                          plot_keywords=True, num_keywords=5, keywords_color_is_black=True, plot_name=None):
     """
     Use t-SNE technique for dimensionality reduction.
-    :param model:
-    :param num_dimensions:
-    :param angle:
-    :param doc_threshold:
-    :param plot_keywords:
-    :param num_keywords:
-    :param plot_name:
-    :return:
+    :param model: Topics Model.
+    :param num_dimensions: Number of dimensions of the tSNE result. Should be 2 or 3.
+    :param angle: Number between 0 and 1. Angle less than 0.2 has quickly increasing computation
+    time and angle greater 0.8 has quickly increasing error.
+    :param doc_threshold: Threshold that each document has to pass to be added to the plot.
+    :param plot_keywords: If True, the keywords of each topic are plotted near a document of the topic.
+    :param num_keywords: Number of keyword to show if plot_keywords is True.
+    :param keywords_color_is_black: If true, the keywords color is black. If not, is the same color as the topic.
+    :param plot_name: Name of the plot to be saved.
     """
+
+    # TODO: 3d
+
     # Get doc topic prob matrix
     doc_topic_prob_matrix = model.get_doc_topic_prob_matrix()
 
@@ -136,19 +143,26 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
         dominant_topic_per_doc.append(dominant_topic_doc.argmax())
         dominant_topic_prob_per_doc.append(dominant_topic_doc.max())
 
+    # Configure the default output state to generate output saved to a file when show() is called.
+    if plot_name is None:
+        now = now_as_str()
+        plot_name = 'tsne_' + now + '.html'
+
+    bp.output_file(get_abspath(__file__, __TSNE_SAVE_PATH + plot_name), mode='inline')
+
     # Create the plot for the Topic Clusters using Bokeh
     plot = figure(title="t-SNE Clustering of {} LDA Topics".format(model.num_topics),
                   tools="pan,wheel_zoom,box_zoom,reset,hover,previewsave",  # plot option tools
-                  plot_width=1300, plot_height=1000)
+                  plot_width=1400, plot_height=900)
 
-    plot.scatter(x='x', y='y', color="color",
+    plot.scatter(x='x', y='y', color='color',
                  # When source is provided, the kwargs above must refer to keys in the dict passed to source
                  source=bp.ColumnDataSource({
                      "x": tsne_lda[:, 0],
                      "y": tsne_lda[:, 1],
                      "topic index": dominant_topic_per_doc,
                      "topic prob": dominant_topic_prob_per_doc,
-                     "doc text": list(map(lambda x: ' '.join(x), model.documents)),
+                     "doc text": list(map(lambda x: ' '.join(x), model.documents[:doc_topic_prob_matrix.shape[0]])),
                      "color": colormap[dominant_topic_per_doc]
                  }))
 
@@ -156,7 +170,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
         # Plot the keywords for each topic:
 
         # Randomly choose a doc (within a topic) coordinate as the keywords coordinate
-        topic_coord = np.empty((doc_topic_prob_matrix.shape[1], 2)) * np.nan
+        topic_coord = np.empty((doc_topic_prob_matrix.shape[1], num_dimensions)) * np.nan
         for topic_num in dominant_topic_per_doc:
             if not np.isnan(topic_coord).any():
                 break
@@ -167,11 +181,27 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
 
         # Plot the keywords
         for i in range(doc_topic_prob_matrix.shape[1]):
-            plot.text(topic_coord[i, 0], topic_coord[i, 1], [topics_kws[i]])
+            if keywords_color_is_black:
+                text_color = ['#000000']
+            else:
+                # TODO: The library doesn't permit put a color in the contour,
+                #  so this option doesn't let to visualize the words correctly
+                text_color = [colormap[i]]
+
+            plot.text(x='x', y='y', text='text', text_color='text_color',
+                      source=bp.ColumnDataSource({
+                          "x": [topic_coord[i, 0]],
+                          "y": [topic_coord[i, 1]],
+                          "text": [topics_kws[i]],
+                          "topic index": [i],
+                          "text_color": text_color
+                      }))
 
     # Add info box for each doc using hover tools
     hover = plot.select(dict(type=HoverTool))
     # With @ we refer to keys in the source dict. If the key contains spaces, it must be specified like @{key name}
+    # TODO: This shows this fields for all objects, including the text, that doesn't have all them, but I think
+    #  there is no solution to this, or at least in the documentation they only explain how to apply tooltips to figure.
     hover.tooltips = [
         ("doc_index", "$index"),
         ("topic_index", "@{topic index}"),
@@ -183,10 +213,4 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
     show(plot)
 
     # Save the plot
-    __TSNE_SAVE_PATH = 'saved-model/topics/tsne/'
-    if plot_name is None:
-        now = now_as_str()
-        plot_name = 'tsne_' + now
-
-    plot_name += '.html'
-    bp.save(plot, get_abspath(__file__, __TSNE_SAVE_PATH + plot_name))
+    bp.save(plot)

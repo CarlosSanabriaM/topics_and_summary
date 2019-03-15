@@ -5,6 +5,7 @@ from utils import pretty_print, RANDOM_STATE
 from visualizations import plot_word_clouds_k_keywords_each_topic, tsne_clustering_chart
 
 if __name__ == '__main__':
+    # %%
     # Load dataset and apply preprocessing
     dataset = TwentyNewsGroupsDataset()
     dataset = preprocess_dataset(dataset)
