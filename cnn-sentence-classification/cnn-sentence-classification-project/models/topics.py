@@ -312,33 +312,33 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return k_most_repr_doc_per_topic_df
 
-    # TODO: This method hasn't been tested
-    def get_topic_distribution_as_df(self, docs_topics_df=None):
+    def get_topic_distribution_as_df(self):
         """
         Returns a DataFrame where each row contains a topic, the number of documents of that topic (the topic
         is the dominant topic of those documents), and the percentage of documents of that topic.
-        :param docs_topics_df: DataFrame previously created with the method
-        get_dominant_topic_of_document_each_doc_as_df(). If is None, that method is call, and that can take be slow.
-        :return: A pandas DataFrame with the following columns: Dominant_Topic_Index, Topic_Keywords, Num_Documents and
-        Percentage_Documents.
+        :return: A pandas DataFrame with the following columns: Dominant topic index, Num docs, Percentage docs and
+        Topic keywords.
         """
-        if docs_topics_df is None:
-            docs_topics_df = self.get_dominant_topic_of_each_doc_as_df()
+        if self.docs_topics_df is None:
+            self.get_dominant_topic_of_each_doc_as_df()
 
-        # Number of Documents for Each Topic
-        topic_counts = docs_topics_df['Dominant_Topic_Index'].value_counts()
+        # DataFrame of docs and topics grouped by topic
+        docs_topics_grpd_by_topic_df = self.docs_topics_df.groupby('Dominant topic index')
+        # Number of docs per topic
+        topic_docs_count = docs_topics_grpd_by_topic_df[['Doc index']].count()
+        # Percentage of docs per topic
+        topic_docs_perc = topic_docs_count / topic_docs_count.sum()
 
-        # Percentage of Documents for Each Topic
-        topic_contribution = round(topic_counts / topic_counts.sum(), 4)
+        # Concat the previous columns into a single df
+        df_dominant_topics = pd.concat([topic_docs_count, topic_docs_perc], axis=1)
+        df_dominant_topics.reset_index(inplace=True)
 
-        # Topic Number and Keywords
-        topic_num_keywords = docs_topics_df[['Dominant_Topic_Index', 'Topic_Keywords']]
-
-        # Concatenate Column wise
-        df_dominant_topics = pd.concat([topic_num_keywords, topic_counts, topic_contribution], axis=1)
+        # Obtain Topic keywords and add a column with them to the df
+        topic_kws = pd.Series([self.model.show_topic(i) for i in range(20)])
+        df_dominant_topics = pd.concat([df_dominant_topics, topic_kws], axis=1)
 
         # Change Column names
-        df_dominant_topics.columns = ['Dominant_Topic_Index', 'Topic_Keywords', 'Num_Documents', 'Percentage_Documents']
+        df_dominant_topics.columns = ['Dominant topic index', 'Num docs', 'Percentage docs', 'Topic keywords']
 
         return df_dominant_topics
 

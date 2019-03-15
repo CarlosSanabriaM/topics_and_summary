@@ -1,6 +1,9 @@
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
+from bokeh.io import output_notebook
+from bokeh.plotting import figure, show
+from sklearn.manifold import TSNE
 from wordcloud import WordCloud, STOPWORDS
 
 from models.topics import TopicsModel
@@ -57,7 +60,7 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
                       height=1800,
                       max_words=num_keywords,
                       colormap='tab10',
-                      color_func=color_func,  # TODO
+                      color_func=color_func,
                       prefer_horizontal=1.0)
 
     if num_topics is None:
@@ -89,3 +92,32 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
         plt.margins(x=0, y=0)
         plt.tight_layout()
         plt.show()
+
+
+def tsne_clustering_chart():
+    # Get topic weights
+    topic_weights = []
+    for i, row_list in enumerate(lda_model[corpus]):
+        topic_weights.append([w for i, w in row_list[0]])
+
+    # Array of topic weights
+    arr = pd.DataFrame(topic_weights).fillna(0).values
+
+    # Keep the well separated points (optional)
+    arr = arr[np.amax(arr, axis=1) > 0.35]
+
+    # Dominant topic number in each doc
+    topic_num = np.argmax(arr, axis=1)
+
+    # tSNE Dimension Reduction
+    tsne_model = TSNE(n_components=2, verbose=1, random_state=0, angle=.99, init='pca')
+    tsne_lda = tsne_model.fit_transform(arr)
+
+    # Plot the Topic Clusters using Bokeh
+    output_notebook()
+    n_topics = 4
+    mycolors = np.array([color for name, color in mcolors.TABLEAU_COLORS.items()])
+    plot = figure(title="t-SNE Clustering of {} LDA Topics".format(n_topics),
+                  plot_width=900, plot_height=700)
+    plot.scatter(x=tsne_lda[:, 0], y=tsne_lda[:, 1], color=mycolors[topic_num])
+    show(plot)

@@ -1,13 +1,12 @@
+import datetime
+import os
+
+import matplotlib.pyplot as plt
 from gensim.corpora import Dictionary
 from gensim.models import LdaModel, CoherenceModel
 from gensim.models.callbacks import CallbackAny2Vec
 from gensim.models.callbacks import CoherenceMetric
 from tqdm import tqdm
-import gensim
-import datetime
-import os
-import pyLDAvis.gensim
-import matplotlib.pyplot as plt
 
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from preprocessing.dataset import preprocess_dataset
@@ -159,7 +158,6 @@ if __name__ == '__main__':
     warnings.filterwarnings("ignore", category=DeprecationWarning)
 
     # Log gensim
-    import logging
 
     #logging.basicConfig(filename=get_abspath(__file__, '../logs/lda.log'),
     #                    format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -209,57 +207,3 @@ if __name__ == '__main__':
 
     NUM_WORDS_EACH_TOPIC_TO_BE_PRINTED = 15
     print_topics(lda_model_tuned, NUM_WORDS_EACH_TOPIC_TO_BE_PRINTED)
-
-    #%%
-    # Visualize topics with pyLDAvis
-    lda_vis_data = pyLDAvis.gensim.prepare(lda_model_tuned, doc_term_matrix, terms_dictionary)
-    #pyLDAvis.display(lda_vis_data)
-    pyLDAvis.save_html(lda_vis_data, get_abspath(__file__, 'lda_results/pyLDAvis'))
-
-
-"""
-    # %%
-    # Compute and plot coherence values to check which number of topics is the optimum
-    pretty_print('Computing the coherence values')
-    START, STOP, STEP = 10, 20, 1
-    models_list, coherence_values = compute_coherence_values(terms_dictionary, doc_term_matrix, documents,
-                                                                 start=START, stop=STOP, step=STEP)
-    plot_coherence_score_values(coherence_values, START, STOP, STEP)
-
-    # %%
-    # Select the best LDA model
-    pretty_print('Selecting the final LDA model')
-    index_max_coherence_value = coherence_values.index(max(coherence_values))
-    model = models_list[index_max_coherence_value]
-    print_topics(model, NUM_WORDS_EACH_TOPIC_TO_BE_PRINTED)
-"""
-
-
-'''
-get_document_topics(bow, minimum_probability=None, minimum_phi_value=None, per_word_topics=False)
-    Get the topic distribution for the given document.
-get_term_topics(word_id, minimum_probability=None)
-    Get the most relevant topics to the given word.
-"""
-
-"""
-dataset = TwentyNewsGroupsDataset()
-dataset = preprocess_dataset(dataset, stopwords=True, lemmatize=False, chars=False)
-
-documents = dataset.as_documents_list()
-
-# Build the bigram and trigram models
-bigram = gensim.models.Phrases(documents, min_count=5, threshold=100)  # higher threshold fewer phrases.
-trigram = gensim.models.Phrases(bigram[documents], threshold=100)
-
-# Faster way to get a sentence clubbed as a trigram/bigram
-bigram_mod = gensim.models.phrases.Phraser(bigram)
-trigram_mod = gensim.models.phrases.Phraser(trigram)
-
-# See trigram example
-print(trigram_mod[bigram_mod[documents[0]]])
-
-#%%
-dataset = preprocess_dataset(dataset)
-
-'''
