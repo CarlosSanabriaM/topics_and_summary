@@ -190,7 +190,6 @@ class TopicsModel(metaclass=abc.ABCMeta):
         return topic_prob_vector[:num_best_topics]
 
     def get_related_documents_as_df(self, text, k_docs_per_topic=1, preprocess=True):
-        # TODO: Revise
         """
         Given a text, this method returns a df with the index and the content of the most similar documents
         in the corpus. The similar/related documents are obtained as follows:
@@ -208,6 +207,9 @@ class TopicsModel(metaclass=abc.ABCMeta):
         # 1. Obtain the list of topics more related with the text
         topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess=preprocess, print_table=False)
         topics = list(map(lambda x: x[0], topic_prob_vector))
+        # TODO: If the prob between the first topic and the second is very high, maybe is better to use only the first
+        #  topic and forget about the rest. The number of topics to return will be k_docs_per_topic * len(topics),
+        #  although the docs to return will be only of the first topic.
 
         # 2. Obtain a df with the documents more related with the topics in the previous step
         k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k=k_docs_per_topic)
@@ -215,6 +217,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         # 3. Transform the df to have the following columns: Doc index, Doc prob, Doc text
         # Doc prob = prob of the text being related with the topic * prob that the doc influence the topic
+
         def get_prob_of_topic(topic_index):
             return next(filter(lambda x: x[0] == topic_index, topic_prob_vector))[1]
 
@@ -225,6 +228,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
                                                 axis='columns')
 
         # Remove other columns
+        # TODO: Maybe it's interesting to keep this 3 columns to give the user info about why that doc is related
+        #  to the given text. This columns can be moved to the end of the df.
         related_docs_df = related_docs_df.drop(columns=['Topic index', 'Topic prob', 'Topic keywords'])
 
         # Add the 'Doc prob' column
@@ -268,6 +273,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         # Concat the dfs to a one df, store it, and return it
         self.docs_topics_df = pd.concat(rows_list)
+        self.docs_topics_df.reset_index(drop=True, inplace=True)
         return self.docs_topics_df
 
     def get_k_most_representative_docs_per_topic_as_df(self, k=1):
