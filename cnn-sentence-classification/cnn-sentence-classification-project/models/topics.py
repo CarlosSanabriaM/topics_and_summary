@@ -60,7 +60,6 @@ class TopicsModel(metaclass=abc.ABCMeta):
         self.num_topics = num_topics
         self.coherence_value = None
         self.docs_topics_df = None
-        self.most_repr_doc_per_topic_df = None
 
         if dictionary is None or corpus is None:
             self.dictionary, self.corpus = prepare_corpus(documents)
@@ -190,7 +189,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return topic_prob_vector[:num_best_topics]
 
-    def get_related_documents_as_df(self, text, preprocess=True):
+    def get_related_documents_as_df(self, text, k_docs_per_topic=1, preprocess=True):
+        # TODO: Revise
         """
         Given a text, this method returns a df with the index and the content of the most similar documents
         in the corpus. The similar/related documents are obtained as follows:
@@ -201,6 +201,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         That probability is obtained as follows: Probability of the text being related with the topic * Probability
         that the document influence the topic.
         :param text: String.
+        :param k_docs_per_topic: Number of documents per topic to be used to retrieve the related documents.
         :param preprocess: If True, apply preprocessing to the text.
         :return: The pandas DataFrame.
         """
@@ -209,10 +210,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
         topics = list(map(lambda x: x[0], topic_prob_vector))
 
         # 2. Obtain a df with the documents more related with the topics in the previous step
-        if self.most_repr_doc_per_topic_df is None:
-            self.get_most_representative_doc_per_topic_as_df()
-        related_docs_df = self.most_repr_doc_per_topic_df.loc[
-            self.most_repr_doc_per_topic_df['Topic index'].isin(topics)]
+        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k=k_docs_per_topic)
+        related_docs_df = k_most_repr_doc_per_topic_df.loc[k_most_repr_doc_per_topic_df['Topic index'].isin(topics)]
 
         # 3. Transform the df to have the following columns: Doc index, Doc prob, Doc text
         # Doc prob = prob of the text being related with the topic * prob that the doc influence the topic
@@ -271,39 +270,41 @@ class TopicsModel(metaclass=abc.ABCMeta):
         self.docs_topics_df = pd.concat(rows_list)
         return self.docs_topics_df
 
-    def get_most_representative_doc_per_topic_as_df(self):
+    def get_k_most_representative_docs_per_topic_as_df(self, k=1):
         """
-        Returns a DataFrame where each row contains a topic and the most representative document of that topic.
+        Returns a DataFrame where the topics are grouped in ascending order by their indices, and inside each
+        topic group there are k rows, where each row contains the topic and one of the most representative documents
+        of that topic, in descending order.
         get_dominant_topic_of_document_each_doc_as_df(). If is None, that method is call, and that can take be slow.
-        :return: A pandas DataFrame with the following columns: Topic_Index, Topic_Contribution, Topic_Keywords and
-        Doc_Text.
+        :param k: Number of the most representative documents per topic you want.
+        :return: A pandas DataFrame with the following columns: Topic index, Doc index, Topic prob, Topic keywords and
+        Doc text.
         """
         if self.docs_topics_df is None:
             self.get_dominant_topic_of_each_doc_as_df()
 
-        most_repr_doc_per_topic_df = pd.DataFrame()
+        k_most_repr_doc_per_topic_df = pd.DataFrame()
 
         # Group rows by the topic index
         doc_topics_grouped_by_topic_df = self.docs_topics_df.groupby('Dominant topic index')
 
-        # For each topic, group the docs by the 'Topic prob' and select the first one
-        for topic, group in tqdm(doc_topics_grouped_by_topic_df):
-            most_repr_doc = group.sort_values(['Topic prob'], ascending=[False]).head(1)
-            most_repr_doc_per_topic_df = pd.concat([most_repr_doc_per_topic_df, most_repr_doc],
-                                                   axis=0)
+        # For each topic group, sort the docs by the 'Topic prob' (in descending order) and select the first k ones
+        for topic, group in doc_topics_grouped_by_topic_df:
+            most_repr_docs = group.sort_values(['Topic prob'], ascending=[False]).head(k)
+            k_most_repr_doc_per_topic_df = pd.concat([k_most_repr_doc_per_topic_df, most_repr_docs],
+                                                     axis=0)
 
-        most_repr_doc_per_topic_df.reset_index(drop=True, inplace=True)
+        # Reset indices
+        k_most_repr_doc_per_topic_df.reset_index(drop=True, inplace=True)
         # Change columns names
-        most_repr_doc_per_topic_df.columns = ['Doc index', 'Topic index', 'Topic prob', 'Topic keywords', 'Doc text']
+        k_most_repr_doc_per_topic_df.columns = ['Doc index', 'Topic index', 'Topic prob', 'Topic keywords', 'Doc text']
         # Change columns order
-        most_repr_doc_per_topic_df = \
-            most_repr_doc_per_topic_df[['Topic index', 'Doc index', 'Topic prob', 'Topic keywords', 'Doc text']]
-        # Order rows by topic index
-        most_repr_doc_per_topic_df = most_repr_doc_per_topic_df.sort_values(['Topic index'], ascending=[True])
+        k_most_repr_doc_per_topic_df = \
+            k_most_repr_doc_per_topic_df[['Topic index', 'Doc index', 'Topic prob', 'Topic keywords', 'Doc text']]
+        # Order rows by topic index (in ascending order). Each topic group is ordered by the Topic prob, so no problem.
+        k_most_repr_doc_per_topic_df = k_most_repr_doc_per_topic_df.sort_values(['Topic index'], ascending=[True])
 
-        # Store the df and return it
-        self.most_repr_doc_per_topic_df = most_repr_doc_per_topic_df
-        return self.most_repr_doc_per_topic_df
+        return k_most_repr_doc_per_topic_df
 
     # TODO: This method hasn't been tested
     def get_topic_distribution_as_df(self, docs_topics_df=None):

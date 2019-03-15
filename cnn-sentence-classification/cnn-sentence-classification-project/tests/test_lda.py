@@ -32,7 +32,7 @@ if __name__ == '__main__':
     # %%
     # Get insights about the topics
     docs_topics_df = model.get_dominant_topic_of_each_doc_as_df()
-    most_repr_doc_per_topic_df = model.get_most_representative_doc_per_topic_as_df()
+    most_repr_doc_per_topic_df = model.get_k_most_representative_docs_per_topic_as_df()
 
     # %%
     # Query the model using new, unseen documents
