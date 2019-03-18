@@ -115,7 +115,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
     :param plot_name: Name of the plot to be saved.
     """
 
-    # TODO: 3d
+    # TODO: 3d?
 
     # Get doc topic prob matrix
     doc_topic_prob_matrix = model.get_doc_topic_prob_matrix()
@@ -124,7 +124,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
     _idx = np.amax(doc_topic_prob_matrix, axis=1) > doc_threshold  # idx of doc that above the threshold
     doc_topic_prob_matrix = doc_topic_prob_matrix[_idx]
 
-    # tSNE Dimension Reduction: 20-D -> 2-D
+    # tSNE Dimension Reduction: 20-D -> 2-D or 3-D
     tsne_model = TSNE(n_components=num_dimensions, verbose=1, random_state=RANDOM_STATE, angle=angle, init='pca')
     tsne_lda = tsne_model.fit_transform(doc_topic_prob_matrix)
 
