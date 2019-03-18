@@ -1,15 +1,55 @@
-from utils import get_abspath
+import re
 from copy import deepcopy
+
 from texttable import Texttable
 
-from utils import pretty_print
+from preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, make_trigrams_and_get_trigram_model_func
 from preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, remove_stopwords, \
     substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, remove_single_chars
-from preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, make_trigrams_and_get_trigram_model_func
+from utils import get_abspath
+from utils import pretty_print
 
 __PREPROCESSING_FILES_DIR = '../preprocessing-files/'
 __TRASH_WORDS_PATH = __PREPROCESSING_FILES_DIR + 'trash_words.txt'
 __TRASH_DOCS_PATH = __PREPROCESSING_FILES_DIR + 'trash_docs.txt'
+
+
+def print_words_that_contain_elem(dataset, elem):
+    """
+    Prints a table with the following info:
+        - Word that contains the given element.
+        - Number of occurrences of the word in the whole dataset
+    :param dataset: Dataset.
+    :param elem: Elem contained in the printed words.
+    """
+    elem_re = re.compile(elem)
+
+    # Create table for better printing
+    table = Texttable()
+    table.set_cols_width([30, 10])
+    table.set_cols_align(['c', 'c'])
+
+    # Specify header
+    table.set_header_align(['c', 'c'])
+    table.header(['Word', 'Num occurrences'])
+
+    num_words_contain_elem = 0
+    word_occurrence_dict = {}
+    for doc in dataset.as_documents_list():
+        for word in doc:
+            if elem_re.search(word) is not None:
+                if not word_occurrence_dict.__contains__(word):
+                    word_occurrence_dict[word] = 0
+                word_occurrence_dict[word] += 1
+                num_words_contain_elem += 1
+
+    # Sort by the number of occurrences and add items to table
+    word_occurrence_sorted = sorted(word_occurrence_dict.items(), key=lambda kv: kv[1])
+    for word, occurences in word_occurrence_sorted:
+        table.add_row([word, occurences])
+
+    print(table.draw())
+    print(" Num words with the elem " + elem + ":", num_words_contain_elem)
 
 
 # TODO: Change to admit more than one word ?? I think it makes more sense to be used only with one word.
@@ -205,8 +245,8 @@ def remove_empty_docs(dataset):
     return num_empty_docs
 
 
-def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=True, vulgar_words=True,
-                       stopwords=True, emails=True, punctuation=True, ngrams='uni',
+def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=True, vulgar_words=True, stopwords=True,
+                       emails=True, punctuation=True, ngrams='uni', min_ngrams_count=50, ngrams_threshold=75,
                        lemmatize=True, stem=False, trash_words=True, trash_docs=True, chars=True, empty_docs=True):
     """
     Creates a copy of the given dataset and returns the copy with the specified preprocessing.
@@ -222,6 +262,9 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
     :param punctuation: Remove punctuation. By default is True.
     :param ngrams: If 'uni' uses unigrams. If 'bi' create bigrams and returns bigram function.
     If 'tri' creates trigrams and returns trigram function. By default is 'uni'.
+    :param min_ngrams_count: If ngrams is 'bi' or 'tri', this is the minimum number of occurrences
+    of an ngram to be transformed as an ngram.
+    :param ngrams_threshold: If ngrams is 'bi' or 'tri', this is the threshold for creating an ngram.
     :param lemmatize: Lemmatize words. By default is True.
     :param stem: Stemm words. By default is False.
     :param trash_words: Remove documents with any of the 'trash words'. By default is True.
@@ -257,9 +300,9 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
         dataset_copy.apply_function_to_files(remove_stopwords)
     # TODO: Bigrams/trigrams here??
     if ngrams == 'bi':
-        bigram_model_func = make_bigrams_and_get_bigram_model_func(dataset_copy)
+        bigram_model_func = make_bigrams_and_get_bigram_model_func(dataset_copy, min_ngrams_count, ngrams_threshold)
     elif ngrams == 'tri':
-        trigram_model_func = make_trigrams_and_get_trigram_model_func(dataset_copy)
+        trigram_model_func = make_trigrams_and_get_trigram_model_func(dataset_copy, min_ngrams_count, ngrams_threshold)
     if lemmatize:
         dataset_copy.apply_function_to_files(lemmatize_words)
     elif stem:
