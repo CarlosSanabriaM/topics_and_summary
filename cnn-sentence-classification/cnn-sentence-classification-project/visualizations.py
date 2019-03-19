@@ -35,7 +35,8 @@ def plot_distribution_of_doc_word_counts(documents):
     plt.show()
 
 
-def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_keywords=10):
+def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_keywords=10,
+                                           save=False, dir_save_path=None):
     """
     Plots word clouds for the specified number of topics in the given model.
     :type topics_model: TopicsModel or gensim.models.wrappers.LdaMallet or gensim.models.LdaModel
@@ -43,6 +44,8 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
     :param topics_model: gensim models (lda, lsa or lda_mallet)
     :param num_topics: Number of topics to be plotted. If is None, the num_topics of the model are used.
     :param num_keywords: Number of keywords in each topic to be plotted.
+    :param save: If true, the plots are saved to disk.
+    :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
     """
 
     # If topics_model is a TopicsModel, obtain the gensim model inside it.
@@ -73,7 +76,7 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
     topics = topics_model.show_topics(num_topics, num_keywords, formatted=False)
 
     # Each plot is formed by 4 subplots, each one containing the words of a topic
-    for _ in range(num_topics // 4):
+    for i in range(num_topics // 4):
         fig, axes = plt.subplots(2, 2, figsize=(10, 10), sharex=True, sharey=True)
 
         for ax in axes.flatten():
@@ -96,12 +99,16 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
         plt.tight_layout()
         plt.show()
 
+        if save:
+            plt.savefig(dir_save_path + '/wordcloud' + str(i))
 
-__TSNE_SAVE_PATH = 'saved-models/topics/tsne/'
+
+__TSNE_SAVE_PATH = 'saved-models/topics/tsne'
 
 
 def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_threshold=0,
-                          plot_keywords=True, num_keywords=5, keywords_color_is_black=True, plot_name=None):
+                          plot_keywords=True, num_keywords=5, keywords_color_is_black=True,
+                          save_path=__TSNE_SAVE_PATH, plot_name=None):
     """
     Use t-SNE technique for dimensionality reduction.
     :param model: Topics Model.
@@ -112,6 +119,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
     :param plot_keywords: If True, the keywords of each topic are plotted near a document of the topic.
     :param num_keywords: Number of keyword to show if plot_keywords is True.
     :param keywords_color_is_black: If true, the keywords color is black. If not, is the same color as the topic.
+    :param save_path: Path where the html file with the interactive plot will be saved.
     :param plot_name: Name of the plot to be saved.
     """
 
@@ -148,7 +156,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
         now = now_as_str()
         plot_name = 'tsne_' + now + '.html'
 
-    bp.output_file(get_abspath(__file__, __TSNE_SAVE_PATH + plot_name), mode='inline')
+    bp.output_file(get_abspath(__file__, save_path + '/' + plot_name), mode='inline')
 
     # Create the plot for the Topic Clusters using Bokeh
     plot = figure(title="t-SNE Clustering of {} LDA Topics".format(model.num_topics),

@@ -60,6 +60,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         self.num_topics = num_topics
         self.coherence_value = None
         self.docs_topics_df = None
+        self.dir_path = None  # Path of the directory where the model is saved to
 
         if dictionary is None or corpus is None:
             self.dictionary, self.corpus = prepare_corpus(documents)
@@ -96,7 +97,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
     def save(self, base_name, path=__SAVE_PATH):
         """
         Saves the model to disk.
-        :param base_name: Base name of the models. After it, the current time, the number of topics, and
+        :param base_name: Base name of the model. After it, the current time, the number of topics, and
         the coherence value are added.
         :param path: Path were the models will be stored.
         and the coherence value of the models is added.
@@ -105,12 +106,18 @@ class TopicsModel(metaclass=abc.ABCMeta):
             self.compute_coherence_value()
 
         now = now_as_str()
-        model_name = "{0}_{1} topics_{2} coherence_{3}".format(base_name, now, str(self.model.num_topics),
-                                                               str(self.coherence_value))
+        model_name = "{0}_{1}topics_coherence{2}_{3}".format(base_name, str(self.model.num_topics),
+                                                             str(self.coherence_value), now)
 
-        os.mkdir(path + model_name)
-        path = get_abspath(__file__, path + model_name + "/" + model_name)
-        self.model.save(path)
+        self.dir_path = get_abspath(__file__, path + model_name)
+        os.mkdir(self.dir_path)
+        model_path = self.dir_path + "/" + model_name
+        self.model.save(model_path)
+
+        # Save the coherence value in a .txt file
+        coherence_path = self.dir_path + "/coherence_value.txt"
+        with open(coherence_path, 'w') as f:
+            f.write(str(self.coherence_value))
 
     @classmethod
     def load(cls, model_name, documents, model_dir_path=__SAVE_PATH):
@@ -549,7 +556,7 @@ class LsaGensimModel(TopicsModel):
 class TopicsModelsList(metaclass=abc.ABCMeta):
     """Base class for a list of topics models."""
 
-    __SAVE_PATH = '../saved-models/topics/'  # Path where the models will be saved
+    _SAVE_MODELS_PATH = '../saved-models/topics/'  # Path where the models will be saved
 
     def __init__(self, documents):
         self.documents = documents
@@ -557,7 +564,8 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         self.models_list = []  # Stores the models created
 
     def create_models_and_compute_coherence_values(self, start=2, stop=20, step=1, coherence='c_v', print_and_plot=True,
-                                                   title="Topic's model coherence comparison", **kwargs):
+                                                   title="Topic's model coherence comparison", save_plot=False,
+                                                   save_plot_path=None, **kwargs):
         """
         Creates, stores and returns topics models and it's coherence values.
         Can be used to determine an optimum number of topics.
@@ -568,6 +576,9 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         Valid values are: ‘c_v’, ‘c_uci’ and ‘c_npmi’.
         :param print_and_plot: If true, prints and plots the results.
         :param title: Title of the result's plot. Ignored if print_and_plot is False.
+        :param save_plot: If is true and print_and_plot is True, save the plot to disk.
+        :param save_plot_path: If save_plot is True and print_and_plot is True, this is the path where
+        the plot will be saved.
         :param kwargs: Other keyword parameters for creating the models.
         :return: List of the created models and their corresponding coherence values.
         """
@@ -575,7 +586,7 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         current_index = first_index
         coherence_values = []
 
-        for num_topics in tqdm(range(start, stop, step)):
+        for num_topics in tqdm(range(start, stop + 1, step)):
             # Template design pattern. create_model() is an abstract method redefined in the subclasses.
             model = self._create_model(num_topics=num_topics, **kwargs)
             # Compute coherence value
@@ -586,8 +597,8 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
 
         if print_and_plot:
             self.print_and_plot_coherence_values(self.models_list[first_index:],
-                                                 coherence_values,
-                                                 title)
+                                                 coherence_values, title,
+                                                 save_plot=save_plot, save_plot_path=save_plot_path)
 
         return self.models_list[first_index:], coherence_values
 
@@ -600,12 +611,16 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         """
 
     def print_and_plot_coherence_values(self, models_list=None, coherence_values=None,
-                                        title="Topic's model coherence comparison"):
+                                        title="Topic's model coherence comparison",
+                                        save_plot=False, save_plot_path=None):
         """
         Prints and plots coherence values of the specified models.
         :param models_list: List of models. If is None, self.models_list is used.
         :param coherence_values: List of coherence values. If is None, self.coherence_values is used.
         :param title: Title of the plot.
+        :param save_plot: If is True, save the plot to disk.
+        :param save_plot_path: If save_plot is True, this is the path where the plot will be saved.
+        Must end in '.png' or '.pdf'.
         """
         if models_list is None:
             models_list = self.models_list
@@ -626,7 +641,11 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         plt.title(title)
         plt.show()
 
-    def save(self, base_name, path=__SAVE_PATH, index=None):
+        # Save to disk
+        if save_plot:
+            plt.savefig(save_plot_path)
+
+    def save(self, base_name, path=_SAVE_MODELS_PATH, index=None):
         """
         If index parameter is None, saves all the models to disk.
         If is a number, saves only the model with that index.

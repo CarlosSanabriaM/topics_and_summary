@@ -1,11 +1,11 @@
-import re
 import json
+import re
+
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
-from preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, make_trigrams_and_get_trigram_model_func
-from utils import get_abspath, pretty_print
+from utils import get_abspath
 
 __BASIC_STOPWORDS = set(stopwords.words('english'))
 __EMAILS_RE = re.compile(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)")
@@ -211,9 +211,19 @@ def remove_single_chars(text):
                     if len(word) > 1)
 
 
+def remove_apostrophes(text):
+    """
+    Returns the given text with the apostrophes removed.
+    :param text: The text to remove apostrophes. (String)
+    :return: The given text with all the apostrophes removed. (String)
+    """
+    apostrophes_re = re.compile("'")
+    return apostrophes_re.sub(' ', text)
+
+
 def preprocess_text(text, normalize=True, lowercase=True, contractions=True, vulgar_words=True,
                     stopwords=True, emails=True, punctuation=True, ngrams='uni', ngrams_model_func=None,
-                    lemmatize=True, stem=False, chars=True):
+                    lemmatize=True, stem=False, apostrophes=True, chars=True):
     """
     Receives a str containing a text and returns a list of words after applying the specified preprocessing.
     The original dataset is not modified.
@@ -234,6 +244,7 @@ def preprocess_text(text, normalize=True, lowercase=True, contractions=True, vul
     the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
     :param lemmatize: Lemmatize words. By default is True.
     :param stem: Stemm words. By default is False.
+    :param apostrophes: Remove apostrophes.
     :param chars: Remove single chars. By default is True.
     :return: List of str.
     Note that lemmatize and stem shouldn't be both True.
@@ -263,7 +274,8 @@ def preprocess_text(text, normalize=True, lowercase=True, contractions=True, vul
         text = lemmatize_words(text)
     elif stem:
         text = stem_words(text)
-    # TODO: remove apostrophes here?? we have things like god's
+    if apostrophes:
+        text = remove_apostrophes(text)
     if chars:
         text = remove_single_chars(text)
 

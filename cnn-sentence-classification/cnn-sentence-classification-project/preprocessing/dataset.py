@@ -5,7 +5,8 @@ from texttable import Texttable
 
 from preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, make_trigrams_and_get_trigram_model_func
 from preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, remove_stopwords, \
-    substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, remove_single_chars
+    substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, remove_single_chars, \
+    remove_apostrophes
 from utils import get_abspath
 from utils import pretty_print
 
@@ -245,10 +246,10 @@ def remove_empty_docs(dataset):
     return num_empty_docs
 
 
-def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=True, vulgar_words=True, stopwords=True,
-                       emails=True, punctuation=True, ngrams='uni', min_bigrams_count=50, bigrams_threshold=75,
-                       min_trigrams_count=100, trigrams_threshold=175,
-                       lemmatize=True, stem=False, trash_words=True, trash_docs=True, chars=True, empty_docs=True):
+def preprocess_dataset(dataset, trash_docs=True, normalize=True, lowercase=True, contractions=True, vulgar_words=True,
+                       stopwords=True, emails=True, punctuation=True, ngrams='uni', min_bigrams_count=50,
+                       bigrams_threshold=75, min_trigrams_count=100, trigrams_threshold=175, lemmatize=True, stem=False,
+                       trash_words=True, apostrophes=True, chars=True, empty_docs=True):
     """
     Creates a copy of the given dataset and returns the copy with the specified preprocessing.
     The original dataset is not modified.
@@ -272,6 +273,7 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
     :param lemmatize: Lemmatize words. By default is True.
     :param stem: Stemm words. By default is False.
     :param trash_words: Remove documents with any of the 'trash words'. By default is True.
+    :param apostrophes: Remove apostrophes.
     :param chars: Remove single chars. By default is True.
     :param empty_docs: Remove empty docs. By default is True.
     :return: The dataset with the preprocessing applied.
@@ -314,7 +316,8 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
         dataset_copy.apply_function_to_files(stem_words)
     if trash_words:
         remove_docs_that_contain_any_of_the_words_in_file(dataset_copy)
-    # TODO: remove apostrophes here?? we have things like god's
+    if apostrophes:
+        dataset_copy.apply_function_to_files(remove_apostrophes)
     if chars:
         dataset_copy.apply_function_to_files(remove_single_chars)
     if empty_docs:
