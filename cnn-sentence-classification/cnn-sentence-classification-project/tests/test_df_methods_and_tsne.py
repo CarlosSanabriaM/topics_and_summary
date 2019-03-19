@@ -7,22 +7,6 @@ from visualizations import plot_word_clouds_k_keywords_each_topic, tsne_clusteri
 if __name__ == '__main__':
     # %%
 
-    """
-    Models to be created and compared:
-    1. Unigrams
-        1.1 Models with LDA between 10 and 20 topics
-        1.2 Models with LSA between 10 and 20 topics
-        1.3 Models with LDA Mallet between 10 and 20 topics
-    2. Bigrams
-        2.1 Models with LDA between 10 and 20 topics
-        2.2 Models with LSA between 10 and 20 topics
-        2.3 Models with LDA Mallet between 10 and 20 topics
-    3. Trigrams
-        3.1 Models with LDA between 10 and 20 topics
-        3.2 Models with LSA between 10 and 20 topics
-        3.3 Models with LDA Mallet between 10 and 20 topics
-    """
-
     # Load dataset and apply preprocessing
     dataset = TwentyNewsGroupsDataset()
     dataset = preprocess_dataset(dataset)

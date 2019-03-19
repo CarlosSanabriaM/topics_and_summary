@@ -246,11 +246,18 @@ def remove_empty_docs(dataset):
 
 
 def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=True, vulgar_words=True, stopwords=True,
-                       emails=True, punctuation=True, ngrams='uni', min_ngrams_count=50, ngrams_threshold=75,
+                       emails=True, punctuation=True, ngrams='uni', min_bigrams_count=50, bigrams_threshold=75,
+                       min_trigrams_count=100, trigrams_threshold=175,
                        lemmatize=True, stem=False, trash_words=True, trash_docs=True, chars=True, empty_docs=True):
     """
     Creates a copy of the given dataset and returns the copy with the specified preprocessing.
     The original dataset is not modified.
+    :param min_bigrams_count: If ngrams is 'bi' or 'tri', this is the minimum number of occurrences
+    of a bigram to be transformed as a bigram.
+    :param bigrams_threshold: If ngrams is 'bi' or 'tri', this is the threshold for creating a bigram.
+    :param min_trigrams_count: If ngrams is 'tri', this is the minimum number of occurrences
+    of a trigram to be transformed as a trigram.
+    :param trigrams_threshold: If ngrams is 'tri', this is the threshold for creating a trigram.
     :param dataset: Dataset to copy and apply preprocessing.
     :param trash_docs: Remove specified docs. By default is True.
     :param normalize: Normalize words. By default is True.
@@ -262,9 +269,6 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
     :param punctuation: Remove punctuation. By default is True.
     :param ngrams: If 'uni' uses unigrams. If 'bi' create bigrams and returns bigram function.
     If 'tri' creates trigrams and returns trigram function. By default is 'uni'.
-    :param min_ngrams_count: If ngrams is 'bi' or 'tri', this is the minimum number of occurrences
-    of an ngram to be transformed as an ngram.
-    :param ngrams_threshold: If ngrams is 'bi' or 'tri', this is the threshold for creating an ngram.
     :param lemmatize: Lemmatize words. By default is True.
     :param stem: Stemm words. By default is False.
     :param trash_words: Remove documents with any of the 'trash words'. By default is True.
@@ -298,11 +302,12 @@ def preprocess_dataset(dataset, normalize=True, lowercase=True, contractions=Tru
         dataset_copy.apply_function_to_files(substitute_punctuation)
     if stopwords:
         dataset_copy.apply_function_to_files(remove_stopwords)
-    # TODO: Bigrams/trigrams here??
     if ngrams == 'bi':
-        bigram_model_func = make_bigrams_and_get_bigram_model_func(dataset_copy, min_ngrams_count, ngrams_threshold)
+        bigram_model_func = make_bigrams_and_get_bigram_model_func(dataset_copy, min_bigrams_count, bigrams_threshold)
     elif ngrams == 'tri':
-        trigram_model_func = make_trigrams_and_get_trigram_model_func(dataset_copy, min_ngrams_count, ngrams_threshold)
+        trigram_model_func = make_trigrams_and_get_trigram_model_func(dataset_copy,
+                                                                      min_bigrams_count, bigrams_threshold,
+                                                                      min_trigrams_count, trigrams_threshold)
     if lemmatize:
         dataset_copy.apply_function_to_files(lemmatize_words)
     elif stem:
