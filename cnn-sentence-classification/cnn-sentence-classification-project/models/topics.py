@@ -414,7 +414,9 @@ class LdaMalletModel(TopicsModel):
         prefix = get_abspath(__file__, self.__MALLET_SAVED_MODELS_PATH + self.model_name)
         os.mkdir(prefix)
 
-        # Add the model_name again to the prefix. Mallet expects the prexis to be the name of a file
+        self.dir_path = prefix
+
+        # Add the model_name again to the prefix. Mallet expects the prefix to be the name of a file
         # inside the folder where the mallet files will be saved. For that reason, we add to the folder
         # path the model name, and we will use later the prefix to store the final model.
         prefix += '/' + self.model_name
@@ -474,10 +476,17 @@ class LdaGensimModel(TopicsModel):
         :return: The gensim.models.LdaModel model created.
         """
 
+        # TODO: Remove
+        """
         # model_name kwargs can't be passed to LdaModel __init__()
         # TODO: This can be done better removing from kwargs all the keys that aren't in the __init__() method below
         if kwargs.__contains__('model_name'):
             del kwargs['model_name']
+            
+        # Obtain the argument names of the gensim LdaModel __init__ method, and remove from the kwargs dict
+        # the kwargs that aren't in the argument names of the gensim LdaModel __init__ method.
+        gensim_ldamodel_init_args = inspect.getfullargspec(gensim.models.LdaModel.__init__).args
+        """
 
         return gensim.models.LdaModel(corpus=self.corpus,
                                       id2word=self.dictionary,
@@ -526,10 +535,13 @@ class LsaGensimModel(TopicsModel):
         :return: The gensim.models.LsiModel model created.
         """
 
+        # TODO: Remove
+        """
         # model_name kwargs can't be passed to LdaModel __init__()
         # TODO: This can be done better removing from kwargs all the keys that aren't in the __init__() method below
         if kwargs.__contains__('model_name'):
             del kwargs['model_name']
+        """
 
         return gensim.models.LsiModel(corpus=self.corpus,
                                       id2word=self.dictionary,
@@ -625,16 +637,16 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         if models_list is None:
             models_list = self.models_list
         if coherence_values is None:
-            coherence_values = map(lambda m: m.coherence_value, self.models_list)
+            coherence_values = list(map(lambda model: model.coherence_value, self.models_list))
 
-        num_topics_list = map(lambda model: model.num_topics, models_list)
+        num_topics_list = list(map(lambda model: model.num_topics, models_list))
 
         # Print the coherence scores
         for num_topics, coherence_value in zip(num_topics_list, coherence_values):
             print("Num Topics =", num_topics, " has Coherence Value of", round(coherence_value, 4))
 
         # Plot the coherence scores
-        plt.plot(list(num_topics_list), coherence_values)
+        plt.plot(np.array(num_topics_list), np.array(coherence_values))
         plt.xlabel("Number of Topics")
         plt.ylabel("Coherence score")
         plt.legend("coherence_values", loc='best')
@@ -670,6 +682,69 @@ class LdaMalletModelsList(TopicsModelsList):
     def _create_model(self, num_topics, **kwargs):
         return LdaMalletModel(self.documents, self.dictionary, self.corpus, num_topics, **kwargs)
 
+    def create_models_and_compute_coherence_values(self, start=2, stop=20, step=1, coherence='c_v', print_and_plot=True,
+                                                   title="Topic's model coherence comparison", save_plot=False,
+                                                   save_plot_path=None, models_base_name='mallet_model', **kwargs):
+        """
+        Creates, stores and returns topics models and it's coherence values.
+        Can be used to determine an optimum number of topics.
+        :param start: Number of topics to start looking for the optimum.
+        :param stop: Maximum number of topics to be tried.
+        :param step: Number of topics to be incremented while looking for the optimum.
+        :param coherence: String that represents the type of coherence to calculate.
+        Valid values are: ‘c_v’, ‘c_uci’ and ‘c_npmi’.
+        :param print_and_plot: If true, prints and plots the results.
+        :param title: Title of the result's plot. Ignored if print_and_plot is False.
+        :param save_plot: If is true and print_and_plot is True, save the plot to disk.
+        :param save_plot_path: If save_plot is True and print_and_plot is True, this is the path where
+        the plot will be saved.
+        :param models_base_name: Base name for the Mallet models. This param + num_topics of each model
+        is passed to the LdaMalletModel __init__ method, because is needed for storing the files of the model.
+        :param kwargs: Other keyword parameters for creating the models.
+        :return: List of the created models and their corresponding coherence values.
+        """
+
+        # TODO: Remove?
+        # # base_models_name is an obligatory param for creating lda mallet models, because it's
+        # # obligatory to pass the param models_base_name to the _create_model function of LdaMalletModelsList.
+        # if 'models_base_name' not in kwargs or kwargs['models_base_name'] is None:
+        #     raise ValueError('models_base_name parameter is obligatory')
+
+        first_index = len(self.models_list)
+        current_index = first_index
+        coherence_values = []
+
+        for num_topics in tqdm(range(start, stop + 1, step)):
+            # Template design pattern. create_model() is an abstract method redefined in the subclasses.
+            # model_name is passed as a kwarg. This param is the reason for overrading this method.
+            model = self._create_model(num_topics=num_topics, model_name=models_base_name + str(num_topics), **kwargs)
+            # Compute coherence value
+            coherence_values.append(model.compute_coherence_value(coherence))
+
+            self.models_list.append(model)
+            current_index += 1
+
+        if print_and_plot:
+            self.print_and_plot_coherence_values(self.models_list[first_index:],
+                                                 coherence_values, title,
+                                                 save_plot=save_plot, save_plot_path=save_plot_path)
+
+        return self.models_list[first_index:], coherence_values
+
+    # noinspection PyMethodOverriding
+    def save(self, index=None):
+        """
+        If index parameter is None, saves all the models to disk.
+        If is a number, saves only the model with that index.
+        :param index: Index of the model to be saved. If is none, saves all models.
+        and the coherence value of the models is added.
+        """
+        if index is not None:
+            self.models_list[index].save()
+        else:
+            for model in self.models_list:
+                model.save()
+
 
 class LdaModelsList(TopicsModelsList):
 
@@ -677,7 +752,7 @@ class LdaModelsList(TopicsModelsList):
         super().__init__(documents)
 
     def _create_model(self, num_topics, random_state=RANDOM_STATE, **kwargs):
-        return LdaGensimModel(self.documents, self.dictionary, self.corpus, num_topics, random_state, **kwargs)
+        return LdaGensimModel(self.documents, self.dictionary, self.corpus, num_topics, None, random_state, **kwargs)
 
 
 class LsaModelsList(TopicsModelsList):

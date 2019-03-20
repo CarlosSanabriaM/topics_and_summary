@@ -1,3 +1,5 @@
+import math
+
 import bokeh.plotting as bp
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
@@ -36,7 +38,7 @@ def plot_distribution_of_doc_word_counts(documents):
 
 
 def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_keywords=10,
-                                           save=False, dir_save_path=None):
+                                           save=False, dir_save_path=None, dpi=350):
     """
     Plots word clouds for the specified number of topics in the given model.
     :type topics_model: TopicsModel or gensim.models.wrappers.LdaMallet or gensim.models.LdaModel
@@ -46,6 +48,7 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
     :param num_keywords: Number of keywords in each topic to be plotted.
     :param save: If true, the plots are saved to disk.
     :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
+    :param dpi: Dots per inches for the images.
     """
 
     # If topics_model is a TopicsModel, obtain the gensim model inside it.
@@ -76,8 +79,8 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
     topics = topics_model.show_topics(num_topics, num_keywords, formatted=False)
 
     # Each plot is formed by 4 subplots, each one containing the words of a topic
-    for i in range(num_topics // 4):
-        fig, axes = plt.subplots(2, 2, figsize=(10, 10), sharex=True, sharey=True)
+    for i in range(math.ceil(num_topics / 4)):
+        fig, axes = plt.subplots(2, 2, figsize=(10, 10), dpi=dpi, sharex=True, sharey=True)
 
         for ax in axes.flatten():
             fig.add_subplot(ax)
@@ -97,10 +100,12 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
         plt.axis('off')
         plt.margins(x=0, y=0)
         plt.tight_layout()
-        plt.show()
 
         if save:
-            plt.savefig(dir_save_path + '/wordcloud' + str(i))
+            plot_path = dir_save_path + '/wordcloud' + str(i) + '.png'
+            plt.savefig(plot_path, dpi=dpi)
+
+        plt.show()
 
 
 __TSNE_SAVE_PATH = 'saved-models/topics/tsne'
