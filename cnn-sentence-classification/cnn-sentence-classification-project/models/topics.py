@@ -377,11 +377,11 @@ class LdaMalletModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use."""
 
     __MALLET_SOURCE_CODE_PATH = '../../../mallet-2.0.8/bin/mallet'
-    __MALLET_SAVED_MODELS_PATH = '../saved-models/topics/lda_mallet/'
+    __MALLET_SAVED_MODELS_PATH = '../saved-models/topics/lda_mallet'
 
     def __init__(self, documents, dictionary=None, corpus=None, num_topics=20,
                  model=None, mallet_path=get_abspath(__file__, __MALLET_SOURCE_CODE_PATH),
-                 model_name=None, **kwargs):
+                 model_name=None, model_path=__MALLET_SAVED_MODELS_PATH, **kwargs):
         """
         Encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use.
         :param documents: List of lists of strings. Each one of the nested lists represents a document,
@@ -392,7 +392,8 @@ class LdaMalletModel(TopicsModel):
         :param model: Pre-created model. If is None, a model is created.
         :param mallet_path: Path to the mallet source code.
         :param model_name: Name of the folder where all mallet files will be saved. That folder will be created
-        inside __MALLET_SAVED_MODELS_PATH directory. This param is obligatory.
+        inside model_path directory. This param is obligatory.
+        :param model_path: Path of the directory where the mallet directory will be created.
         :param kwargs: Additional keyword arguments that want to be used in the gensim.models.wrappers.LdaMallet
         __init__ method.
         """
@@ -401,7 +402,8 @@ class LdaMalletModel(TopicsModel):
 
         self.model_name = model_name
 
-        super().__init__(documents, dictionary, corpus, num_topics, model, mallet_path=mallet_path, **kwargs)
+        super().__init__(documents, dictionary, corpus, num_topics, model,
+                         mallet_path=mallet_path, model_path=model_path, **kwargs)
 
     def _create_model(self, **kwargs):
         """
@@ -411,7 +413,9 @@ class LdaMalletModel(TopicsModel):
         :return: The gensim.models.wrappers.LdaMallet model created.
         """
         # Create the folder where the mallet files will be stored
-        prefix = get_abspath(__file__, self.__MALLET_SAVED_MODELS_PATH + self.model_name)
+
+        prefix = get_abspath(__file__, join_paths(kwargs['model_path'], self.model_name))
+        del kwargs['model_path']  # Remove it to avoid passing it to the LdaMallet __init__ method above
         os.mkdir(prefix)
 
         self.dir_path = prefix
@@ -439,9 +443,18 @@ class LdaMalletModel(TopicsModel):
     # noinspection PyMethodOverriding
     def save(self):
         """
-        Saves the mallet model to the path specified in self.model.prefix.
+        Saves the mallet model to the path specified in self.model.prefix and stores in a .txt the coherence value.
         """
+        # Save the model and all it's files
         self.model.save(self.model.prefix)
+
+        # Save the coherence value in a .txt file
+        if self.coherence_value is None:
+            self.compute_coherence_value()
+
+        coherence_path = join_paths(self.dir_path, "coherence_value.txt")
+        with open(coherence_path, 'w') as f:
+            f.write(str(self.coherence_value))
 
     @classmethod
     def load(cls, model_name, documents, model_dir_path=__MALLET_SAVED_MODELS_PATH):

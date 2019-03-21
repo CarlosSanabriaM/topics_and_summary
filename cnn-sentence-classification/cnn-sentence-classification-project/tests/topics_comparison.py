@@ -1,8 +1,9 @@
 from typing import List
 
+from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from models.topics import LdaModelsList, LsaModelsList, LdaMalletModelsList, TopicsModel
 from preprocessing.dataset import preprocess_dataset
-from utils import get_abspath, join_paths, pretty_print, load_obj_from_disk
+from utils import get_abspath, join_paths, pretty_print
 from visualizations import plot_word_clouds_k_keywords_each_topic, tsne_clustering_chart
 
 
@@ -58,18 +59,21 @@ def generate_and_store_models(path, documents, plot_first_name):
                                                                           save_plot=True,
                                                                           save_plot_path=join_paths(lda_mallet_path,
                                                                                                     'coherence_values.png'),
-                                                                          models_base_name='model')
+                                                                          models_base_name='model',
+                                                                          model_path=lda_mallet_path)
     # Store the models and a txt file with the coherence value of each model
     pretty_print('Storing models')
     lda_mallet_models_list.save()
-    store_plots(lda_mallet_models, lda_mallet_coherence_values)
+    # tSNE is too slow to calculate, because predictions in LdaMallet are too slow
+    store_plots(lda_mallet_models, lda_mallet_coherence_values, tsne=False)
     # endregion
 
 
-def store_plots(models: List[TopicsModel], coherence_values: List[float]):
+def store_plots(models: List[TopicsModel], coherence_values: List[float], tsne=True):
     """
     Given a list of models and a list of coherence values, stores the plots of the wordclouds
     and the tsne html interactive plot in the dir_path of the model with max coherence value.
+    :param tsne: If true, calculates tsne and stores plot.
     """
     pretty_print('Storing plots')
 
@@ -81,8 +85,9 @@ def store_plots(models: List[TopicsModel], coherence_values: List[float]):
     plot_word_clouds_k_keywords_each_topic(best_model, save=True, dir_save_path=best_model.dir_path,
                                            show_plot=False, dpi=100)
 
-    # Store the tSNE plot of only the best model of the list
-    tsne_clustering_chart(best_model, save_path=best_model.dir_path, plot_name='tsne.html', show_plot=False)
+    if tsne:
+        # Store the tSNE plot of only the best model of the list
+        tsne_clustering_chart(best_model, save_path=best_model.dir_path, plot_name='tsne.html', show_plot=False)
 
 
 if __name__ == '__main__':
@@ -104,21 +109,17 @@ if __name__ == '__main__':
 
     # %%
     # Load dataset
-    # dataset = TwentyNewsGroupsDataset() # TODO: Uncomment
+    dataset = TwentyNewsGroupsDataset()
 
     # Topics info for the models
-    # TODO: Uncomment
-    # MIN_TOPICS = 10
-    # MAX_TOPICS = 20
-    MIN_TOPICS = 2  # TODO: Remove
-    MAX_TOPICS = 3  # TODO: Remove
+    MIN_TOPICS = 10
+    MAX_TOPICS = 20
     BASE_PATH = '../saved-models/topics/comparison'
 
     # %%
     # Unigrams
     pretty_print('Unigrams')
-    # unigrams_dataset = preprocess_dataset(dataset, ngrams='uni')  # TODO: Uncomment
-    unigrams_dataset = load_obj_from_disk('unigrams_dataset')  # TODO: Remove
+    unigrams_dataset = preprocess_dataset(dataset, ngrams='uni')
     unigrams_documents = unigrams_dataset.as_documents_list()
     unigrams_path = get_abspath(__file__, join_paths(BASE_PATH, 'unigrams'))
 
