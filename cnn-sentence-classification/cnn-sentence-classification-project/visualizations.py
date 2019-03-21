@@ -11,7 +11,7 @@ from tqdm import tqdm
 from wordcloud import WordCloud, STOPWORDS
 
 from models.topics import TopicsModel
-from utils import RANDOM_STATE, now_as_str, get_abspath
+from utils import RANDOM_STATE, now_as_str, get_abspath, join_paths
 
 
 def plot_distribution_of_doc_word_counts(documents):
@@ -38,7 +38,7 @@ def plot_distribution_of_doc_word_counts(documents):
 
 
 def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_keywords=10,
-                                           save=False, dir_save_path=None, dpi=350):
+                                           save=False, dir_save_path=None, dpi=350, show_plot=True):
     """
     Plots word clouds for the specified number of topics in the given model.
     :type topics_model: TopicsModel or gensim.models.wrappers.LdaMallet or gensim.models.LdaModel
@@ -49,6 +49,7 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
     :param save: If true, the plots are saved to disk.
     :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
     :param dpi: Dots per inches for the images.
+    :param show_plot: If true, shows the plot while executing.
     """
 
     # If topics_model is a TopicsModel, obtain the gensim model inside it.
@@ -83,12 +84,20 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
         fig, axes = plt.subplots(2, 2, figsize=(10, 10), dpi=dpi, sharex=True, sharey=True)
 
         for ax in axes.flatten():
+            # TODO: Check this to avoid printing empty graphs
+            # If the topic index equals the num_topics, the current plot has less than 4 topic to show,
+            # so we remove that axes from the plot.
+            if topic_index == num_topics:
+                fig.delaxes(ax)
+                continue
+
             fig.add_subplot(ax)
 
             topic_index = topics[topic_index][0]
             topic = topics[topic_index][1]
             topic_words = dict(topic)
-            cloud.generate_from_frequencies(topic_words, max_font_size=300)
+            cloud.generate_from_frequencies(topic_words,
+                                            max_font_size=300)  # TODO: Process finished with exit code 139 (interrupted by signal 11: SIGSEGV)
 
             plt.gca().imshow(cloud)
             plt.gca().set_title('Topic ' + str(topic_index), fontdict=dict(size=20))
@@ -102,10 +111,13 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
         plt.tight_layout()
 
         if save:
-            plot_path = dir_save_path + '/wordcloud' + str(i) + '.png'
+            plot_path = join_paths(dir_save_path, 'wordcloud{}.png'.format(i))
             plt.savefig(plot_path, dpi=dpi)
 
-        plt.show()
+        if show_plot:
+            plt.show()
+
+        plt.clf()  # TODO: Does this avoid showing the plots when show_plot is False and plt.show() is called in another part?
 
 
 __TSNE_SAVE_PATH = 'saved-models/topics/tsne'
@@ -113,7 +125,7 @@ __TSNE_SAVE_PATH = 'saved-models/topics/tsne'
 
 def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_threshold=0,
                           plot_keywords=True, num_keywords=5, keywords_color_is_black=True,
-                          save_path=__TSNE_SAVE_PATH, plot_name=None):
+                          save_path=__TSNE_SAVE_PATH, plot_name=None, show_plot=True):
     """
     Use t-SNE technique for dimensionality reduction.
     :param model: Topics Model.
@@ -126,6 +138,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
     :param keywords_color_is_black: If true, the keywords color is black. If not, is the same color as the topic.
     :param save_path: Path where the html file with the interactive plot will be saved.
     :param plot_name: Name of the plot to be saved.
+    :param show_plot: If true, opens a browser and shows the html with the plot.
     """
 
     # TODO: 3d?
@@ -161,7 +174,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
         now = now_as_str()
         plot_name = 'tsne_' + now + '.html'
 
-    bp.output_file(get_abspath(__file__, save_path + '/' + plot_name), mode='inline')
+    bp.output_file(get_abspath(__file__, join_paths(save_path, plot_name)), mode='inline')
 
     # Create the plot for the Topic Clusters using Bokeh
     plot = figure(title="t-SNE Clustering of {} LDA Topics".format(model.num_topics),
@@ -222,8 +235,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
         ("doc_text", "@{doc text}")
     ]
 
-    # Show the plot
-    show(plot)
+    if show_plot:
+        show(plot)
 
-    # Save the plot
     bp.save(plot)

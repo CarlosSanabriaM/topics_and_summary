@@ -9,7 +9,7 @@ from texttable import Texttable
 from tqdm import tqdm
 
 from preprocessing.text import preprocess_text
-from utils import get_abspath, RANDOM_STATE, now_as_str
+from utils import get_abspath, RANDOM_STATE, now_as_str, join_paths
 
 
 def prepare_corpus(documents):
@@ -109,13 +109,13 @@ class TopicsModel(metaclass=abc.ABCMeta):
         model_name = "{0}_{1}topics_coherence{2}_{3}".format(base_name, str(self.model.num_topics),
                                                              str(self.coherence_value), now)
 
-        self.dir_path = get_abspath(__file__, path + model_name)
+        self.dir_path = get_abspath(__file__, join_paths(path, model_name))
         os.mkdir(self.dir_path)
-        model_path = self.dir_path + "/" + model_name
+        model_path = join_paths(self.dir_path, model_name)
         self.model.save(model_path)
 
         # Save the coherence value in a .txt file
-        coherence_path = self.dir_path + "/coherence_value.txt"
+        coherence_path = join_paths(self.dir_path, "coherence_value.txt")
         with open(coherence_path, 'w') as f:
             f.write(str(self.coherence_value))
 
@@ -129,7 +129,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :param documents:
         :return:
         """
-        model = cls._load_gensim_model(model_dir_path + model_name + "/" + model_name)
+        model = cls._load_gensim_model(join_paths(model_dir_path, model_name) + "/" + model_name)
         return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name)
 
     @classmethod
@@ -419,7 +419,7 @@ class LdaMalletModel(TopicsModel):
         # Add the model_name again to the prefix. Mallet expects the prefix to be the name of a file
         # inside the folder where the mallet files will be saved. For that reason, we add to the folder
         # path the model name, and we will use later the prefix to store the final model.
-        prefix += '/' + self.model_name
+        prefix = join_paths(prefix, self.model_name)
 
         return gensim.models.wrappers.LdaMallet(corpus=self.corpus,
                                                 id2word=self.dictionary,
@@ -651,11 +651,12 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         plt.ylabel("Coherence score")
         plt.legend("coherence_values", loc='best')
         plt.title(title)
-        plt.show()
 
         # Save to disk
         if save_plot:
             plt.savefig(save_plot_path)
+
+        plt.show()
 
     def save(self, base_name, path=_SAVE_MODELS_PATH, index=None):
         """

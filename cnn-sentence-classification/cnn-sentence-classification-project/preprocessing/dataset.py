@@ -7,12 +7,12 @@ from preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, make_tr
 from preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, remove_stopwords, \
     substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, remove_single_chars, \
     remove_apostrophes
-from utils import get_abspath
+from utils import get_abspath, join_paths
 from utils import pretty_print
 
-__PREPROCESSING_FILES_DIR = '../preprocessing-files/'
-__TRASH_WORDS_PATH = __PREPROCESSING_FILES_DIR + 'trash_words.txt'
-__TRASH_DOCS_PATH = __PREPROCESSING_FILES_DIR + 'trash_docs.txt'
+__PREPROCESSING_FILES_DIR = '../preprocessing-files'
+__TRASH_WORDS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'trash_words.txt')
+__TRASH_DOCS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'trash_docs.txt')
 
 
 def print_words_that_contain_elem(dataset, elem):

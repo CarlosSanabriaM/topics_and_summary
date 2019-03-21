@@ -5,16 +5,16 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
-from utils import get_abspath
+from utils import get_abspath, join_paths
 
 __BASIC_STOPWORDS = set(stopwords.words('english'))
 __EMAILS_RE = re.compile(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)")
 __PUNCTUATION_RE = re.compile('[—ºª#$€%&*+-_.·,;:<=>@/¡!¿?^¨`´\"(){|}~[\\]]')
-__PREPROCESSING_FILES_DIR = '../preprocessing-files/'
-__ADDITIONAL_STOPWORDS_PATH = __PREPROCESSING_FILES_DIR + 'stopwords.txt'
-__EXPAND_CONTRACTIONS_DICT_PATH = __PREPROCESSING_FILES_DIR + 'expand_contractions_dict.txt'
-__VULGAR_WORDS_DICT_PATH = __PREPROCESSING_FILES_DIR + 'vulgar_words_dict.txt'
-__NORMALIZE_WORDS_DICT_PATH = __PREPROCESSING_FILES_DIR + 'normalize_words_dict.txt'
+__PREPROCESSING_FILES_DIR = '../preprocessing-files'
+__ADDITIONAL_STOPWORDS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'stopwords.txt')
+__EXPAND_CONTRACTIONS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'expand_contractions_dict.txt')
+__VULGAR_WORDS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'vulgar_words_dict.txt')
+__NORMALIZE_WORDS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'normalize_words_dict.txt')
 
 
 def to_lowercase(text):

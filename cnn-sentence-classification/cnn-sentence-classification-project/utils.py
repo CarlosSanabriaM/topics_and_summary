@@ -22,6 +22,17 @@ def get_abspath(module__file__, file_path):
     return path.abspath(path.join(path.dirname(module__file__), file_path))
 
 
+def join_paths(path1, path2):
+    """
+    Joins 2 unix paths. If path1 ends in '/', path2 is added at the end.
+    If not, path1 and path2 are added with a '/' in between.
+    """
+    if path1[-1] == '/':
+        return path1 + path2
+    else:
+        return path1 + '/' + path2
+
+
 def now_as_str():
     """
     :return: The current time as str.
