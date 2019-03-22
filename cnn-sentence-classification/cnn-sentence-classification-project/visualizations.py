@@ -84,7 +84,6 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
         fig, axes = plt.subplots(2, 2, figsize=(10, 10), dpi=dpi, sharex=True, sharey=True)
 
         for ax in axes.flatten():
-            # TODO: Check this to avoid printing empty graphs
             # If the topic index equals the num_topics, the current plot has less than 4 topic to show,
             # so we remove that axes from the plot.
             if topic_index == num_topics:

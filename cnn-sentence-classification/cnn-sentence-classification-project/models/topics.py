@@ -488,19 +488,6 @@ class LdaGensimModel(TopicsModel):
         random_state argument is obligatory.
         :return: The gensim.models.LdaModel model created.
         """
-
-        # TODO: Remove
-        """
-        # model_name kwargs can't be passed to LdaModel __init__()
-        # TODO: This can be done better removing from kwargs all the keys that aren't in the __init__() method below
-        if kwargs.__contains__('model_name'):
-            del kwargs['model_name']
-            
-        # Obtain the argument names of the gensim LdaModel __init__ method, and remove from the kwargs dict
-        # the kwargs that aren't in the argument names of the gensim LdaModel __init__ method.
-        gensim_ldamodel_init_args = inspect.getfullargspec(gensim.models.LdaModel.__init__).args
-        """
-
         return gensim.models.LdaModel(corpus=self.corpus,
                                       id2word=self.dictionary,
                                       num_topics=self.num_topics,
@@ -547,15 +534,6 @@ class LsaGensimModel(TopicsModel):
         :param kwargs: Keyword arguments that want to be used in the gensim.models.LdaModel.
         :return: The gensim.models.LsiModel model created.
         """
-
-        # TODO: Remove
-        """
-        # model_name kwargs can't be passed to LdaModel __init__()
-        # TODO: This can be done better removing from kwargs all the keys that aren't in the __init__() method below
-        if kwargs.__contains__('model_name'):
-            del kwargs['model_name']
-        """
-
         return gensim.models.LsiModel(corpus=self.corpus,
                                       id2word=self.dictionary,
                                       num_topics=self.num_topics,
@@ -717,13 +695,6 @@ class LdaMalletModelsList(TopicsModelsList):
         :param kwargs: Other keyword parameters for creating the models.
         :return: List of the created models and their corresponding coherence values.
         """
-
-        # TODO: Remove?
-        # # base_models_name is an obligatory param for creating lda mallet models, because it's
-        # # obligatory to pass the param models_base_name to the _create_model function of LdaMalletModelsList.
-        # if 'models_base_name' not in kwargs or kwargs['models_base_name'] is None:
-        #     raise ValueError('models_base_name parameter is obligatory')
-
         first_index = len(self.models_list)
         current_index = first_index
         coherence_values = []

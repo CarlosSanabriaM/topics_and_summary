@@ -1,8 +1,7 @@
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset
-from preprocessing.dataset import preprocess_dataset
 from models.topics import LdaMalletModel, LdaMalletModelsList
+from preprocessing.dataset import preprocess_dataset
 from utils import pretty_print
-
 
 if __name__ == '__main__':
 

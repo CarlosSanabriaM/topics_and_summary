@@ -1,5 +1,5 @@
-import seaborn as sns
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from preprocessing.dataset import preprocess_dataset

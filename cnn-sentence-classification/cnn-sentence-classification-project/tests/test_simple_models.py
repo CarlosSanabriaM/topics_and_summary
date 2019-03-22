@@ -1,10 +1,10 @@
-from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC
 
-from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 import preprocessing as pre
+from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from embeddings import Word2VecModel
 from evaluation import evaluate_model
 from utils import pretty_print

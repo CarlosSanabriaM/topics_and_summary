@@ -1,14 +1,14 @@
 # %%
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils.np_utils import to_categorical
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset
-from preprocessing.dataset import preprocess_dataset
-from preprocessing.text import get_first_k_words
 from embeddings import Word2VecModel
 from models.classification import CNNSentenceClassification, CNNKerasExample
+from preprocessing.dataset import preprocess_dataset
+from preprocessing.text import get_first_k_words
 from utils import pretty_print
 
 

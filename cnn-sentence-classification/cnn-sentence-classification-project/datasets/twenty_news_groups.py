@@ -1,5 +1,6 @@
-from os import listdir, path
 import re
+from os import listdir
+
 import pandas as pd
 
 from datasets.common import get_file_content, Document
@@ -162,7 +163,6 @@ class TwentyNewsGroupsDataset:
         :param doc_name: Name of the document.
         :return: Returns the index of the specified document or -1 if the documents isn't in the dataset.
         """
-        # TODO: Is there a way to make it simpler?
         try:
             # Get the document with that name inside that category
             f = filter(lambda doc: doc.name == doc_name, self.files_dict[category])

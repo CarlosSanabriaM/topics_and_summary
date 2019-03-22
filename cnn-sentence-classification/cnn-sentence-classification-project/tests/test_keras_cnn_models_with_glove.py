@@ -1,17 +1,17 @@
 # %%
 import numpy as np
+from keras.initializers import Constant
+from keras.layers import Embedding
+from keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing.text import Tokenizer
+from keras.utils.np_utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
-from keras.utils.np_utils import to_categorical
-from keras.layers import Embedding
-from keras.initializers import Constant
 
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset
-from preprocessing.dataset import preprocess_dataset
 from embeddings import Glove
 from models.classification import CNNSentenceClassification, CNNKerasExample
+from preprocessing.dataset import preprocess_dataset
 from utils import pretty_print
 
 

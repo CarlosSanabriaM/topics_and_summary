@@ -1,6 +1,6 @@
+import matplotlib.pyplot as plt
 from keras.layers import Input, Conv1D, Dropout, Dense, GlobalMaxPooling1D, MaxPooling1D
 from keras.models import Model
-import matplotlib.pyplot as plt
 
 from utils import pretty_print
 
@@ -181,7 +181,7 @@ class CNNKerasExample:  # TODO: Create a parent class??
         x = MaxPooling1D(pool_size=pool_size)(x)
         x = Conv1D(filters=num_filters, kernel_size=filter_window_size, activation=activation_function)(x)
         x = GlobalMaxPooling1D()(x)
-        x = Dense(units=128, activation=activation_function)(x)  # TODO: Extract 128 to a variable?
+        x = Dense(units=128, activation=activation_function)(x)
         preds = Dense(units=num_classes, activation='softmax')(x)
 
         self.model = Model(sequence_input, preds)
