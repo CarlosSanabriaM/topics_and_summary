@@ -3,7 +3,7 @@ from typing import List
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from models.topics import LdaModelsList, LsaModelsList, LdaMalletModelsList, TopicsModel
 from preprocessing.dataset import preprocess_dataset
-from utils import get_abspath, join_paths, pretty_print
+from utils import join_paths, pretty_print, get_abspath_from_project_root
 from visualizations import plot_word_clouds_k_keywords_each_topic, tsne_clustering_chart
 
 
@@ -114,29 +114,29 @@ if __name__ == '__main__':
     # Topics info for the models
     MIN_TOPICS = 10
     MAX_TOPICS = 20
-    BASE_PATH = '../saved-models/topics/comparison'
+    BASE_PATH = get_abspath_from_project_root('saved-models/topics/comparison')
 
     # %%
     # Unigrams
     pretty_print('Unigrams')
     unigrams_dataset = preprocess_dataset(dataset, ngrams='uni')
     unigrams_documents = unigrams_dataset.as_documents_list()
-    unigrams_path = get_abspath(__file__, join_paths(BASE_PATH, 'unigrams'))
+    unigrams_path = join_paths(BASE_PATH, 'unigrams')
 
     generate_and_store_models(unigrams_path, unigrams_documents, 'Unigrams')
 
     # Bigrams
     pretty_print('Bigrams')
-    bigrams_dataset = preprocess_dataset(dataset, ngrams='bi')
+    bigrams_dataset, bigrams_func = preprocess_dataset(dataset, ngrams='bi')
     bigrams_documents = bigrams_dataset.as_documents_list()
-    bigrams_path = get_abspath(__file__, join_paths(BASE_PATH, 'bigrams'))
+    bigrams_path = join_paths(BASE_PATH, 'bigrams')
 
     generate_and_store_models(bigrams_path, bigrams_documents, 'Bigrams')
 
     # Trigrams
     pretty_print('Trigrams')
-    trigrams_dataset = preprocess_dataset(dataset, ngrams='tri')
+    trigrams_dataset, trigrams_func = preprocess_dataset(dataset, ngrams='tri')
     trigrams_documents = trigrams_dataset.as_documents_list()
-    trigrams_path = get_abspath(__file__, join_paths(BASE_PATH, 'trigrams'))
+    trigrams_path = join_paths(BASE_PATH, 'trigrams')
 
     generate_and_store_models(trigrams_path, trigrams_documents, 'Trigrams')

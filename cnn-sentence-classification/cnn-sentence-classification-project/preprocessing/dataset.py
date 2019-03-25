@@ -7,10 +7,10 @@ from preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, make_tr
 from preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, remove_stopwords, \
     substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, remove_single_chars, \
     remove_apostrophes
-from utils import get_abspath, join_paths
+from utils import join_paths, get_abspath_from_project_root
 from utils import pretty_print
 
-__PREPROCESSING_FILES_DIR = '../preprocessing-files'
+__PREPROCESSING_FILES_DIR = get_abspath_from_project_root('preprocessing-files')
 __TRASH_WORDS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'trash_words.txt')
 __TRASH_DOCS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'trash_docs.txt')
 
@@ -195,7 +195,6 @@ def remove_docs_that_contain_any_of_the_words_in_file(dataset, file_path=__TRASH
     :param dataset: Dataset where docs will be removed. The dataset is modified.
     :param file_path: Path to the file. The file must contain a word in each line.
     """
-    file_path = get_abspath(__file__, file_path)
     with open(file_path) as f:
         words = set(line.strip() for line in f)
 
@@ -211,7 +210,6 @@ def remove_trash_docs_specified_in_file(dataset, file_path=__TRASH_DOCS_PATH, fi
     the element specified in 'file_sep' parameter.
     :param file_sep: Separator of the category and the name in the file.
     """
-    file_path = get_abspath(__file__, file_path)
     with open(file_path) as f:
         docs_list = [line.strip().split(file_sep) for line in f]
 

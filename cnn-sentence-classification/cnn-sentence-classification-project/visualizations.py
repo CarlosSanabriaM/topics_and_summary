@@ -11,7 +11,7 @@ from tqdm import tqdm
 from wordcloud import WordCloud, STOPWORDS
 
 from models.topics import TopicsModel
-from utils import RANDOM_STATE, now_as_str, get_abspath, join_paths
+from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
 
 
 def plot_distribution_of_doc_word_counts(documents):
@@ -96,7 +96,7 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
             topic = topics[topic_index][1]
             topic_words = dict(topic)
             cloud.generate_from_frequencies(topic_words,
-                                            max_font_size=300)  # TODO: Process finished with exit code 139 (interrupted by signal 11: SIGSEGV)
+                                            max_font_size=300)  # TODO: Process finished with exit code 139 (interrupted by signal 11: SIGSEGV) when LSAModel is used
 
             plt.gca().imshow(cloud)
             plt.gca().set_title('Topic ' + str(topic_index), fontdict=dict(size=20))
@@ -119,7 +119,7 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
         plt.clf()  # TODO: Does this avoid showing the plots when show_plot is False and plt.show() is called in another part?
 
 
-__TSNE_SAVE_PATH = 'saved-models/topics/tsne'
+__TSNE_SAVE_PATH = get_abspath_from_project_root('saved-models/topics/tsne')
 
 
 def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_threshold=0,
@@ -173,7 +173,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
         now = now_as_str()
         plot_name = 'tsne_' + now + '.html'
 
-    bp.output_file(get_abspath(__file__, join_paths(save_path, plot_name)), mode='inline')
+    bp.output_file(join_paths(save_path, plot_name), mode='inline')
 
     # Create the plot for the Topic Clusters using Bokeh
     plot = figure(title="t-SNE Clustering of {} LDA Topics".format(model.num_topics),

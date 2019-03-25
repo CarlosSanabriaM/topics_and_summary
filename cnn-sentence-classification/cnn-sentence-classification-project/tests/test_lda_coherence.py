@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from preprocessing.dataset import preprocess_dataset
-from utils import pretty_print, get_abspath, RANDOM_STATE
+from utils import pretty_print, RANDOM_STATE, get_abspath_from_project_root, join_paths
 
 
 def get_corpus(dictionary, documents):
@@ -159,7 +159,7 @@ if __name__ == '__main__':
 
     # Log gensim
 
-    #logging.basicConfig(filename=get_abspath(__file__, '../logs/lda.log'),
+    # logging.basicConfig(filename=get_abspath_from_project_root('logs/lda.log'),
     #                    format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
     # %%
@@ -182,9 +182,9 @@ if __name__ == '__main__':
     now = str(datetime.datetime.now())
     model_name = "lda_tuned_model_" + now
     os.mkdir('../saved-models/lda/' + model_name)
-    path = get_abspath(__file__, "../saved-models/lda/" + model_name + "/" + model_name)
+    path = get_abspath_from_project_root(join_paths("saved-models/lda/", model_name, model_name))
 
-    epoch_saver = EpochSaver(get_abspath(__file__, path))
+    epoch_saver = EpochSaver(path)
     epoch_logger = EpochLogger()
 
     #coherence_metric = CoherenceMetric(texts=documents, dictionary=terms_dictionary,

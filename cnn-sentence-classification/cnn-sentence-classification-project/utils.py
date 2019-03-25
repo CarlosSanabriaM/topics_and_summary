@@ -3,6 +3,8 @@ from datetime import datetime
 from os import path
 
 RANDOM_STATE = 100
+# This python module (utils.py) must be in the root folder of the project. If not, the following PATH won't be OK.
+PROJECT_ROOT_PATH = path.dirname(path.abspath(__file__))
 
 
 def pretty_print(text):
@@ -11,33 +13,24 @@ def pretty_print(text):
     print('_' * len(text))
 
 
-def get_abspath(module__file__, file_path):
-    """
-    Returns the absolute path to the relative path specified in a module.
-    :param module__file__: __file__ variable of the module that calls this function.
-    :param file_path: Relative path from the module that calls this function, pointing to
-    the resource that module wants to access.
-    :return: The absolute path to the relative path specified in a module.
-    """
-    return path.abspath(path.join(path.dirname(module__file__), file_path))
+def join_paths(path1, *paths):
+    # If paths contains '/', transform to '\\' if os is Windows.
+    path1 = path.normcase(path1)
+    paths = map(lambda p: path.normcase(p), paths)
+
+    # Join all the paths
+    return path.join(path1, *paths)
 
 
-def join_paths(path1, path2):
-    """
-    Joins 2 unix paths. If path1 ends in '/', path2 is added at the end.
-    If not, path1 and path2 are added with a '/' in between.
-    """
-    if path1[-1] == '/':
-        return path1 + path2
-    else:
-        return path1 + '/' + path2
+def get_abspath_from_project_root(path):
+    return join_paths(PROJECT_ROOT_PATH, path)
 
 
 def now_as_str():
     """
     :return: The current time as str.
     """
-    return str(datetime.now())
+    return str(datetime.now().strftime('%Y-%m-%d_%H-%M'))
 
 
 def save_obj_to_disk(obj, name):
@@ -47,7 +40,7 @@ def save_obj_to_disk(obj, name):
     :param name: Name of the pickle file to be created in saved-models/objects/ and
     where the object info will be stored.
     """
-    obj_path = get_abspath(__file__, 'saved-models/objects/{}.pickle'.format(name))
+    obj_path = get_abspath_from_project_root('saved-models/objects/{}.pickle'.format(name))
     with open(obj_path, 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
@@ -58,6 +51,6 @@ def load_obj_from_disk(name):
     :param name: Name of the pickle file stores in saved-models/objects/.
     :return: The object load from disk.
     """
-    obj_path = get_abspath(__file__, 'saved-models/objects/{}.pickle'.format(name))
+    obj_path = get_abspath_from_project_root('saved-models/objects/{}.pickle'.format(name))
     with open(obj_path, 'rb') as f:
         return pickle.load(f)

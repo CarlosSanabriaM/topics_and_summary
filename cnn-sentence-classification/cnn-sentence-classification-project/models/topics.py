@@ -9,7 +9,7 @@ from texttable import Texttable
 from tqdm import tqdm
 
 from preprocessing.text import preprocess_text
-from utils import get_abspath, RANDOM_STATE, now_as_str, join_paths
+from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
 
 
 def prepare_corpus(documents):
@@ -44,7 +44,7 @@ def get_corpus(dictionary, documents):
 class TopicsModel(metaclass=abc.ABCMeta):
     """Base class for a single topics model."""
 
-    __SAVE_PATH = '../saved-models/topics/'  # Path where the models will be saved
+    __SAVE_PATH = get_abspath_from_project_root('saved-models/topics/')  # Path where the models will be saved
 
     def __init__(self, documents, dictionary=None, corpus=None, num_topics=20, model=None, **kwargs):
         """
@@ -109,7 +109,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         model_name = "{0}_{1}topics_coherence{2}_{3}".format(base_name, str(self.model.num_topics),
                                                              str(self.coherence_value), now)
 
-        self.dir_path = get_abspath(__file__, join_paths(path, model_name))
+        self.dir_path = join_paths(path, model_name)
         os.mkdir(self.dir_path)
         model_path = join_paths(self.dir_path, model_name)
         self.model.save(model_path)
@@ -129,7 +129,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :param documents:
         :return:
         """
-        model = cls._load_gensim_model(join_paths(model_dir_path, model_name) + "/" + model_name)
+        model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name))
         return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name)
 
     @classmethod
@@ -376,11 +376,11 @@ class TopicsModel(metaclass=abc.ABCMeta):
 class LdaMalletModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use."""
 
-    __MALLET_SOURCE_CODE_PATH = '../../../mallet-2.0.8/bin/mallet'
-    __MALLET_SAVED_MODELS_PATH = '../saved-models/topics/lda_mallet'
+    __MALLET_SOURCE_CODE_PATH = get_abspath_from_project_root('../../mallet-2.0.8/bin/mallet')
+    __MALLET_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lda_mallet')
 
     def __init__(self, documents, dictionary=None, corpus=None, num_topics=20,
-                 model=None, mallet_path=get_abspath(__file__, __MALLET_SOURCE_CODE_PATH),
+                 model=None, mallet_path=__MALLET_SOURCE_CODE_PATH,
                  model_name=None, model_path=__MALLET_SAVED_MODELS_PATH, **kwargs):
         """
         Encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use.
@@ -414,7 +414,7 @@ class LdaMalletModel(TopicsModel):
         """
         # Create the folder where the mallet files will be stored
 
-        prefix = get_abspath(__file__, join_paths(kwargs['model_path'], self.model_name))
+        prefix = join_paths(kwargs['model_path'], self.model_name)
         del kwargs['model_path']  # Remove it to avoid passing it to the LdaMallet __init__ method above
         os.mkdir(prefix)
 
@@ -438,7 +438,7 @@ class LdaMalletModel(TopicsModel):
         :param path: Path of the saved gensim.models.wrappers.LdaMallet.
         :return: The gensim.models.wrappers.LdaMallet model.
         """
-        return gensim.models.wrappers.LdaMallet.load(get_abspath(__file__, path))
+        return gensim.models.wrappers.LdaMallet.load(path)
 
     # noinspection PyMethodOverriding
     def save(self):
@@ -464,7 +464,7 @@ class LdaMalletModel(TopicsModel):
 class LdaGensimModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LdaModel, making it easier to use."""
 
-    __LDA_SAVED_MODELS_PATH = '../saved-models/topics/lda/'
+    __LDA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lda/')
 
     def __init__(self, documents, dictionary=None, corpus=None, num_topics=20,
                  model=None, random_state=RANDOM_STATE, **kwargs):
@@ -507,13 +507,13 @@ class LdaGensimModel(TopicsModel):
         :param path: Path of the saved gensim.models.LdaModel.
         :return: The gensim.models.LdaModel.
         """
-        return gensim.models.LdaModel.load(get_abspath(__file__, path))
+        return gensim.models.LdaModel.load(path)
 
 
 class LsaGensimModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LsiModel, making it easier to use."""
 
-    __LSA_SAVED_MODELS_PATH = '../saved-models/topics/lsa/'
+    __LSA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lsa/')
 
     def __init__(self, documents, dictionary=None, corpus=None, num_topics=20, model=None, **kwargs):
         """
@@ -553,13 +553,13 @@ class LsaGensimModel(TopicsModel):
         :param path: Path of the saved gensim.models.LsiModel.
         :return: The gensim.models.LsiModel.
         """
-        return gensim.models.LsiModel.load(get_abspath(__file__, path))
+        return gensim.models.LsiModel.load(path)
 
 
 class TopicsModelsList(metaclass=abc.ABCMeta):
     """Base class for a list of topics models."""
 
-    _SAVE_MODELS_PATH = '../saved-models/topics/'  # Path where the models will be saved
+    _SAVE_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/')  # Path where the models will be saved
 
     def __init__(self, documents):
         self.documents = documents

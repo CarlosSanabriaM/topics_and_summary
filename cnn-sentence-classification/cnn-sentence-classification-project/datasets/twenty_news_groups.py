@@ -4,14 +4,13 @@ from os import listdir
 import pandas as pd
 
 from datasets.common import get_file_content, Document
-from utils import pretty_print, get_abspath
+from utils import pretty_print, get_abspath_from_project_root, join_paths
 
 
 class TwentyNewsGroupsDataset:
-    __DATASET_PATH = '../../../text-preprocessing/20_newsgroups'
+    __DATASET_PATH = get_abspath_from_project_root('../../text-preprocessing/20_newsgroups')
 
-    def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True,
-                 dataset_path=get_abspath(__file__, __DATASET_PATH)):
+    def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=__DATASET_PATH):
         """
         Loads the 20 newsgroups dataset in a dict.
         It can appy a first preprocessing on the dataset files.
@@ -47,9 +46,9 @@ class TwentyNewsGroupsDataset:
             self.files_dict[directory] = []
 
             # Add each file in the category to the dict
-            for file_name in listdir(self.dataset_path + '/' + directory):
+            for file_name in listdir(join_paths(self.dataset_path, directory)):
                 file_content = get_file_content(
-                    self.dataset_path + '/' + directory + '/' + file_name, 'latin1')
+                    join_paths(self.dataset_path, directory, file_name), 'latin1')
                 self.files_dict[directory].append(Document(file_name, file_content))
 
     def apply_function_to_files(self, func):

@@ -5,12 +5,12 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
-from utils import get_abspath, join_paths
+from utils import join_paths, get_abspath_from_project_root
 
 __BASIC_STOPWORDS = set(stopwords.words('english'))
 __EMAILS_RE = re.compile(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)")
 __PUNCTUATION_RE = re.compile('[—ºª#$€%&*+-_.·,;:<=>@/¡!¿?^¨`´\"(){|}~[\\]]')
-__PREPROCESSING_FILES_DIR = '../preprocessing-files'
+__PREPROCESSING_FILES_DIR = get_abspath_from_project_root('preprocessing-files')
 __ADDITIONAL_STOPWORDS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'stopwords.txt')
 __EXPAND_CONTRACTIONS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'expand_contractions_dict.txt')
 __VULGAR_WORDS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'vulgar_words_dict.txt')
@@ -39,8 +39,7 @@ def remove_stopwords(text, basic_stopwords=__BASIC_STOPWORDS, additional_stopwor
     _stopwords = basic_stopwords
 
     if additional_stopwords:
-        additional_stopwords_path = get_abspath(__file__, __ADDITIONAL_STOPWORDS_PATH)
-        with open(additional_stopwords_path) as f:
+        with open(__ADDITIONAL_STOPWORDS_PATH) as f:
             additional_stopwords = set(line.strip() for line in f)
         _stopwords = _stopwords.union(additional_stopwords)
 
@@ -136,8 +135,7 @@ def substitute_words_with_dict(text, substitutions_dict):
     # If substitutions_dict is a str, then it's the path to a file containing the dict in json format.
     # So, we have to load the dict from the hard drive to memory.
     if type(substitutions_dict) is str:
-        file_path = get_abspath(__file__, substitutions_dict)
-        with open(file_path) as f:
+        with open(substitutions_dict) as f:
             substitutions_dict = json.load(f)
 
     # If it's a dict (it was at the beginning or it was converted above) we make the substitutions.
