@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # Create the Glove model
     EMBEDDING_DIM = 100
     glove = Glove(EMBEDDING_DIM)
-    print('Found %s word vectors.' % len(glove.embeddings_index))
+    print('Found %s word vectors.' % len(glove.embeddings))
 
     # %%
     # Prepare the embedding matrix
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         # TODO: Se puede optimizar poniendo break?? Si word_index.items() está ordenado sí.
         if i > MAX_NUM_WORDS:
             continue
-        embedding_vector = glove.embeddings_index.get(word)
+        embedding_vector = glove.embeddings.get(word)
         if embedding_vector is not None:
             # words not found in embedding index will be all-zeros.
             embedding_matrix[i] = embedding_vector

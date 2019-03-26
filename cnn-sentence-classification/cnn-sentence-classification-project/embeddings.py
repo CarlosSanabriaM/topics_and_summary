@@ -58,7 +58,7 @@ class Glove:
         """
 
         # A dict where keys are words and values are their corresponding word vectors
-        self.embeddings_index = {}
+        self.embeddings = {}
 
         with open(join_paths(glove_dir, 'glove.6B.' + str(vectors_dim) + 'd.txt')) as f:
             for line in f:
@@ -67,4 +67,4 @@ class Glove:
                 values = line.split()
                 word = values[0]  # the word is the first element of the line
                 word_vector = np.asarray(values[1:], dtype='float32')  # the word vector is the rest
-                self.embeddings_index[word] = word_vector
+                self.embeddings[word] = word_vector
