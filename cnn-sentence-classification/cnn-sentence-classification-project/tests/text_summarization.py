@@ -22,8 +22,14 @@ if __name__ == '__main__':
     documents = dataset.as_documents_list(tokenize_words=False)
 
     # Get a single document
-    doc_index = int(input('Doc index: '))
-    doc = documents[doc_index]
+    dataset_doc_or_user_doc = input('Use a dataset doc (d) or enter your own doc (o)?')
+    if dataset_doc_or_user_doc == 'd':
+        doc_index = int(input('Doc index: '))
+        doc = documents[doc_index]
+    else:
+        doc = input('Write the doc:')
+
+    pretty_print('Document content')
     print(doc)
     # endregion
 
@@ -58,7 +64,6 @@ if __name__ == '__main__':
     # Transform each word of each sentence into a vector and calculate the mean
     # of the vectors of the sentence. That mean vector will be the sentence vector.
     sentence_vectors = []
-    preprocessed_sentences.append('')  # TODO: Remove this line
     for sent in preprocessed_sentences:
         sent_words = sent.split()
         # If the sentence has no words after the preprocessing a default numpy array full of zeros is used
@@ -67,7 +72,7 @@ if __name__ == '__main__':
         else:
             # For each word in the sentence, transform it to a vector. If the word is not present
             # in the glove embeddings, a default numpy array full of zeros is used.
-            word_vectors = [glove.embeddings.get(word, np.zeros(EMBEDDINGS_DIM)) for word in sent_words]
+            word_vectors = [glove.get_word_vector(word) for word in sent_words]
             # Sentence vector is the mean of the word vectors
             sent_vector = sum(word_vectors) / len(word_vectors)
 

@@ -1,28 +1,55 @@
+import abc
+
 import numpy as np
 from gensim.models import KeyedVectors
 
 from utils import get_abspath_from_project_root, join_paths
 
 
-class Word2VecModel:
-    """Word2Vec word embedding model."""
-    __MODEL_PATH = get_abspath_from_project_root('../../word2vec/GoogleNews-vectors-negative300.bin.gz')
+class EmbeddingsModel(metaclass=abc.ABCMeta):
+    """Interface for embedding's models."""
 
-    def __init__(self, model_path=__MODEL_PATH):
+    @abc.abstractmethod
+    def get_word_vector(self, word):
+        """
+        Returns the embedding vector of the given word. If the word is
+        not present in the embedding's model, a default numpy array full
+        of zeros of the same size of the vectors in the embedding's model is returned.
+        :param word: Word to be converted as a vector.
+        :return: The embedding vector of the given word.
+        """
+        pass
+
+
+class Word2VecModel(EmbeddingsModel):
+    """Word2Vec word embedding model."""
+
+    __WORD2VEC_VECTORS_DIM = 300
+    __MODEL_PATH = get_abspath_from_project_root('../../word2vec/GoogleNews-vectors-negative{}.bin.gz'
+                                                 .format(__WORD2VEC_VECTORS_DIM))
+
+    def __init__(self, model_path=__MODEL_PATH, vectors_dim=__WORD2VEC_VECTORS_DIM):
         """
         Constructs a Word2Vec model using the gensim library.
         :param model_path: The path of the binary word2vec model.
+        :param vectors_dim: Dimension of the vectors of the word2vec model.
         Default is the 100 billion words model pretrained on Google News.
         """
+        self.vectors_dim = vectors_dim
         self.w2v_model = KeyedVectors.load_word2vec_format(model_path, binary=True)
 
     def get_word_vector(self, word):
         """
-        Returns the word2vec vector of the given word.
+        Returns the word2vec vector of the given word. If the word is not present
+        in the word2vec model, a default numpy array full of zeros of the same size
+        of the vectors in the word2vec model is returned.
         :param word: Word to be converted as a vector.
         :return: The word2vec vector of the given word.
         """
-        return self.w2v_model.word_vec(word, use_norm=False)
+        try:
+            return self.w2v_model.word_vec(word, use_norm=False)
+        except KeyError:
+            return np.zeros(self.vectors_dim)
 
     def get_word_index(self, word):
         """
@@ -43,8 +70,9 @@ class Word2VecModel:
         return self.w2v_model.get_keras_embedding(train_embeddings=train_embeddings)
 
 
-class Glove:
+class Glove(EmbeddingsModel):
     """Glove word embedding model."""
+
     __GLOVE_DIR = get_abspath_from_project_root('../../glove/glove.6B')
     __GLOVE_VECTORS_DIM = 100
 
@@ -56,7 +84,7 @@ class Glove:
         text files with the structure mentioned above.
         :param vectors_dim: Size of the word vector. Possible values are: 50, 100, 200, 300.
         """
-
+        self.vectors_dim = vectors_dim
         # A dict where keys are words and values are their corresponding word vectors
         self.embeddings = {}
 
@@ -68,3 +96,15 @@ class Glove:
                 word = values[0]  # the word is the first element of the line
                 word_vector = np.asarray(values[1:], dtype='float32')  # the word vector is the rest
                 self.embeddings[word] = word_vector
+
+    def get_word_vector(self, word):
+        """
+        Returns the glove vector of the given word. If the word is not present
+        in the glove model, a default numpy array full of zeros of the same size
+        of the vectors in the glove model is returned.
+        :param word: Word to be converted as a vector.
+        :return: The glove vector of the given word.
+        """
+
+        # If the word is not present in the dict as a key, an array of zeros is returned
+        return self.embeddings.get(word, np.zeros(self.vectors_dim))  # second value is the default if key not present
