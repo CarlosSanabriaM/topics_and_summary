@@ -20,6 +20,13 @@ class EmbeddingsModel(metaclass=abc.ABCMeta):
         """
         pass
 
+    @abc.abstractmethod
+    def get_vectors_dim(self):
+        """
+        :return: The dimension of the embeddings vectors.
+        """
+        pass
+
 
 class Word2VecModel(EmbeddingsModel):
     """Word2Vec word embedding model."""
@@ -69,6 +76,9 @@ class Word2VecModel(EmbeddingsModel):
         """
         return self.w2v_model.get_keras_embedding(train_embeddings=train_embeddings)
 
+    def get_vectors_dim(self):
+        return self.vectors_dim
+
 
 class Glove(EmbeddingsModel):
     """Glove word embedding model."""
@@ -108,3 +118,6 @@ class Glove(EmbeddingsModel):
 
         # If the word is not present in the dict as a key, an array of zeros is returned
         return self.embeddings.get(word, np.zeros(self.vectors_dim))  # second value is the default if key not present
+
+    def get_vectors_dim(self):
+        return self.vectors_dim
