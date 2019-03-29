@@ -46,7 +46,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     __SAVE_PATH = get_abspath_from_project_root('saved-models/topics/')  # Path where the models will be saved
 
-    def __init__(self, documents, dictionary=None, corpus=None, num_topics=20, model=None, **kwargs):
+    def __init__(self, documents, dictionary=None, corpus=None, num_topics=20, model=None, docs_topics_df=None,
+                 **kwargs):
         """
         :param documents: List of lists of strings. Each one of the nested lists represents a document,
         and the strings the words in that document.
@@ -54,12 +55,14 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :param corpus: Document-term matrix. If is None, it is created using the documents.
         :param num_topics: Number of topics.
         :param model: Pre-created model. If is None, a model is created.
+        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method
+        get_dominant_topic_of_each_doc_as_df().
         :param kwargs: Additional arguments.
         """
         self.documents = documents
         self.num_topics = num_topics
         self.coherence_value = None
-        self.docs_topics_df = None
+        self.docs_topics_df = docs_topics_df
         self.dir_path = None  # Path of the directory where the model is saved to
 
         if dictionary is None or corpus is None:
@@ -255,10 +258,14 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     def get_dominant_topic_of_each_doc_as_df(self):
         """
-        Returns a pandas DataFrame with the following columns: Doc index, Dominant topic index, Topic prob,
-        Topic keywords, Doc text. This method can take to much time to execute if the dataset is big.
+        Returns a pandas DataFrame with the dominant topic of each document.
+        The df has the following columns: Doc index, Dominant topic index, Topic prob,Topic keywords, Doc text.
+        This method can take to much time to execute if the dataset is big.
         :return: pandas DataFrame.
         """
+
+        if self.docs_topics_df is not None:
+            return self.docs_topics_df
 
         # Iteratively appending rows to a DataFrame can be more computationally intensive than a single concatenate.
         # A better solution is to append those rows to a list and then concatenate the list with the original
