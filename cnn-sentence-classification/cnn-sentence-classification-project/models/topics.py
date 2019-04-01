@@ -438,14 +438,21 @@ class LdaMalletModel(TopicsModel):
                                                 prefix=prefix,
                                                 **kwargs)  # mallet_path is passed here
 
+    # noinspection PyMethodOverriding
     @classmethod
-    def _load_gensim_model(cls, path):
+    def _load_gensim_model(cls, path, mallet_path):
         """
         Loads the gensim.models.wrappers.LdaMallet in the specified path and returns it.
         :param path: Path of the saved gensim.models.wrappers.LdaMallet.
         :return: The gensim.models.wrappers.LdaMallet model.
         """
-        return gensim.models.wrappers.LdaMallet.load(path)
+        model = gensim.models.wrappers.LdaMallet.load(path)
+        # Save path in the prefix attribute of the mallet model, because it's needed to access the files
+        model.prefix = path
+        # Save mallet path in the mallet_path attribute
+        model.mallet_path = mallet_path
+
+        return model
 
     # noinspection PyMethodOverriding
     def save(self):
@@ -464,8 +471,19 @@ class LdaMalletModel(TopicsModel):
             f.write(str(self.coherence_value))
 
     @classmethod
-    def load(cls, model_name, documents, model_dir_path=__MALLET_SAVED_MODELS_PATH):
-        return super(LdaMalletModel, cls).load(model_name, documents, model_dir_path)
+    def load(cls, model_name, documents,
+             model_dir_path=__MALLET_SAVED_MODELS_PATH, mallet_path=__MALLET_SOURCE_CODE_PATH):
+        """
+        Loads the model with the given name from the specified path, and
+        returns a LdaMalletModel instance.
+        :param model_name: Model name.
+        :param documents: Documents of the dataset.
+        :param model_dir_path: Path to the directory where the model is in.
+        :param mallet_path: Path to the mallet source code.
+        :return:
+        """
+        model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name), mallet_path)
+        return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name)
 
 
 class LdaGensimModel(TopicsModel):
