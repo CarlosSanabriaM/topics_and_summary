@@ -159,7 +159,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
         for topic in topics_sequence:
             print('Topic ' + str(topic[0]) + ': ' + topic[1])
 
-    def predict_topic_prob_on_text(self, text, num_best_topics=None, preprocess=True, print_table=True):
+    def predict_topic_prob_on_text(self, text, num_best_topics=None, preprocess=True,
+                                   ngrams='uni', ngrams_model_func=None, print_table=True):
         """
         Predicts the probability of each topic to be related to the given text.
         The probabilities sum 1. When the probability of a topic is very high, the other
@@ -167,12 +168,18 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :param text: Text.
         :param num_best_topics: Number of topics to return. If is None, returns all the topics that the model returns.
         :param preprocess: If true, applies preprocessing to the given text using preprocessing.text.preprocess_text().
+        :param ngrams: If 'uni', uses unigrams. If 'bi', create bigrams. If 'tri', creates trigrams.
+        By default is 'uni'. If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
+        :param ngrams_model_func: Function that receives a list of words and returns a list of words with
+        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function
+        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions
+        in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
         :param print_table: If True, this method also prints a table with the topics indices,
         their probabilities, and their keywords.
         :return: Topic probability vector.
         """
         if preprocess:
-            text = preprocess_text(text)
+            text = preprocess_text(text, ngrams=ngrams, ngrams_model_func=ngrams_model_func)
 
         text_as_bow = self.dictionary.doc2bow(text.split())
         topic_prob_vector = self.model[text_as_bow]
@@ -199,7 +206,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return topic_prob_vector[:num_best_topics]
 
-    def get_related_documents_as_df(self, text, k_docs_per_topic=1, preprocess=True):
+    def get_related_documents_as_df(self, text, k_docs_per_topic=1, preprocess=True,
+                                    ngrams='uni', ngrams_model_func=None):
         """
         Given a text, this method returns a df with the index and the content of the most similar documents
         in the corpus. The similar/related documents are obtained as follows:
@@ -212,10 +220,17 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :param text: String.
         :param k_docs_per_topic: Number of documents per topic to be used to retrieve the related documents.
         :param preprocess: If True, apply preprocessing to the text.
+        :param ngrams: If 'uni', uses unigrams. If 'bi', create bigrams. If 'tri', creates trigrams.
+        By default is 'uni'. If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
+        :param ngrams_model_func: Function that receives a list of words and returns a list of words with
+        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function
+        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions
+        in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
         :return: The pandas DataFrame.
         """
         # 1. Obtain the list of topics more related with the text
-        topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess=preprocess, print_table=False)
+        topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess=preprocess, ngrams=ngrams,
+                                                            ngrams_model_func=ngrams_model_func, print_table=False)
         topics = list(map(lambda x: x[0], topic_prob_vector))
         # TODO: If the prob between the first topic and the second is very high, maybe is better to use only the first
         #  topic and forget about the rest. The number of topics to return will be k_docs_per_topic * len(topics),

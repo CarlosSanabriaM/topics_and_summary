@@ -1,4 +1,5 @@
 import re
+from collections import OrderedDict
 from os import listdir
 
 import pandas as pd
@@ -20,7 +21,7 @@ class TwentyNewsGroupsDataset:
         :param dataset_path: Path to the dataset.
         """
         self.dataset_path = dataset_path
-        self.files_dict = {}  # The key is the parent folder and the value of each key is a list of document objects
+        self.files_dict = OrderedDict()  # Key is the parent folder and value of each key is a list of document objects
         self._load_files()  # Load the files in the previous dict
         self.classes = list(self.files_dict.keys())
         self.num_classes = len(self.files_dict)
@@ -38,15 +39,19 @@ class TwentyNewsGroupsDataset:
         Load the files in the files_dict with the keys being the category of the files,
         and the values being a list of document objects, where each document is a file of that category.
         """
-        for directory in listdir(self.dataset_path):
-            # Skip Mac file
-            if directory == '.DS_Store':
+        for directory in sorted(listdir(self.dataset_path)):
+            # Skip hidden files
+            if directory.startswith('.'):
                 continue
 
             self.files_dict[directory] = []
 
             # Add each file in the category to the dict
-            for file_name in listdir(join_paths(self.dataset_path, directory)):
+            for file_name in sorted(listdir(join_paths(self.dataset_path, directory))):
+                # Skip hidden files
+                if file_name.startswith('.'):
+                    continue
+
                 file_content = get_file_content(
                     join_paths(self.dataset_path, directory, file_name), 'latin1')
                 self.files_dict[directory].append(Document(file_name, file_content))
