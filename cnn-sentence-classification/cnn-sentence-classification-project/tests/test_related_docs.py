@@ -1,44 +1,13 @@
-# # Appears 1,2,3
-# topic_prob_vector = [
-#     (1, 0.30),
-#     (2, 0.15),
-#     (3, 0.13),
-#     (4, 0.10),
-#     (5, 0.10)]
+from models.topics import LdaGensimModel
+from utils import load_obj_from_disk, load_func_from_disk
 
-# Appears all
-# topic_prob_vector = [
-#     (1, 0.10),
-#     (2, 0.10),
-#     (3, 0.10),
-#     (4, 0.10),
-#     (5, 0.10)]
+dataset = load_obj_from_disk('trigrams_dataset')
+trigrams_func = load_func_from_disk('trigrams_func')
 
-# Appears 1,2
-topic_prob_vector = [
-    (1, 0.30),
-    (2, 0.15),
-    (3, 0.11),
-    (4, 0.10),
-    (5, 0.10)]
+documents = dataset.as_documents_list()
+model = LdaGensimModel(documents)
 
-# topic_prob_vector is ordered by the probability. If the probability of a topic is greater than
-# the probability of the next topic * a multiplier, then the next topics are discard.
-multipliers_list = [2, 1.3, 1.1, 1]  # List of multipliers applied to topic i+1
-topics = []  # List that stores the index of the best topics
-for i in range(len(topic_prob_vector)):
-    topics.append(topic_prob_vector[i][0])  # Add the current topic index to the list of topics
+text = """According to the 1991 Survey of State Prison Inmates, among those inmates who possessed a handgun, 9% had acquired it through theft, and 28% had acquired it through an illegal market such as a drug dealer or fence. Of all inmates, 10% had stolen at least one gun, and 11% had sold or traded stolen guns.
+Studies of adult and juvenile offend- ers that the Virginia Department of Criminal Justice Services conducted in 1992 and 1993 found that 15% of the adult offenders and 19% of the ju- venile offenders had stolen guns; 16% of the adults and 24% of the juveniles had kept a stolen gun; and 20% of the adults and 30% of the juveniles had sold or traded a stolen gun."""
 
-    # Break if the last topic was reached
-    if i == len(topic_prob_vector) - 1:
-        break
-
-    # Last multiplier value is used for the topics above len(multipliers_list) position in the topic_prob_vector
-    multipliers_index = min(i, len(multipliers_list) - 1)
-    multiplier = multipliers_list[multipliers_index]
-
-    # If the prob of the current topic is > than the prob of the next topic * multiplier, discard next topics
-    if topic_prob_vector[i][1] > topic_prob_vector[i + 1][1] * multiplier:
-        break
-
-print(topics)
+df = model.get_related_documents_as_df(text, num_docs=7, ngrams='tri', ngrams_model_func=trigrams_func)
