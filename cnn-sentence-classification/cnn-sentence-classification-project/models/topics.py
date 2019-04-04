@@ -334,8 +334,6 @@ class TopicsModel(metaclass=abc.ABCMeta):
         # Change columns order
         k_most_repr_doc_per_topic_df = \
             k_most_repr_doc_per_topic_df[['Topic index', 'Doc index', 'Topic prob', 'Topic keywords', 'Doc text']]
-        # Order rows by topic index (in ascending order). Each topic group is ordered by the Topic prob, so no problem.
-        k_most_repr_doc_per_topic_df = k_most_repr_doc_per_topic_df.sort_values(['Topic index'], ascending=[True])
 
         return k_most_repr_doc_per_topic_df
 
