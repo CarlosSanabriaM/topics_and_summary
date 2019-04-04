@@ -1,5 +1,6 @@
 import abc
 import os
+from typing import List, Tuple
 
 import gensim
 import matplotlib.pyplot as plt
@@ -158,6 +159,25 @@ class TopicsModel(metaclass=abc.ABCMeta):
         topics_sequence = self.model.print_topics(num_topics=num_topics, num_words=num_words_each_topic)
         for topic in topics_sequence:
             print('Topic ' + str(topic[0]) + ': ' + topic[1])
+
+    def get_topics(self, num_keywords=10) -> List[Tuple[int, List[Tuple[str, float]]]]:
+        """
+        Returns a list of the topics and it's keywords (keyword name and keyword probability).
+        Keywords inside a topic are ordered by it's probability inside that topic.
+        :param num_keywords: Number of keywords of each topic.
+        :return: List of (topic, List of(keyword, keyword_prob)).
+        """
+        return self.model.show_topics(num_topics=self.num_topics, num_words=num_keywords, formatted=False)
+
+    def get_topic(self, topic, num_keywords=10) -> List[Tuple[str, float]]:
+        """
+        Returns a list of the topic keywords (keyword name and keyword probability).
+        Keywords are ordered by it's probability inside the topic.
+        :param topic: Topic id.
+        :param num_keywords: Number of keywords to retrieve.
+        :return: List of(keyword, keyword_prob).
+        """
+        return self.model.show_topic(topic, num_keywords)
 
     def predict_topic_prob_on_text(self, text, num_best_topics=None, preprocess=True,
                                    ngrams='uni', ngrams_model_func=None, print_table=True):
@@ -351,10 +371,6 @@ class TopicsModel(metaclass=abc.ABCMeta):
             k_most_repr_doc_per_topic_df.loc[k_most_repr_doc_per_topic_df['Topic index'] == topic]
         # Return a df with only the following columns: Doc index, Topic prob and Doc text
         return k_most_repr_doc_per_topic_df[['Doc index', 'Topic prob', 'Doc text']]
-
-        # todo: remove
-        # # Remove 'Topic index' column
-        # k_most_repr_doc_per_topic_df.drop(columns=['Topic index'], inplace=True)
 
     def get_topic_distribution_as_df(self):
         """
