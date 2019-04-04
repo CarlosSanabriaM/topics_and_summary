@@ -37,7 +37,6 @@ def plot_distribution_of_doc_word_counts(documents):
     plt.show()
 
 
-# TODO: Add a param that receives a dataframe, to avoid recalculating the matrix if dataframe is available
 def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_keywords=10,
                                            save=False, dir_save_path=None, dpi=350, show_plot=True):
     """

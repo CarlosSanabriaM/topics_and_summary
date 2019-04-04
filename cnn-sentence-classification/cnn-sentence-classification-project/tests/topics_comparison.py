@@ -3,7 +3,7 @@ from typing import List
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from models.topics import LdaModelsList, LsaModelsList, LdaMalletModelsList, TopicsModel
 from preprocessing.dataset import preprocess_dataset
-from utils import join_paths, pretty_print, get_abspath_from_project_root
+from utils import join_paths, pretty_print, get_abspath_from_project_root, save_obj_to_disk, save_func_to_disk
 from visualizations import plot_word_clouds_k_keywords_each_topic, tsne_clustering_chart
 
 
@@ -136,6 +136,9 @@ if __name__ == '__main__':
     # Trigrams
     pretty_print('Trigrams')
     trigrams_dataset, trigrams_func = preprocess_dataset(dataset, ngrams='tri')
+    save_obj_to_disk(trigrams_dataset, 'trigrams_dataset')
+    save_func_to_disk(trigrams_func, 'trigrams_func')
+
     trigrams_documents = trigrams_dataset.as_documents_list()
     trigrams_path = join_paths(BASE_PATH, 'trigrams')
 
