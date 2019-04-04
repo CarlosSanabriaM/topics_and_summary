@@ -308,7 +308,6 @@ class TopicsModel(metaclass=abc.ABCMeta):
         Returns a DataFrame where the topics are grouped in ascending order by their indices, and inside each
         topic group there are k rows, where each row contains the topic and one of the most representative documents
         of that topic, in descending order.
-        get_dominant_topic_of_document_each_doc_as_df(). If is None, that method is call, and that can take be slow.
         :param k: Number of the most representative documents per topic you want.
         :return: A pandas DataFrame with the following columns: Topic index, Doc index, Topic prob, Topic keywords and
         Doc text.
@@ -336,6 +335,26 @@ class TopicsModel(metaclass=abc.ABCMeta):
             k_most_repr_doc_per_topic_df[['Topic index', 'Doc index', 'Topic prob', 'Topic keywords', 'Doc text']]
 
         return k_most_repr_doc_per_topic_df
+
+    def get_k_most_representative_docs_of_topic_as_df(self, topic, k=1):
+        """
+        Returns a DataFrame with the k most representative documents of the given topic.
+        The DataFrame has k rows, where each row contains the document index, the document-topic probability and
+        the document text, in descending order.
+        :param topic: Index of the topic.
+        :param k: Number of the most representative documents of the topic you want.
+        :return: A pandas DataFrame with the following columns: Doc index, Topic prob and Doc text.
+        """
+        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k)
+        # Keep only the rows where the 'Topic index' equals the topic index passed as a parameter
+        k_most_repr_doc_per_topic_df = \
+            k_most_repr_doc_per_topic_df.loc[k_most_repr_doc_per_topic_df['Topic index'] == topic]
+        # Return a df with only the following columns: Doc index, Topic prob and Doc text
+        return k_most_repr_doc_per_topic_df[['Doc index', 'Topic prob', 'Doc text']]
+
+        # todo: remove
+        # # Remove 'Topic index' column
+        # k_most_repr_doc_per_topic_df.drop(columns=['Topic index'], inplace=True)
 
     def get_topic_distribution_as_df(self):
         """
