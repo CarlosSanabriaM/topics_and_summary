@@ -1,5 +1,4 @@
 import abc
-import math
 import os
 
 import gensim
@@ -207,8 +206,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return topic_prob_vector[:num_best_topics]
 
-    def get_related_documents_as_df(self, text, num_docs=5, preprocess=True,
-                                    ngrams='uni', ngrams_model_func=None, multipliers_list=None):
+    def get_related_documents_as_df(self, text, num_docs=5, preprocess=True, ngrams='uni', ngrams_model_func=None):
         """
         Given a text, this method returns a df with the index and the content of the most similar documents
         in the corpus. The similar/related documents are obtained as follows:
@@ -227,49 +225,31 @@ class TopicsModel(metaclass=abc.ABCMeta):
         possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function
         is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions
         in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
-        :param multipliers_list: List of multipliers to select the best topics.
         :return: The pandas DataFrame.
         """
         # 1. Obtain the list of topics more related with the text
         topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess=preprocess, ngrams=ngrams,
                                                             ngrams_model_func=ngrams_model_func, print_table=False)
 
-        # topic_prob_vector is ordered by the probability. If the probability of a topic is greater than
-        # the probability of the next topic * a multiplier, then the next topics are discard.
-        if multipliers_list is None:
-            multipliers_list = [2, 1.3, 1.1, 1]  # List of multipliers applied to topic i+1
-        topics = []  # List that stores the index of the best topics
-        for i in range(len(topic_prob_vector)):
-            topics.append(topic_prob_vector[i][0])  # Add the current topic index to the list of topics
-
-            # Break if the last topic was reached
-            if i == len(topic_prob_vector) - 1:
-                break
-
-            # Last multiplier value is used for the topics above len(multipliers_list) position in the topic_prob_vector
-            multipliers_index = min(i, len(multipliers_list) - 1)
-            multiplier = multipliers_list[multipliers_index]
-
-            # If the prob of the current topic is > than the prob of the next topic * multiplier, discard next topics
-            if topic_prob_vector[i][1] > topic_prob_vector[i + 1][1] * multiplier:
-                break
+        topics = list(map(lambda x: x[0], topic_prob_vector))  # Stores the indices of the topics
 
         # 2. Obtain a df with the documents more related with the topics in the previous step
-        num_docs_per_topic = math.ceil(num_docs / len(topics))
-
-        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k=num_docs_per_topic)
+        # Maybe all the best docs are from a unique topic,
+        # so we need to obtain num_docs docs from each topic in the topics list
+        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k=num_docs)
+        # Only the docs of the topics in the topics list are kept
         related_docs_df = k_most_repr_doc_per_topic_df.loc[k_most_repr_doc_per_topic_df['Topic index'].isin(topics)]
 
-        # 3. Transform the df to have the following columns: Doc index, Doc prob, Doc text
+        # 3. Transform the df to have the following columns: Doc index, Doc prob, Doc text, Topic index, Topic keywords
         # Doc prob = prob of the text being related with the topic * prob that the doc influence the topic
 
-        def get_prob_of_topic(topic_index):
+        def get_text_topic_prob_of_topic(topic_index):
             return next(filter(lambda x: x[0] == topic_index, topic_prob_vector))[1]
 
         # Iterate for each row, get the prob text-topic from the topic_prob_vector using the 'Topic index' of that row,
-        # get the prob doc-topic from that row, and multiply them.
+        # get the prob doc-topic from that row, and multiply them. 'Topic prob' is the doc-topic prob.
         doc_prob_column = related_docs_df.apply(lambda row:
-                                                get_prob_of_topic(row['Topic index']) * row['Topic prob'],
+                                                get_text_topic_prob_of_topic(row['Topic index']) * row['Topic prob'],
                                                 axis='columns')
 
         # Add the 'Doc prob' column
@@ -286,9 +266,6 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         # Only the first num_docs rows are kept
         related_docs_df.drop(related_docs_df.index[range(num_docs, len(related_docs_df.index))], inplace=True)
-
-        # Reset the indices
-        related_docs_df.reset_index(drop=True, inplace=True)
 
         return related_docs_df
 
