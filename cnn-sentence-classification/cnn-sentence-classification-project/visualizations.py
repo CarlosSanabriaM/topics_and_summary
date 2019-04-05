@@ -39,26 +39,29 @@ def plot_distribution_of_doc_word_counts(documents):
     plt.show()
 
 
-def plot_word_clouds_of_topic(topic: Topic, save=False, dir_save_path=None, dpi=350, show_plot=True):
+def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir_save_path=None, dpi=350,
+                              show_plot=True):
     """
     Plots the specified topic and it's keywords as a word-cloud.
     :param topic: Topic obtained with the get_topic() method of the TopicsModel class.
+    :param all_horizontal: If True, all the keywords are plotted in horizontal.
     :param save: If true, the plots are saved to disk.
     :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
     :param dpi: Dots per inches for the images.
     :param show_plot: If true, shows the plot while executing.
     """
-    plot_word_clouds_of_topics([topic], single_plot_per_topic=True, save=save, dir_save_path=dir_save_path,
-                               dpi=dpi, show_plot=show_plot)
+    plot_word_clouds_of_topics([topic], single_plot_per_topic=True, all_horizontal=all_horizontal, save=save,
+                               dir_save_path=dir_save_path, dpi=dpi, show_plot=show_plot)
 
 
-def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
+def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False, all_horizontal=True,
                                save=False, dir_save_path=None, dpi=350, show_plot=True):
     """
     Plots the specified topics and it's keywords as word-clouds.
     :param topics: Topics obtained with the get_topics() method of the TopicsModel class.
     :param single_plot_per_topic: If True, each topic is plotted in a separated plot.
     If False, each plot contains 4 topics.
+    :param all_horizontal: If True, all the keywords are plotted in horizontal.
     :param save: If true, the plots are saved to disk.
     :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
     :param dpi: Dots per inches for the images.
@@ -75,6 +78,11 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
     def color_func(*args, **kwargs):
         return colors[topic_index % len(colors)]
 
+    if all_horizontal:
+        prefer_horizontal = 1.0
+    else:
+        prefer_horizontal = 0.9
+
     cloud = WordCloud(stopwords=STOPWORDS,
                       background_color='white',
                       width=2500,
@@ -82,7 +90,7 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
                       max_words=topics[0].num_keywords(),
                       colormap='tab10',
                       color_func=color_func,
-                      prefer_horizontal=1.0)
+                      prefer_horizontal=prefer_horizontal)
 
     num_topics_plotted = 0
     num_iterations = len(topics) if single_plot_per_topic else math.ceil(len(topics) / 4)
