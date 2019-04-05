@@ -146,38 +146,41 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :return: The gensim model.
         """
 
-    def print_topics(self, num_words_each_topic=10, num_topics=None):
+    def print_topics(self, num_keywords=10, gensim_way=True):
         """
         Prints the topics of the topics model.
-        :param num_words_each_topic: Number of words of each topic to print.
-        :param num_topics: Number of topics to show. If not specified, default is the num topics in the lsa model.
+        :param num_keywords: Number of keywords of each topic to be printed.
+        :param gensim_way: If True, the topics are printed in the gensim way.
+        If not, are printed using the __str__ methods of the Topic and Keywords classes.
         """
-        if num_topics is None:
-            num_topics = self.model.num_topics
+        if gensim_way:
+            # Sequence with (topic_id, [(word, value), ... ]).
+            topics_sequence = self.model.print_topics(num_topics=self.num_topics, num_words=num_keywords)
+            for topic in topics_sequence:
+                print('Topic ' + str(topic[0]) + ': ' + topic[1])
+        else:
+            print(*self.get_topics(), sep='\n')
 
-        # Sequence with (topic_id, [(word, value), ... ]).
-        topics_sequence = self.model.print_topics(num_topics=num_topics, num_words=num_words_each_topic)
-        for topic in topics_sequence:
-            print('Topic ' + str(topic[0]) + ': ' + topic[1])
-
-    def get_topics(self, num_keywords=10) -> List[Tuple[int, List[Tuple[str, float]]]]:
+    def get_topics(self, num_keywords=10) -> List['Topic']:
         """
         Returns a list of the topics and it's keywords (keyword name and keyword probability).
         Keywords inside a topic are ordered by it's probability inside that topic.
         :param num_keywords: Number of keywords of each topic.
-        :return: List of (topic, List of(keyword, keyword_prob)).
+        :return: List of Topics objs.
         """
-        return self.model.show_topics(num_topics=self.num_topics, num_words=num_keywords, formatted=False)
+        return [Topic(id, kws_as_list_of_tuples)
+                for id, kws_as_list_of_tuples in
+                self.model.show_topics(num_topics=self.num_topics, num_words=num_keywords, formatted=False)]
 
-    def get_topic(self, topic, num_keywords=10) -> List[Tuple[str, float]]:
+    def get_topic(self, topic, num_keywords=10) -> 'Topic':
         """
         Returns a list of the topic keywords (keyword name and keyword probability).
         Keywords are ordered by it's probability inside the topic.
         :param topic: Topic id.
         :param num_keywords: Number of keywords to retrieve.
-        :return: List of(keyword, keyword_prob).
+        :return: Topic obj.
         """
-        return self.model.show_topic(topic, num_keywords)
+        return Topic(topic, self.model.show_topic(topic, num_keywords))
 
     def predict_topic_prob_on_text(self, text, num_best_topics=None, preprocess=True,
                                    ngrams='uni', ngrams_model_func=None, print_table=True):
@@ -448,7 +451,7 @@ class Topic:
             .format(self.id, self.num_keywords())
 
         for kw in self.keywords:
-            s += '\t\t{0}'.format(kw)
+            s += '\t\t{0}\n'.format(kw)
 
         return s
 
