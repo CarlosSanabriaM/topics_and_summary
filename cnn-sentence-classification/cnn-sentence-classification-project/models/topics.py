@@ -426,6 +426,53 @@ class TopicsModel(metaclass=abc.ABCMeta):
         return ' '.join(list(map(lambda x: x[0], self.model.show_topic(topic)))[:k])
 
 
+class Topic:
+    """
+    Class that simply stores the id of a topic and a specific number of keywords obtained from that topic.
+    It's used for data transfer.
+    """
+
+    def __init__(self, id, kws_as_list_of_tuples):
+        """
+        :param id: Id of the topic
+        :param kws_as_list_of_tuples: Keywords obtained from the topic.
+        :type kws_as_list_of_tuples: List[Tuple[str, float]]
+        """
+        self.id = id
+        self.keywords = [Keyword(name, probability) for name, probability in kws_as_list_of_tuples]
+
+    def __str__(self):
+        s = 'Topic {0}:\n' \
+            '\tNum keywords={1}\n' \
+            '\tKeywords:\n' \
+            .format(self.id, self.num_keywords())
+
+        for kw in self.keywords:
+            s += '\t\t{0}'.format(kw)
+
+        return s
+
+    def num_keywords(self):
+        """
+        :return: Number of keywords stored in this topic object.
+        """
+        return len(self.keywords)
+
+
+class Keyword:
+    """
+    Class that simply stores the name of a keywords and it's probability inside a topic.
+    It's used for data transfer.
+    """
+
+    def __init__(self, name, probability):
+        self.name = name
+        self.probability = probability
+
+    def __str__(self):
+        return '{0}: {1}'.format(self.name, self.probability)
+
+
 class LdaMalletModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use."""
 
