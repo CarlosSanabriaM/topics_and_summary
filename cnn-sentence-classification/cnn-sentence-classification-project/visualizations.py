@@ -1,4 +1,5 @@
 import math
+from typing import List
 
 import bokeh.plotting as bp
 import matplotlib.colors as mcolors
@@ -10,6 +11,7 @@ from sklearn.manifold import TSNE
 from tqdm import tqdm
 from wordcloud import WordCloud, STOPWORDS
 
+from models.topics import Topic
 from models.topics import TopicsModel
 from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
 
@@ -37,29 +39,24 @@ def plot_distribution_of_doc_word_counts(documents):
     plt.show()
 
 
-def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_keywords=10,
-                                           save=False, dir_save_path=None, dpi=350, show_plot=True):
+def plot_word_clouds_k_keywords_each_topic(topics: List[Topic], save=False, dir_save_path=None, dpi=350,
+                                           show_plot=True):
     """
-    Plots word clouds for the specified number of topics in the given model.
-    :type topics_model: TopicsModel or gensim.models.wrappers.LdaMallet or gensim.models.LdaModel
-    or gensim.models.LsiModel.
-    :param topics_model: gensim models (lda, lsa or lda_mallet)
-    :param num_topics: Number of topics to be plotted. If is None, the num_topics of the model are used.
-    :param num_keywords: Number of keywords in each topic to be plotted.
+    Plots the specified topics and it's keywords as word clouds.
+    :param topics: Topics obtained with the get_topics() method of the TopicsModel class.
     :param save: If true, the plots are saved to disk.
     :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
     :param dpi: Dots per inches for the images.
     :param show_plot: If true, shows the plot while executing.
     """
 
-    # If topics_model is a TopicsModel, obtain the gensim model inside it.
-    if isinstance(topics_model, TopicsModel):
-        topics_model = topics_model.model
+    if len(topics) == 0:
+        raise Exception("topics param can't be an empty list")
 
     colors = [color for color in mcolors.TABLEAU_COLORS.values()]  # List of colors
     # Index of the current topic to be plotted.
     # Is used also for selecting the color for that topic in the function below.
-    topic_index = 0
+    topic_index = topics[0].id
 
     def color_func(*args, **kwargs):
         return colors[topic_index % len(colors)]
@@ -68,41 +65,37 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
                       background_color='white',
                       width=2500,
                       height=1800,
-                      max_words=num_keywords,
+                      max_words=topics[0].num_keywords(),
                       colormap='tab10',
                       color_func=color_func,
                       prefer_horizontal=1.0)
 
-    if num_topics is None:
-        num_topics = topics_model.num_topics
-
-    # Obtain the topics from the model, with the specified number of topics and keywords
-    topics = topics_model.show_topics(num_topics, num_keywords, formatted=False)
-
+    # TODO: Change this to retrieve a single plot for each topic when param in the method is True
     # Each plot is formed by 4 subplots, each one containing the words of a topic
-    for i in range(math.ceil(num_topics / 4)):
+    num_topics_plotted = 0
+    for i in range(math.ceil(len(topics) / 4)):
         fig, axes = plt.subplots(2, 2, figsize=(10, 10), dpi=dpi, sharex=True, sharey=True)
 
         for ax in axes.flatten():
-            # If the topic index equals the num_topics, the current plot has less than 4 topic to show,
-            # so we remove that axes from the plot.
-            if topic_index == num_topics:
+            # If all the topics have been plotted, and we are inside this for,
+            # the current plot has less than 4 topic to show, so we remove the rest of the axes from the plot.
+            if num_topics_plotted == len(topics):
                 fig.delaxes(ax)
                 continue
 
             fig.add_subplot(ax)
 
-            topic_index = topics[topic_index][0]
-            topic = topics[topic_index][1]
-            topic_words = dict(topic)
-            cloud.generate_from_frequencies(topic_words,
-                                            max_font_size=300)  # TODO: Process finished with exit code 139 (interrupted by signal 11: SIGSEGV) when LSAModel is used
+            topic = topics[num_topics_plotted]
+            topic_index = topic.id
+            topic_kws = dict(topic.as_list_of_tuples())
+            # Process finished with exit code 139 (interrupted by signal 11: SIGSEGV) when LSAModel is used below
+            cloud.generate_from_frequencies(topic_kws, max_font_size=300)
 
             plt.gca().imshow(cloud)
             plt.gca().set_title('Topic ' + str(topic_index), fontdict=dict(size=20))
             plt.gca().axis('off')
 
-            topic_index += 1
+            num_topics_plotted += 1
 
         # plt.subplots_adjust(wspace=0, hspace=0)
         plt.axis('off')
@@ -116,7 +109,8 @@ def plot_word_clouds_k_keywords_each_topic(topics_model, num_topics=None, num_ke
         if show_plot:
             plt.show()
 
-        plt.clf()  # TODO: Does this avoid showing the plots when show_plot is False and plt.show() is called in another part?
+        # TODO: Does this avoid showing the plots when show_plot is False and plt.show() is called in another part?
+        plt.clf()
 
 
 __TSNE_SAVE_PATH = get_abspath_from_project_root('saved-models/topics/tsne')

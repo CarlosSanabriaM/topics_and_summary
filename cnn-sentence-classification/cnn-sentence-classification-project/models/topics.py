@@ -461,6 +461,12 @@ class Topic:
         """
         return len(self.keywords)
 
+    def as_list_of_tuples(self):
+        """
+        :return: Topics as a list of tuples: [(name1, prob1), (name2, prob2), ...].
+        """
+        return [kw.as_tuple() for kw in self.keywords]
+
 
 class Keyword:
     """
@@ -474,6 +480,12 @@ class Keyword:
 
     def __str__(self):
         return '{0}: {1}'.format(self.name, self.probability)
+
+    def as_tuple(self):
+        """
+        :return: Keyword as a tuple: (name, prob).
+        """
+        return self.name, self.probability
 
 
 class LdaMalletModel(TopicsModel):
