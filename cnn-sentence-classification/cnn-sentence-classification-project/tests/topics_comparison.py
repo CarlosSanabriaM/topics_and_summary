@@ -4,7 +4,7 @@ from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from models.topics import LdaModelsList, LsaModelsList, LdaMalletModelsList, TopicsModel
 from preprocessing.dataset import preprocess_dataset
 from utils import join_paths, pretty_print, get_abspath_from_project_root, save_obj_to_disk, save_func_to_disk
-from visualizations import plot_word_clouds_k_keywords_each_topic, tsne_clustering_chart
+from visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
 
 
 def generate_and_store_models(path, documents, plot_first_name):
@@ -82,8 +82,8 @@ def store_plots(models: List[TopicsModel], coherence_values: List[float], tsne=T
     best_model = models[index_max_coherence_value]
 
     # Store the wordclouds plots of only the bests models of the list
-    plot_word_clouds_k_keywords_each_topic(best_model, save=True, dir_save_path=best_model.dir_path,
-                                           show_plot=False, dpi=100)
+    plot_word_clouds_of_topics(best_model.get_topics(), save=True, dir_save_path=best_model.dir_path,
+                               show_plot=False, dpi=100)
 
     if tsne:
         # Store the tSNE plot of only the best model of the list

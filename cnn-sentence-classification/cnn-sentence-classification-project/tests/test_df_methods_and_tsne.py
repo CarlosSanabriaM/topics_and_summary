@@ -2,7 +2,7 @@ from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from models.topics import LdaGensimModel
 from preprocessing.dataset import preprocess_dataset
 from utils import pretty_print, RANDOM_STATE
-from visualizations import plot_word_clouds_k_keywords_each_topic, tsne_clustering_chart
+from visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
 
 if __name__ == '__main__':
     # %%
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     model.save('lda_test')
 
     # Get insights about the topics
-    plot_word_clouds_k_keywords_each_topic(model)
+    plot_word_clouds_of_topics(model.get_topics())
 
     docs_topics_df = model.get_dominant_topic_of_each_doc_as_df()
     three_most_repr_doc_per_topic_df = model.get_k_most_representative_docs_per_topic_as_df(k=3)

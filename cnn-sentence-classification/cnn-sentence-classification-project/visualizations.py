@@ -39,17 +39,31 @@ def plot_distribution_of_doc_word_counts(documents):
     plt.show()
 
 
-def plot_word_clouds_k_keywords_each_topic(topics: List[Topic], save=False, dir_save_path=None, dpi=350,
-                                           show_plot=True):
+def plot_word_clouds_of_topic(topic: Topic, save=False, dir_save_path=None, dpi=350, show_plot=True):
     """
-    Plots the specified topics and it's keywords as word clouds.
-    :param topics: Topics obtained with the get_topics() method of the TopicsModel class.
+    Plots the specified topic and it's keywords as a word-cloud.
+    :param topic: Topic obtained with the get_topic() method of the TopicsModel class.
     :param save: If true, the plots are saved to disk.
     :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
     :param dpi: Dots per inches for the images.
     :param show_plot: If true, shows the plot while executing.
     """
+    plot_word_clouds_of_topics([topic], single_plot_per_topic=True, save=save, dir_save_path=dir_save_path,
+                               dpi=dpi, show_plot=show_plot)
 
+
+def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
+                               save=False, dir_save_path=None, dpi=350, show_plot=True):
+    """
+    Plots the specified topics and it's keywords as word-clouds.
+    :param topics: Topics obtained with the get_topics() method of the TopicsModel class.
+    :param single_plot_per_topic: If True, each topic is plotted in a separated plot.
+    If False, each plot contains 4 topics.
+    :param save: If true, the plots are saved to disk.
+    :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
+    :param dpi: Dots per inches for the images.
+    :param show_plot: If true, shows the plot while executing.
+    """
     if len(topics) == 0:
         raise Exception("topics param can't be an empty list")
 
@@ -70,40 +84,58 @@ def plot_word_clouds_k_keywords_each_topic(topics: List[Topic], save=False, dir_
                       color_func=color_func,
                       prefer_horizontal=1.0)
 
-    # TODO: Change this to retrieve a single plot for each topic when param in the method is True
-    # Each plot is formed by 4 subplots, each one containing the words of a topic
     num_topics_plotted = 0
-    for i in range(math.ceil(len(topics) / 4)):
-        fig, axes = plt.subplots(2, 2, figsize=(10, 10), dpi=dpi, sharex=True, sharey=True)
+    num_iterations = len(topics) if single_plot_per_topic else math.ceil(len(topics) / 4)
 
-        for ax in axes.flatten():
-            # If all the topics have been plotted, and we are inside this for,
-            # the current plot has less than 4 topic to show, so we remove the rest of the axes from the plot.
-            if num_topics_plotted == len(topics):
-                fig.delaxes(ax)
-                continue
-
-            fig.add_subplot(ax)
-
+    for i in range(num_iterations):
+        # Each topic is plotted in a separate plot
+        if single_plot_per_topic:
             topic = topics[num_topics_plotted]
             topic_index = topic.id
             topic_kws = dict(topic.as_list_of_tuples())
             # Process finished with exit code 139 (interrupted by signal 11: SIGSEGV) when LSAModel is used below
             cloud.generate_from_frequencies(topic_kws, max_font_size=300)
 
-            plt.gca().imshow(cloud)
-            plt.gca().set_title('Topic ' + str(topic_index), fontdict=dict(size=20))
-            plt.gca().axis('off')
+            plt.imshow(cloud)
+            plt.title('Topic ' + str(topic_index), fontdict=dict(size=20))
+            plt.axis("off")
+            plt.margins(x=0, y=0)
+            plt.tight_layout()
 
             num_topics_plotted += 1
+        # Each plot contains, as max, 4 topics
+        else:
+            # Each plot is formed by 4 subplots, each one containing the keywords of a topic
+            fig, axes = plt.subplots(2, 2, figsize=(10, 10), dpi=dpi, sharex=True, sharey=True)
 
-        # plt.subplots_adjust(wspace=0, hspace=0)
-        plt.axis('off')
-        plt.margins(x=0, y=0)
-        plt.tight_layout()
+            for ax in axes.flatten():
+                # If all the topics have been plotted, and we are inside this for,
+                # the current plot has less than 4 topic to show, so we remove the rest of the axes from the plot.
+                if num_topics_plotted == len(topics):
+                    fig.delaxes(ax)
+                    continue
+
+                fig.add_subplot(ax)
+
+                topic = topics[num_topics_plotted]
+                topic_index = topic.id
+                topic_kws = dict(topic.as_list_of_tuples())
+                # Process finished with exit code 139 (interrupted by signal 11: SIGSEGV) when LSAModel is used below
+                cloud.generate_from_frequencies(topic_kws, max_font_size=300)
+
+                plt.gca().imshow(cloud)
+                plt.gca().set_title('Topic ' + str(topic_index), fontdict=dict(size=20))
+                plt.gca().axis('off')
+
+                num_topics_plotted += 1
+
+            plt.axis('off')
+            plt.margins(x=0, y=0)
+            plt.tight_layout()
 
         if save:
-            plot_path = join_paths(dir_save_path, 'wordcloud{}.png'.format(i))
+            save_name = 'wordcloud{}.png'.format(i)
+            plot_path = join_paths(dir_save_path, save_name)
             plt.savefig(plot_path, dpi=dpi)
 
         if show_plot:
