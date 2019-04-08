@@ -13,7 +13,7 @@ if __name__ == '__main__':
     #%%
     # Create the Lda Mallet model
     pretty_print('Creating the Lda Mallet model')
-    documents = dataset.as_documents_list()
+    documents = dataset.as_documents_content_list()
     model = LdaMalletModel(documents, num_topics=20, model_name='lda_mallet_test')
 
     #%%

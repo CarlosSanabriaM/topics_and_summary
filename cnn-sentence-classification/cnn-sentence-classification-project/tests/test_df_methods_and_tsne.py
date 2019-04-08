@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     # Create the Lda model
     pretty_print('Creating the Lda model')
-    documents = dataset.as_documents_list()
+    documents = dataset.as_documents_content_list()
     model = LdaGensimModel(documents, num_topics=20, random_state=RANDOM_STATE)
 
     # Visualize with tsne

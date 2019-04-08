@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     # Load dataset and transform to documents list
     dataset = load_obj_from_disk('dataset')
-    documents = dataset.as_documents_list(tokenize_words=False)
+    documents = dataset.as_documents_content_list(tokenize_words=False)
 
     # Get a single document
     dataset_doc_or_user_doc = input('Use a dataset doc (d) or enter your own doc (o)?')

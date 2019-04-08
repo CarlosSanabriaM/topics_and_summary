@@ -171,7 +171,7 @@ if __name__ == '__main__':
     # %%
     # Create the document-term matrix and the dictionary of terms
     pretty_print('Creating the document-term matrix and the dictionary of terms')
-    documents = dataset.as_documents_list()
+    documents = dataset.as_documents_content_list()
     terms_dictionary, doc_term_matrix = prepare_corpus(documents)
 
     # %%

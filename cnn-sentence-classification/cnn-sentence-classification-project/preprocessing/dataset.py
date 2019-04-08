@@ -36,7 +36,7 @@ def print_words_that_contain_elem(dataset, elem):
 
     num_words_contain_elem = 0
     word_occurrence_dict = {}
-    for doc in dataset.as_documents_list():
+    for doc in dataset.as_documents_content_list():
         for word in doc:
             if elem_re.search(word) is not None:
                 if not word_occurrence_dict.__contains__(word):
@@ -242,6 +242,25 @@ def remove_empty_docs(dataset):
             doc_index_in_category -= 1
 
     return num_empty_docs
+
+
+def remove_duplicate_docs(dataset):
+    """
+    Removes the duplicate documents of the given dataset.
+    :param dataset: Dataset where duplicate docs will be removed. The dataset is modified.
+    :return: The number of documents removed.
+    """
+    # Create a copy of the files dictionary of the dataset
+    files_dict_copy = deepcopy(dataset.files_dict)
+
+    # Iterate over each doc in the dataset
+    for category_name, category_docs in dataset.files_dict.items():
+        doc_index_in_category = 0
+        for doc in category_docs:
+
+            # If the doc content is present in another docs, that docs are removed
+            for category_name_copy in files_dict_copy.keys():
+                files_dict_copy[category_name_copy] = [d for d in files_dict_copy[category_name_copy] if d != doc]
 
 
 def preprocess_dataset(dataset, trash_docs=True, normalize=True, lowercase=True, contractions=True, vulgar_words=True,

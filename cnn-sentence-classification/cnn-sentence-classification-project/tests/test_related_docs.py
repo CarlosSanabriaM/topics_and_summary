@@ -4,7 +4,7 @@ from utils import load_obj_from_disk, load_func_from_disk
 dataset = load_obj_from_disk('trigrams_dataset')
 trigrams_func = load_func_from_disk('trigrams_func')
 
-documents = dataset.as_documents_list()
+documents = dataset.as_documents_content_list()
 model = LdaGensimModel(documents)
 
 text = """According to the 1991 Survey of State Prison Inmates, among those inmates who possessed a handgun, 9% had acquired it through theft, and 28% had acquired it through an illegal market such as a drug dealer or fence. Of all inmates, 10% had stolen at least one gun, and 11% had sold or traded stolen guns.

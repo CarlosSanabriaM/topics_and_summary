@@ -12,7 +12,7 @@ def create_bigram_model(dataset, min_count=50, threshold=75):
 
     # TODO: common_terms param(set of str, optional) – List of “stop words” that won’t affect frequency count
     #  of expressions containing them. Allow to detect expressions like “bank_of_america” or “eye_of_the_beholder”.
-    bigram = gensim.models.Phrases(dataset.as_documents_list(), min_count=min_count, threshold=threshold)
+    bigram = gensim.models.Phrases(dataset.as_documents_content_list(), min_count=min_count, threshold=threshold)
 
     # Return a Phraser, because it is much smaller and somewhat faster than using the full Phrases model
     return gensim.models.phrases.Phraser(bigram)
@@ -35,7 +35,7 @@ def create_trigram_model(dataset, min_count1=50, threshold1=75, min_count2=100, 
 
     # TODO: common_terms param(set of str, optional) – List of “stop words” that won’t affect frequency count
     #  of expressions containing them. Allow to detect expressions like “bank_of_america” or “eye_of_the_beholder”.
-    docs_list = dataset.as_documents_list()
+    docs_list = dataset.as_documents_content_list()
     bigram = gensim.models.Phrases(docs_list, min_count=min_count1, threshold=threshold1)
     trigram = gensim.models.Phrases(bigram[docs_list], min_count=min_count2, threshold=threshold2)
 

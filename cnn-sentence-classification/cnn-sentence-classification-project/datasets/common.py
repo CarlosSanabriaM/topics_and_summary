@@ -1,4 +1,5 @@
 import abc
+from typing import List
 
 import pandas as pd
 
@@ -52,13 +53,20 @@ class Dataset(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def as_documents_list(self, tokenize_words=True):
+    def as_documents_content_list(self, tokenize_words=True):
         """
-        Returns a list of the documents in the dataset.
-        :param tokenize_words: If true, each document is converted into a list of words.
-        :return: List of the documents in the dataset.
+        Returns a list of the content of the documents in the dataset.
+        :param tokenize_words: If true, each document content is converted into a list of words.
+        :return: List of the content of the documents in the dataset.
         """
-        # TODO: Change this to return List[Document] if a param is True
+
+    @abc.abstractmethod
+    def as_documents_obj_list(self, tokenize_words=True) -> List['Document']:
+        """
+        Returns a list of Document objects of the documents in the dataset.
+        :param tokenize_words: If true, each document content is converted into a list of words.
+        :return: List of Document objects of the documents in the dataset.
+        """
 
 
 class Document(metaclass=abc.ABCMeta):

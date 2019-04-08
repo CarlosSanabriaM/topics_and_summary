@@ -120,7 +120,7 @@ if __name__ == '__main__':
     # Unigrams
     pretty_print('Unigrams')
     unigrams_dataset = preprocess_dataset(dataset, ngrams='uni')
-    unigrams_documents = unigrams_dataset.as_documents_list()
+    unigrams_documents = unigrams_dataset.as_documents_content_list()
     unigrams_path = join_paths(BASE_PATH, 'unigrams')
 
     generate_and_store_models(unigrams_path, unigrams_documents, 'Unigrams')
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     # Bigrams
     pretty_print('Bigrams')
     bigrams_dataset, bigrams_func = preprocess_dataset(dataset, ngrams='bi')
-    bigrams_documents = bigrams_dataset.as_documents_list()
+    bigrams_documents = bigrams_dataset.as_documents_content_list()
     bigrams_path = join_paths(BASE_PATH, 'bigrams')
 
     generate_and_store_models(bigrams_path, bigrams_documents, 'Bigrams')
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     save_obj_to_disk(trigrams_dataset, 'trigrams_dataset')
     save_func_to_disk(trigrams_func, 'trigrams_func')
 
-    trigrams_documents = trigrams_dataset.as_documents_list()
+    trigrams_documents = trigrams_dataset.as_documents_content_list()
     trigrams_path = join_paths(BASE_PATH, 'trigrams')
 
     generate_and_store_models(trigrams_path, trigrams_documents, 'Trigrams')

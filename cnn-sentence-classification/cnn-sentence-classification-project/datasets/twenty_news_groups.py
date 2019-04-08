@@ -1,6 +1,8 @@
 import re
 from collections import OrderedDict
+from copy import deepcopy
 from os import listdir
+from typing import List
 
 import pandas as pd
 
@@ -9,6 +11,7 @@ from utils import pretty_print, get_abspath_from_project_root, join_paths
 
 
 class TwentyNewsGroupsDataset(Dataset):
+
     __DATASET_PATH = get_abspath_from_project_root('../../text-preprocessing/20_newsgroups')
     __DATASET_ENCODING = 'latin1'
 
@@ -159,15 +162,22 @@ class TwentyNewsGroupsDataset(Dataset):
 
         return pd.DataFrame.from_dict(dataframe_dict, orient='index', columns=['document', 'class', 'document_name'])
 
-    def as_documents_list(self, tokenize_words=True):
-        """
-        Returns a list of the documents in the dataset.
-        :param tokenize_words: If true, each document is converted into a list of words.
-        :return: List of the documents in the dataset.
-        """
+    def as_documents_content_list(self, tokenize_words=True):
         if tokenize_words:
             return [file.content.split() for files_list in list(self.files_dict.values()) for file in files_list]
         return [file.content for files_list in list(self.files_dict.values()) for file in files_list]
+
+    def as_documents_obj_list(self, tokenize_words=True) -> List['Document']:
+        if tokenize_words:
+            documents_obj_list = []
+            files_dict = deepcopy(self.files_dict)
+            for files_list in list(files_dict.values()):
+                for file in files_list:
+                    file.content = file.content.split()
+                    documents_obj_list.append(file)
+            return documents_obj_list
+
+        return [file for files_list in list(self.files_dict.values()) for file in files_list]
 
     def get_document_index(self, category, doc_name):
         """
