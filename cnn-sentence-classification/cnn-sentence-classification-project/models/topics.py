@@ -124,17 +124,20 @@ class TopicsModel(metaclass=abc.ABCMeta):
             f.write(str(self.coherence_value))
 
     @classmethod
-    def load(cls, model_name, documents, model_dir_path=__SAVE_PATH):
+    def load(cls, model_name, documents, model_dir_path=__SAVE_PATH, docs_topics_df=None):
         """
         Loads the model with the given name from the specified path, and
         returns a TopicsModel instance.
         :param model_dir_path: Path to the directory where the model is in.
         :param model_name: Model name.
-        :param documents:
-        :return:
+        :param documents: Documents of the dataset.
+        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method
+        get_dominant_topic_of_each_doc_as_df().
+        :return: Instance of a TopicsModel object.
         """
         model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name))
-        return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name)
+        return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name,
+                   docs_topics_df=docs_topics_df)
 
     @classmethod
     @abc.abstractmethod
@@ -580,7 +583,8 @@ class LdaMalletModel(TopicsModel):
 
     @classmethod
     def load(cls, model_name, documents,
-             model_dir_path=__MALLET_SAVED_MODELS_PATH, mallet_path=__MALLET_SOURCE_CODE_PATH):
+             model_dir_path=__MALLET_SAVED_MODELS_PATH, mallet_path=__MALLET_SOURCE_CODE_PATH,
+             docs_topics_df=None):
         """
         Loads the model with the given name from the specified path, and
         returns a LdaMalletModel instance.
@@ -588,10 +592,13 @@ class LdaMalletModel(TopicsModel):
         :param documents: Documents of the dataset.
         :param model_dir_path: Path to the directory where the model is in.
         :param mallet_path: Path to the mallet source code.
+        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method
+        get_dominant_topic_of_each_doc_as_df().
         :return:
         """
         model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name), mallet_path)
-        return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name)
+        return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name,
+                   docs_topics_df=docs_topics_df)
 
 
 class LdaGensimModel(TopicsModel):
@@ -630,8 +637,8 @@ class LdaGensimModel(TopicsModel):
         super(LdaGensimModel, self).save(base_name, path)
 
     @classmethod
-    def load(cls, model_name, documents, model_dir_path=__LDA_SAVED_MODELS_PATH):
-        return super(LdaGensimModel, cls).load(model_name, documents, model_dir_path)
+    def load(cls, model_name, documents, model_dir_path=__LDA_SAVED_MODELS_PATH, docs_topics_df=None):
+        return super(LdaGensimModel, cls).load(model_name, documents, model_dir_path, docs_topics_df)
 
     @classmethod
     def _load_gensim_model(cls, path):
@@ -673,8 +680,8 @@ class LsaGensimModel(TopicsModel):
                                       **kwargs)
 
     @classmethod
-    def load(cls, model_name, documents, model_dir_path=__LSA_SAVED_MODELS_PATH):
-        return super(LsaGensimModel, cls).load(model_name, documents, model_dir_path)
+    def load(cls, model_name, documents, model_dir_path=__LSA_SAVED_MODELS_PATH, docs_topics_df=None):
+        return super(LsaGensimModel, cls).load(model_name, documents, model_dir_path, docs_topics_df)
 
     def save(self, base_name, path=__LSA_SAVED_MODELS_PATH):
         super(LsaGensimModel, self).save(base_name, path)
