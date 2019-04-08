@@ -58,6 +58,6 @@ if __name__ == '__main__':
 
     text3 = """Car gas speed wheels Windows MSDOS issue space jesus god bible people mac U.S.A. guns lebanese"""
 
-    related_docs_text1_df = model.get_related_documents_as_df(text1, k_docs_per_topic=3)
-    related_docs_text2_df = model.get_related_documents_as_df(text2, k_docs_per_topic=3)
-    related_docs_text3_df = model.get_related_documents_as_df(text3, k_docs_per_topic=3)
+    related_docs_text1_df = model.get_related_docs_as_df(text1, k_docs_per_topic=3)
+    related_docs_text2_df = model.get_related_docs_as_df(text2, k_docs_per_topic=3)
+    related_docs_text3_df = model.get_related_docs_as_df(text3, k_docs_per_topic=3)

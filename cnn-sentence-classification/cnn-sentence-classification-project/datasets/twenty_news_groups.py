@@ -4,27 +4,34 @@ from os import listdir
 
 import pandas as pd
 
-from datasets.common import get_file_content, Document
+from datasets.common import get_file_content, Document, Dataset
 from utils import pretty_print, get_abspath_from_project_root, join_paths
 
 
-class TwentyNewsGroupsDataset:
+class TwentyNewsGroupsDataset(Dataset):
     __DATASET_PATH = get_abspath_from_project_root('../../text-preprocessing/20_newsgroups')
+    __DATASET_ENCODING = 'latin1'
 
     def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=__DATASET_PATH):
         """
         Loads the 20 newsgroups dataset in a dict.
-        It can appy a first preprocessing on the dataset files.
+        It can apply a first preprocessing on the dataset files.
         :param remove_header: If true, it removes the header of all files.
         :param remove_footer: If true, it removes the footer of all files.
         :param remove_quotes: If true, it removes the quotes of all files.
         :param dataset_path: Path to the dataset.
         """
-        self.dataset_path = dataset_path
+        super().__init__(dataset_path, self.__DATASET_ENCODING)
+
         self.files_dict = OrderedDict()  # Key is the parent folder and value of each key is a list of document objects
         self._load_files()  # Load the files in the previous dict
         self.classes = list(self.files_dict.keys())
         self.num_classes = len(self.files_dict)
+
+        # Store this values, because are needed in get_original_doc_content_from_disk()
+        self.remove_header = remove_header
+        self.remove_footer = remove_footer
+        self.remove_quotes = remove_quotes
 
         # Apply a first preprocessing
         if remove_header:
@@ -53,8 +60,11 @@ class TwentyNewsGroupsDataset:
                     continue
 
                 file_content = get_file_content(
-                    join_paths(self.dataset_path, directory, file_name), 'latin1')
-                self.files_dict[directory].append(Document(file_name, file_content))
+                    join_paths(self.dataset_path, directory, file_name),
+                    self.__DATASET_ENCODING
+                )
+
+                self.files_dict[directory].append(TwentyNewsGroupsDocument(directory, file_name, file_content))
 
     def apply_function_to_files(self, func):
         """
@@ -81,8 +91,7 @@ class TwentyNewsGroupsDataset:
         """
         self.apply_function_to_files(self.__strip_header)
 
-    __QUOTE_RE = re.compile(
-        r'(writes in|writes:|wrote:|says:|said:|^In article|^Quoted from|^\||^>)')
+    __QUOTE_RE = re.compile(r'(writes in|writes:|wrote:|says:|said:|^In article|^Quoted from|^\||^>)')
 
     @classmethod
     def __strip_quotes(cls, file_text):
@@ -188,3 +197,39 @@ class TwentyNewsGroupsDataset:
         print(self.files_dict['sci.electronics'][0].content)
         pretty_print('File 3')
         print(self.files_dict['rec.autos'][16].content)
+
+    def get_original_doc_content_from_disk(self, doc: 'Document') -> str:
+        # The original doc content has the header, footer and quotes
+        content = super(TwentyNewsGroupsDataset, self).get_original_doc_content_from_disk(doc)
+
+        # Preprocess
+        if self.remove_header:
+            content = self.__strip_header(content)
+        if self.remove_footer:
+            content = self.__strip_footer(content)
+        if self.remove_quotes:
+            content = self.__strip_quotes(content)
+
+        return content
+
+
+class TwentyNewsGroupsDocument(Document):
+
+    def __init__(self, directory_name: str, name: str, content: str):
+        """
+        :param directory_name: Name of the directory this document is stored in.
+        The directory is inside the dataset directory.
+        :param name: Name of the document.
+        :param content: Content of the document.
+        """
+        super().__init__(name, content)
+        self.directory_name = directory_name
+
+    def get_doc_path_inside_dataset_folder(self) -> str:
+        return join_paths(self.directory_name, self.name)
+
+    def __str__(self):
+        return 'Directory: {0}\n' \
+               'Name: {1}\n' \
+               'Content:\n' \
+               '{2}'.format(self.directory_name, self.name, self.content)

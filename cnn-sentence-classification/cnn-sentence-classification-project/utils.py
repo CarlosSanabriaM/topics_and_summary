@@ -15,7 +15,7 @@ def pretty_print(text):
     print('_' * len(text))
 
 
-def join_paths(path1, *paths):
+def join_paths(path1: str, *paths: str) -> str:
     # If paths contains '/', transform to '\\' if os is Windows.
     path1 = path.normcase(path1)
     paths = map(lambda p: path.normcase(p), paths)
@@ -24,11 +24,11 @@ def join_paths(path1, *paths):
     return path.join(path1, *paths)
 
 
-def get_abspath_from_project_root(_path):
+def get_abspath_from_project_root(_path: str) -> str:
     return path.abspath(join_paths(PROJECT_ROOT_PATH, _path))
 
 
-def now_as_str():
+def now_as_str() -> str:
     """
     :return: The current time as str.
     """
