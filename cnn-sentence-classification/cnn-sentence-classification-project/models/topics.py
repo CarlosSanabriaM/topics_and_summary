@@ -9,6 +9,7 @@ import pandas as pd
 from texttable import Texttable
 from tqdm import tqdm
 
+from datasets.common import Dataset
 from preprocessing.text import preprocess_text
 from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
 
@@ -47,27 +48,32 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     __SAVE_PATH = get_abspath_from_project_root('saved-models/topics/')  # Path where the models will be saved
 
-    def __init__(self, documents, dictionary=None, corpus=None, num_topics=20, model=None, docs_topics_df=None,
+    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None, corpus=None, num_topics=20,
+                 model=None, docs_topics_df=None,
                  **kwargs):
         """
-        :param documents: List of lists of strings. Each one of the nested lists represents a document,
-        and the strings the words in that document.
-        :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the documents.
-        :param corpus: Document-term matrix. If is None, it is created using the documents.
+        :param dataset: Dataset.
+        :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the dataset documents.
+        :param corpus: Document-term matrix. If is None, it is created using the dataset documents.
         :param num_topics: Number of topics.
         :param model: Pre-created model. If is None, a model is created.
         :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method
         get_dominant_topic_of_each_doc_as_df().
         :param kwargs: Additional arguments.
         """
-        self.documents = documents
+        self.dataset = dataset
+        self.document_objects_list = dataset.as_documents_obj_list()
+        # The line below is way faster than dataset.as_documents_content_list()
+        self.documents = list(map(lambda d: d.content,
+                                  self.document_objects_list))  # TODO: This keeps duplicate info in memory. Is better to call list(map(lambda d: d.content, self.document_objects_list)) whenever is needed?
+
         self.num_topics = num_topics
         self.coherence_value = None
         self.docs_topics_df = docs_topics_df
         self.dir_path = None  # Path of the directory where the model is saved to
 
         if dictionary is None or corpus is None:
-            self.dictionary, self.corpus = prepare_corpus(documents)
+            self.dictionary, self.corpus = prepare_corpus(self.documents)
         else:
             self.dictionary, self.corpus = dictionary, corpus
 
@@ -124,19 +130,19 @@ class TopicsModel(metaclass=abc.ABCMeta):
             f.write(str(self.coherence_value))
 
     @classmethod
-    def load(cls, model_name, documents, model_dir_path=__SAVE_PATH, docs_topics_df=None):
+    def load(cls, model_name, dataset: Dataset, model_dir_path=__SAVE_PATH, docs_topics_df=None):
         """
         Loads the model with the given name from the specified path, and
         returns a TopicsModel instance.
-        :param model_dir_path: Path to the directory where the model is in.
         :param model_name: Model name.
-        :param documents: Documents of the dataset.
+        :param dataset: Dataset.
+        :param model_dir_path: Path to the directory where the model is in.
         :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method
         get_dominant_topic_of_each_doc_as_df().
         :return: Instance of a TopicsModel object.
         """
         model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name))
-        return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name,
+        return cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
                    docs_topics_df=docs_topics_df)
 
     @classmethod
@@ -232,7 +238,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return topic_prob_vector[:num_best_topics]
 
-    def get_related_documents_as_df(self, text, num_docs=5, preprocess=True, ngrams='uni', ngrams_model_func=None):
+    def get_related_docs_as_df(self, text, num_docs=5, preprocess=True, ngrams='uni', ngrams_model_func=None):
         """
         Given a text, this method returns a df with the index and the content of the most similar documents
         in the corpus. The similar/related documents are obtained as follows:
@@ -302,7 +308,6 @@ class TopicsModel(metaclass=abc.ABCMeta):
         This method can take to much time to execute if the dataset is big.
         :return: pandas DataFrame.
         """
-
         if self.docs_topics_df is not None:
             return self.docs_topics_df
 
@@ -497,15 +502,14 @@ class LdaMalletModel(TopicsModel):
     __MALLET_SOURCE_CODE_PATH = get_abspath_from_project_root('../../mallet-2.0.8/bin/mallet')
     __MALLET_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lda_mallet')
 
-    def __init__(self, documents, dictionary=None, corpus=None, num_topics=20,
-                 model=None, mallet_path=__MALLET_SOURCE_CODE_PATH,
-                 model_name=None, model_path=__MALLET_SAVED_MODELS_PATH, **kwargs):
+    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None, corpus=None,
+                 num_topics=20, model=None, mallet_path=__MALLET_SOURCE_CODE_PATH, model_name=None,
+                 model_path=__MALLET_SAVED_MODELS_PATH, **kwargs):
         """
         Encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use.
-        :param documents: List of lists of strings. Each one of the nested lists represents a document,
-        and the strings the words in that document.
-        :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the documents.
-        :param corpus: Document-term matrix. If is None, it is created using the documents.
+        :param dataset: Dataset.
+        :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the dataset documents.
+        :param corpus: Document-term matrix. If is None, it is created using the dataset documents.
         :param num_topics: Number of topics.
         :param model: Pre-created model. If is None, a model is created.
         :param mallet_path: Path to the mallet source code.
@@ -520,7 +524,7 @@ class LdaMalletModel(TopicsModel):
 
         self.model_name = model_name
 
-        super().__init__(documents, dictionary, corpus, num_topics, model,
+        super().__init__(dataset, dictionary, corpus, num_topics, model,
                          mallet_path=mallet_path, model_path=model_path, **kwargs)
 
     def _create_model(self, **kwargs):
@@ -582,22 +586,22 @@ class LdaMalletModel(TopicsModel):
             f.write(str(self.coherence_value))
 
     @classmethod
-    def load(cls, model_name, documents,
+    def load(cls, model_name, dataset: Dataset,
              model_dir_path=__MALLET_SAVED_MODELS_PATH, mallet_path=__MALLET_SOURCE_CODE_PATH,
              docs_topics_df=None):
         """
         Loads the model with the given name from the specified path, and
         returns a LdaMalletModel instance.
         :param model_name: Model name.
-        :param documents: Documents of the dataset.
+        :param dataset: Dataset used to create the model previously.
         :param model_dir_path: Path to the directory where the model is in.
         :param mallet_path: Path to the mallet source code.
         :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method
         get_dominant_topic_of_each_doc_as_df().
-        :return:
+        :return: Instance of a LdaMalletModel object.
         """
         model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name), mallet_path)
-        return cls(documents, num_topics=model.num_topics, model=model, model_name=model_name,
+        return cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
                    docs_topics_df=docs_topics_df)
 
 
@@ -606,20 +610,19 @@ class LdaGensimModel(TopicsModel):
 
     __LDA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lda/')
 
-    def __init__(self, documents, dictionary=None, corpus=None, num_topics=20,
-                 model=None, random_state=RANDOM_STATE, **kwargs):
+    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None, corpus=None,
+                 num_topics=20, model=None, random_state=RANDOM_STATE, **kwargs):
         """
         Encapsulates the functionality of gensim.models.LdaModel, making it easier to use.
-        :param documents: List of lists of strings. Each one of the nested lists represents a document,
-        and the strings the words in that document.
-        :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the documents.
-        :param corpus: Document-term matrix. If is None, it is created using the documents.
+        :param dataset: Dataset.
+        :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the dataset documents.
+        :param corpus: Document-term matrix. If is None, it is created using the dataset documents.
         :param num_topics: Number of topics.
         :param model: Pre-created model. If is None, a model is created.
         :param random_state: Random state for reproducibility.
         :param kwargs: Additional keyword arguments that want to be used in the gensim.models.LdaModel __init__ method.
         """
-        super().__init__(documents, dictionary, corpus, num_topics, model, random_state=random_state, **kwargs)
+        super().__init__(dataset, dictionary, corpus, num_topics, model, random_state=random_state, **kwargs)
 
     def _create_model(self, **kwargs):
         """
@@ -637,8 +640,8 @@ class LdaGensimModel(TopicsModel):
         super(LdaGensimModel, self).save(base_name, path)
 
     @classmethod
-    def load(cls, model_name, documents, model_dir_path=__LDA_SAVED_MODELS_PATH, docs_topics_df=None):
-        return super(LdaGensimModel, cls).load(model_name, documents, model_dir_path, docs_topics_df)
+    def load(cls, model_name, dataset: Dataset, model_dir_path=__LDA_SAVED_MODELS_PATH, docs_topics_df=None):
+        return super(LdaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
     @classmethod
     def _load_gensim_model(cls, path):
@@ -655,18 +658,18 @@ class LsaGensimModel(TopicsModel):
 
     __LSA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lsa/')
 
-    def __init__(self, documents, dictionary=None, corpus=None, num_topics=20, model=None, **kwargs):
+    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None, corpus=None,
+                 num_topics=20, model=None, **kwargs):
         """
         Encapsulates the functionality of gensim.models.LsiModel, making it easier to use.
-        :param documents: List of lists of strings. Each one of the nested lists represents a document,
-        and the strings the words in that document.
-        :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the documents.
-        :param corpus: Document-term matrix. If is None, it is created using the documents.
+        :param dataset: Dataset.
+        :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the dataset documents.
+        :param corpus: Document-term matrix. If is None, it is created using the dataset documents.
         :param num_topics: Number of topics.
         :param model: Pre-created model. If is None, a model is created.
         :param kwargs: Additional keyword arguments that want to be used in the gensim.models.LsiModel __init__ method.
         """
-        super().__init__(documents, dictionary, corpus, num_topics, model, **kwargs)
+        super().__init__(dataset, dictionary, corpus, num_topics, model, **kwargs)
 
     def _create_model(self, **kwargs):
         """
@@ -680,8 +683,8 @@ class LsaGensimModel(TopicsModel):
                                       **kwargs)
 
     @classmethod
-    def load(cls, model_name, documents, model_dir_path=__LSA_SAVED_MODELS_PATH, docs_topics_df=None):
-        return super(LsaGensimModel, cls).load(model_name, documents, model_dir_path, docs_topics_df)
+    def load(cls, model_name, dataset: Dataset, model_dir_path=__LSA_SAVED_MODELS_PATH, docs_topics_df=None):
+        return super(LsaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
     def save(self, base_name, path=__LSA_SAVED_MODELS_PATH):
         super(LsaGensimModel, self).save(base_name, path)
@@ -701,9 +704,13 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
 
     _SAVE_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/')  # Path where the models will be saved
 
-    def __init__(self, documents):
-        self.documents = documents
+    def __init__(self, dataset: Dataset):
+        self.dataset = dataset
+
+        # Dictionary and corpus are calculated here, to avoid recalculating them in the moment each model is created
+        documents = dataset.as_documents_content_list()
         self.dictionary, self.corpus = prepare_corpus(documents)
+
         self.models_list = []  # Stores the models created
 
     def create_models_and_compute_coherence_values(self, start=2, stop=20, step=1, coherence='c_v', print_and_plot=True,
@@ -808,11 +815,11 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
 
 class LdaMalletModelsList(TopicsModelsList):
 
-    def __init__(self, documents):
-        super().__init__(documents)
+    def __init__(self, dataset: Dataset):
+        super().__init__(dataset)
 
     def _create_model(self, num_topics, **kwargs):
-        return LdaMalletModel(self.documents, self.dictionary, self.corpus, num_topics, **kwargs)
+        return LdaMalletModel(self.dataset, self.dictionary, self.corpus, num_topics, **kwargs)
 
     def create_models_and_compute_coherence_values(self, start=2, stop=20, step=1, coherence='c_v', print_and_plot=True,
                                                    title="Topic's model coherence comparison", save_plot=False,
@@ -873,17 +880,17 @@ class LdaMalletModelsList(TopicsModelsList):
 
 class LdaModelsList(TopicsModelsList):
 
-    def __init__(self, documents):
-        super().__init__(documents)
+    def __init__(self, dataset: Dataset):
+        super().__init__(dataset)
 
     def _create_model(self, num_topics, random_state=RANDOM_STATE, **kwargs):
-        return LdaGensimModel(self.documents, self.dictionary, self.corpus, num_topics, None, random_state, **kwargs)
+        return LdaGensimModel(self.dataset, self.dictionary, self.corpus, num_topics, None, random_state, **kwargs)
 
 
 class LsaModelsList(TopicsModelsList):
 
-    def __init__(self, documents):
-        super().__init__(documents)
+    def __init__(self, dataset: Dataset):
+        super().__init__(dataset)
 
     def _create_model(self, num_topics, **kwargs):
-        return LsaGensimModel(self.documents, self.dictionary, self.corpus, num_topics, **kwargs)
+        return LsaGensimModel(self.dataset, self.dictionary, self.corpus, num_topics, **kwargs)
