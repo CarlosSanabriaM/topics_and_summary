@@ -288,7 +288,9 @@ class TopicsModel(metaclass=abc.ABCMeta):
         related_docs_df.insert(2, 'Doc prob', doc_prob_column, allow_duplicates=True)
 
         # Change columns order
-        related_docs_df = related_docs_df[['Doc index', 'Doc prob', 'Doc text', 'Topic index', 'Topic keywords']]
+        # TODO: When everyting works, remove Doc text column?
+        related_docs_df = related_docs_df[['Doc index', 'Doc prob', 'Doc text', 'Original doc text',
+                                           'Topic index', 'Topic keywords']]
 
         # Order by 'Doc prob' column in descending order
         related_docs_df = related_docs_df.sort_values(['Doc prob'], ascending=[False])
@@ -365,6 +367,21 @@ class TopicsModel(metaclass=abc.ABCMeta):
         k_most_repr_doc_per_topic_df = \
             k_most_repr_doc_per_topic_df[['Topic index', 'Doc index', 'Topic prob', 'Topic keywords', 'Doc text']]
 
+        # Add a last column with the original document text, obtained from disk (no preprocessing, no tokenization, ...)
+        #  Iterate for each row and get the value of the column 'Doc index'. Using the doc index, obtain the
+        #  document object with that index from the document_objects_list. Using that document object and the dataset,
+        #  obtain the document original content from disk.
+        original_doc_text_column = \
+            k_most_repr_doc_per_topic_df.apply(lambda row:
+                                               self.dataset.get_original_doc_content_from_disk(
+                                                   self.document_objects_list[row['Doc index']]
+                                               ),
+                                               axis='columns')
+
+        # Add the 'Original doc text' column
+        k_most_repr_doc_per_topic_df.insert(k_most_repr_doc_per_topic_df.shape[1], 'Original doc text',
+                                            original_doc_text_column, allow_duplicates=True)
+
         return k_most_repr_doc_per_topic_df
 
     def get_k_most_representative_docs_of_topic_as_df(self, topic, k=1):
@@ -380,8 +397,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
         # Keep only the rows where the 'Topic index' equals the topic index passed as a parameter
         k_most_repr_doc_per_topic_df = \
             k_most_repr_doc_per_topic_df.loc[k_most_repr_doc_per_topic_df['Topic index'] == topic]
-        # Return a df with only the following columns: Doc index, Topic prob and Doc text
-        return k_most_repr_doc_per_topic_df[['Doc index', 'Topic prob', 'Doc text']]
+        # Return a df with only the following columns: Doc index, Topic prob, Doc text and Original doc text
+        return k_most_repr_doc_per_topic_df[['Doc index', 'Topic prob', 'Doc text', 'Original doc text']]
 
     def get_topic_distribution_as_df(self):
         """
