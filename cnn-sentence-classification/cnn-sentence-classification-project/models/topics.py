@@ -263,7 +263,6 @@ class TopicsModel(metaclass=abc.ABCMeta):
         ordered descending).
         :return: The pandas DataFrame.
         """
-        # TODO: Remove duplicates
         # 1. Obtain the list of topics more related with the text
         topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess=preprocess, ngrams=ngrams,
                                                             ngrams_model_func=ngrams_model_func, print_table=False)
@@ -273,7 +272,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         # 2. Obtain a df with the documents more related with the topics in the previous step
         # Maybe all the best docs are from a unique topic,
         # so we need to obtain num_docs docs from each topic in the topics list
-        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k=num_docs)
+        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(num_docs, remove_duplicates)
         # Only the docs of the topics in the topics list are kept
         related_docs_df = k_most_repr_doc_per_topic_df.loc[k_most_repr_doc_per_topic_df['Topic index'].isin(topics)]
 
@@ -299,6 +298,11 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         # Order by 'Doc prob' column in descending order
         related_docs_df = related_docs_df.sort_values(['Doc prob'], ascending=[False])
+
+        if remove_duplicates:
+            # Duplicate documents can appear in different topics. If that happens, here duplicates are removed,
+            # keeping only the document with the highest probability.
+            related_docs_df.drop_duplicates(subset='Doc text', keep='first', inplace=True)
 
         # Reset the indices
         related_docs_df.reset_index(drop=True, inplace=True)
@@ -374,16 +378,9 @@ class TopicsModel(metaclass=abc.ABCMeta):
                             map(lambda pd_series: pd_series['Doc text'], k_non_duplicate_docs_list):
                         k_non_duplicate_docs_list.append(
                             topic_ordered_docs.iloc[i]
-                            # pd.DataFrame([
-                            #     [doc_index, dominant_topic_index, dominant_topic_prob, dominant_topic_kws,
-                            #      ' '.join(self.documents[doc_index])]
-                            # ], columns=['Doc index', 'Dominant topic index', 'Topic prob', 'Topic keywords',
-                            #             'Doc text'])
                         )
                     i += 1
                 # Concat the series list into a single df
-                # most_repr_docs = pd.concat(k_non_duplicate_docs_list)  # TODO !!!
-                # most_repr_docs = pd.concat(k_non_duplicate_docs_list, axis=1)  # TODO !!!
                 most_repr_docs = pd.DataFrame(k_non_duplicate_docs_list)
             else:
                 # The first k documents of each topic are selected (duplicate documents can exist)
