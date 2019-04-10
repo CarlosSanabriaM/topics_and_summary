@@ -2,7 +2,7 @@ import re
 from collections import OrderedDict
 from copy import deepcopy
 from os import listdir
-from typing import List
+from typing import List, Callable
 
 import pandas as pd
 
@@ -11,14 +11,16 @@ from utils import pretty_print, get_abspath_from_project_root, join_paths
 
 
 class TwentyNewsGroupsDataset(Dataset):
+    """
+    Class that represents the 20_newsgroups dataset.
+    This class can apply a first specific preprocessing on the dataset files.
+    """
 
     __DATASET_PATH = get_abspath_from_project_root('../../text-preprocessing/20_newsgroups')
     __DATASET_ENCODING = 'latin1'
 
     def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=__DATASET_PATH):
         """
-        Loads the 20 newsgroups dataset in a dict.
-        It can apply a first preprocessing on the dataset files.
         :param remove_header: If true, it removes the header of all files.
         :param remove_footer: If true, it removes the footer of all files.
         :param remove_quotes: If true, it removes the quotes of all files.
@@ -69,7 +71,7 @@ class TwentyNewsGroupsDataset(Dataset):
 
                 self.files_dict[directory].append(TwentyNewsGroupsDocument(directory, file_name, file_content))
 
-    def apply_function_to_files(self, func):
+    def apply_function_to_files(self, func: Callable):
         """
         Applies the given function to each of the text files in the corpus.
         :param func: The function to be applied to each text file.
@@ -141,7 +143,8 @@ class TwentyNewsGroupsDataset(Dataset):
         """
         self.apply_function_to_files(self.__strip_footer)
 
-    def remove_document(self, category, index_in_category):
+    # TODO: Change to override superclass method
+    def remove_document(self, category: str, index_in_category: int):
         """
         Removes from the dataset the document in the given category with the given index inside that category.
         :param category: Category of the document.
@@ -149,7 +152,7 @@ class TwentyNewsGroupsDataset(Dataset):
         """
         del self.files_dict[category][index_in_category]
 
-    def as_dataframe(self):
+    def as_dataframe(self) -> pd.DataFrame:
         """
         Returns the files_dict as a pandas DataFrame.
         """
@@ -179,7 +182,7 @@ class TwentyNewsGroupsDataset(Dataset):
 
         return [file for files_list in list(self.files_dict.values()) for file in files_list]
 
-    def get_document_index(self, category, doc_name):
+    def get_document_index(self, category: str, doc_name: str):
         """
         Returns the index of the specified document.
         :param category: Category of the document.
@@ -197,17 +200,6 @@ class TwentyNewsGroupsDataset(Dataset):
         # If the document exists, we return it's index inside the specified category
         return self.files_dict[category].index(doc)
 
-    def print_some_files(self):
-        """
-        Prints some text files from the corpus.
-        """
-        pretty_print('File 1')
-        print(self.files_dict['sci.med'][1].content)
-        pretty_print('File 2')
-        print(self.files_dict['sci.electronics'][0].content)
-        pretty_print('File 3')
-        print(self.files_dict['rec.autos'][16].content)
-
     def get_original_doc_content_from_disk(self, doc: 'Document') -> str:
         # The original doc content has the header, footer and quotes
         content = super(TwentyNewsGroupsDataset, self).get_original_doc_content_from_disk(doc)
@@ -222,8 +214,24 @@ class TwentyNewsGroupsDataset(Dataset):
 
         return content
 
+    def print_some_files(self):
+        """
+        Prints some text files from the corpus.
+        """
+        pretty_print('File 1')
+        print(self.files_dict['sci.med'][1].content)
+        pretty_print('File 2')
+        print(self.files_dict['sci.electronics'][0].content)
+        pretty_print('File 3')
+        print(self.files_dict['rec.autos'][16].content)
+
 
 class TwentyNewsGroupsDocument(Document):
+    """
+    Class that represents a 20_newsgroups document.
+    Documents of the 20_newsgroups dataset have an additional attribute 'directory_name',
+    because documents in this dataset are stored in folders.
+    """
 
     def __init__(self, directory_name: str, name: str, content: str):
         """

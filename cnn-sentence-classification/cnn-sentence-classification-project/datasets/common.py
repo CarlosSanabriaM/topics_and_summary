@@ -1,16 +1,16 @@
 import abc
-from typing import List
+from typing import List, Callable
 
 import pandas as pd
 
 from utils import join_paths
 
 
-def get_file_content(file_path, encoding=None):
+def get_file_content(file_path: str, encoding: str = None) -> str:
     """
     Returns the content os the specified file as a string.
-    :param file_path: Path of the file to be converted into a string (String).
-    :param encoding: Encoding of the file (String).
+    :param file_path: Path of the file to be converted into a string.
+    :param encoding: Encoding of the file.
     :return: The content of the file as a string.
     """
     with open(file_path, encoding=encoding) as f:
@@ -18,6 +18,7 @@ def get_file_content(file_path, encoding=None):
 
 
 class Dataset(metaclass=abc.ABCMeta):
+    """Class that represents a dataset."""
 
     def __init__(self, dataset_path, encoding):
         """
@@ -29,8 +30,7 @@ class Dataset(metaclass=abc.ABCMeta):
 
     def get_original_doc_content_from_disk(self, doc: 'Document') -> str:
         """
-        Given a Document object, this method return it's content
-        obtained from disk as a str.
+        Given a Document object, this method return it's content obtained from disk as a str.
         :param doc: Document.
         :return: Content of the given document obtained from disk.
         """
@@ -40,7 +40,7 @@ class Dataset(metaclass=abc.ABCMeta):
         )
 
     @abc.abstractmethod
-    def apply_function_to_files(self, func):
+    def apply_function_to_files(self, func: Callable):
         """
         Applies the given function to each of the text files in the corpus.
         :param func: The function to be applied to each text file.
@@ -68,6 +68,8 @@ class Dataset(metaclass=abc.ABCMeta):
         :return: List of Document objects of the documents in the dataset.
         """
 
+    # TODO: Create a method remove_document()
+
 
 class Document(metaclass=abc.ABCMeta):
     """
@@ -94,10 +96,3 @@ class Document(metaclass=abc.ABCMeta):
         if isinstance(other, self.__class__):
             return self.content == other.content
         return False
-
-    # TODO: Functions for removing duplicate docs in dataset?
-    # def __hash__(self):
-    #     return hash(self.content)  # self.content isn't immutable, but this is used only for removing duplicate docs
-
-    # def __ne__(self, other):
-    #     pass

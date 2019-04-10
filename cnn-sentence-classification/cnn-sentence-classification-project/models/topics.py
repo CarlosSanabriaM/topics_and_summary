@@ -1,6 +1,6 @@
 import abc
 import os
-from typing import List, Tuple
+from typing import List, Tuple, Callable
 
 import gensim
 import matplotlib.pyplot as plt
@@ -14,7 +14,7 @@ from preprocessing.text import preprocess_text
 from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
 
 
-def prepare_corpus(documents):
+def prepare_corpus(documents) -> Tuple[gensim.corpora.Dictionary, List[List[Tuple[int, int]]]]:
     """
     Given a list of documents, returns a term dictionary (dictionary) and a document-term matrix (corpus).
     :param documents: List of documents. Each document is a list of words, where each word is a string.
@@ -30,7 +30,7 @@ def prepare_corpus(documents):
     return dictionary, corpus
 
 
-def get_corpus(dictionary, documents):
+def get_corpus(dictionary, documents) -> List[List[Tuple[int, int]]]:
     """
     Returns a corpus/document-term matrix, that consists on a list, where each element is a list of tuples.
     Each list of tuples represents a document, and each tuple contains the index of a word in that document
@@ -44,13 +44,13 @@ def get_corpus(dictionary, documents):
 
 
 class TopicsModel(metaclass=abc.ABCMeta):
-    """Base class for a single topics model."""
+    """Base class that represents a topics model."""
 
     __SAVE_PATH = get_abspath_from_project_root('saved-models/topics/')  # Path where the models will be saved
 
-    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None, corpus=None, num_topics=20,
-                 model=None, docs_topics_df=None,
-                 **kwargs):
+    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
+                 corpus: List[List[Tuple[int, int]]] = None, num_topics=20,
+                 model=None, docs_topics_df: pd.DataFrame = None, **kwargs):
         """
         :param dataset: Dataset.
         :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the dataset documents.
@@ -64,8 +64,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         self.dataset = dataset
         self.document_objects_list = dataset.as_documents_obj_list()
         # The line below is way faster than dataset.as_documents_content_list()
-        self.documents = list(map(lambda d: d.content,
-                                  self.document_objects_list))  # TODO: This keeps duplicate info in memory. Is better to call list(map(lambda d: d.content, self.document_objects_list)) whenever is needed?
+        self.documents = list(map(lambda d: d.content, self.document_objects_list))
 
         self.num_topics = num_topics
         self.coherence_value = None
@@ -83,14 +82,14 @@ class TopicsModel(metaclass=abc.ABCMeta):
             self.model = model
 
     @abc.abstractmethod
-    def _create_model(self, num_topics, **kwargs):
+    def _create_model(self, num_topics: int, **kwargs):
         """
         Factory Method design pattern. The subclasses override this method,
         creating and returning the specific model that the subclasses represent.
         :param num_topics: Number of topics of the model.
         """
 
-    def compute_coherence_value(self, coherence='c_v'):
+    def compute_coherence_value(self, coherence='c_v') -> float:
         """
         Calculates, stores and returns the coherence value of the topics model.
         :param coherence: String that represents the type of coherence to calculate.
@@ -104,7 +103,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return self.coherence_value
 
-    def save(self, base_name, path=__SAVE_PATH):
+    def save(self, base_name: str, path=__SAVE_PATH):
         """
         Saves the model to disk.
         :param base_name: Base name of the model. After it, the current time, the number of topics, and
@@ -130,7 +129,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
             f.write(str(self.coherence_value))
 
     @classmethod
-    def load(cls, model_name, dataset: Dataset, model_dir_path=__SAVE_PATH, docs_topics_df=None):
+    def load(cls, model_name: str, dataset: Dataset, model_dir_path=__SAVE_PATH, docs_topics_df: pd.DataFrame = None):
         """
         Loads the model with the given name from the specified path, and
         returns a TopicsModel instance.
@@ -147,7 +146,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     @classmethod
     @abc.abstractmethod
-    def _load_gensim_model(cls, path):
+    def _load_gensim_model(cls, path: str):
         """
         Factory Method design pattern. The subclasses override this method,
         loading the gensim model in the specified path and returning it.
@@ -181,7 +180,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
                 for id, kws_as_list_of_tuples in
                 self.model.show_topics(num_topics=self.num_topics, num_words=num_keywords, formatted=False)]
 
-    def get_topic(self, topic, num_keywords=10) -> 'Topic':
+    def get_topic(self, topic: int, num_keywords=10) -> 'Topic':
         """
         Returns a list of the topic keywords (keyword name and keyword probability).
         Keywords are ordered by it's probability inside the topic.
@@ -191,12 +190,13 @@ class TopicsModel(metaclass=abc.ABCMeta):
         """
         return Topic(topic, self.model.show_topic(topic, num_keywords))
 
-    def predict_topic_prob_on_text(self, text, num_best_topics=None, preprocess=True,
-                                   ngrams='uni', ngrams_model_func=None, print_table=True):
+    def predict_topic_prob_on_text(self, text: str, num_best_topics: int = None, preprocess=True,
+                                   ngrams='uni', ngrams_model_func: Callable = None, print_table=True) \
+            -> List[Tuple[int, float]]:
         """
         Predicts the probability of each topic to be related to the given text.
-        The probabilities sum 1. When the probability of a topic is very high, the other
-        topics may not appear in the results.
+        The probabilities sum 1. When the probability of a topic is very high,
+        the other topics may not appear in the results.
         :param text: Text.
         :param num_best_topics: Number of topics to return. If is None, returns all the topics that the model returns.
         :param preprocess: If true, applies preprocessing to the given text using preprocessing.text.preprocess_text().
@@ -238,8 +238,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return topic_prob_vector[:num_best_topics]
 
-    def get_related_docs_as_df(self, text, num_docs=5, preprocess=True, ngrams='uni', ngrams_model_func=None,
-                               remove_duplicates=True):
+    def get_related_docs_as_df(self, text: str, num_docs=5, preprocess=True, ngrams='uni',
+                               ngrams_model_func: Callable = None, remove_duplicates=True) -> pd.DataFrame:
         """
         Given a text, this method returns a df with the index and the content of the most similar documents
         in the corpus. The similar/related documents are obtained as follows:
@@ -292,7 +292,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         related_docs_df.insert(2, 'Doc prob', doc_prob_column, allow_duplicates=True)
 
         # Change columns order
-        # TODO: When everyting works, remove Doc text column?
+        # TODO: When everything works, remove Doc text column?
         related_docs_df = related_docs_df[['Doc index', 'Doc prob', 'Doc text', 'Original doc text',
                                            'Topic index', 'Topic keywords']]
 
@@ -312,7 +312,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return related_docs_df
 
-    def get_dominant_topic_of_each_doc_as_df(self):
+    def get_dominant_topic_of_each_doc_as_df(self) -> pd.DataFrame:
         """
         Returns a pandas DataFrame with the dominant topic of each document.
         The df has the following columns: Doc index, Dominant topic index, Topic prob,Topic keywords, Doc text.
@@ -345,7 +345,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         self.docs_topics_df.reset_index(drop=True, inplace=True)
         return self.docs_topics_df
 
-    def get_k_most_representative_docs_per_topic_as_df(self, k=1, remove_duplicates=True):
+    def get_k_most_representative_docs_per_topic_as_df(self, k=1, remove_duplicates=True) -> pd.DataFrame:
         """
         Returns a DataFrame where the topics are grouped in ascending order by their indices, and inside each
         topic group there are k rows, where each row contains the topic and one of the most representative documents
@@ -414,7 +414,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return k_most_repr_doc_per_topic_df
 
-    def get_k_most_representative_docs_of_topic_as_df(self, topic, k=1, remove_duplicates=True):
+    def get_k_most_representative_docs_of_topic_as_df(self, topic: int, k=1, remove_duplicates=True) -> pd.DataFrame:
         """
         Returns a DataFrame with the k most representative documents of the given topic.
         The DataFrame has k rows, where each row contains the document index, the document-topic probability and
@@ -433,7 +433,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         # Return a df with only the following columns: Doc index, Topic prob, Doc text and Original doc text
         return k_most_repr_doc_per_topic_df[['Doc index', 'Topic prob', 'Doc text', 'Original doc text']]
 
-    def get_topic_distribution_as_df(self):
+    def get_topic_distribution_as_df(self) -> pd.DataFrame:
         """
         Returns a DataFrame where each row contains a topic, the number of documents of that topic (the topic
         is the dominant topic of those documents), and the percentage of documents of that topic.
@@ -463,7 +463,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return df_dominant_topics
 
-    def get_doc_topic_prob_matrix(self):
+    def get_doc_topic_prob_matrix(self) -> np.ndarray:
         """
         :return: Returns a numpy matrix where the rows are documents and columns are topics.
         Each cell represents the probability of the document in that row being related with the topic in that column.
@@ -479,9 +479,10 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return doc_topic_prob_matrix
 
-    def get_k_kws_per_topic_as_str(self, topic, k):
+    def get_k_kws_of_topic_as_str(self, topic: int, k: int):
         """
-        :param k: Num keywords per topic.
+        :param topic: Topic where keywords will be obtained.
+        :param k: Number of keywords to be returned.
         :return: k keywords from the given topic as a str.
         """
         return ' '.join(list(map(lambda x: x[0], self.model.show_topic(topic)))[:k])
@@ -493,7 +494,7 @@ class Topic:
     It's used for data transfer.
     """
 
-    def __init__(self, id, kws_as_list_of_tuples):
+    def __init__(self, id: int, kws_as_list_of_tuples: List[Tuple[str, float]]):
         """
         :param id: Id of the topic
         :param kws_as_list_of_tuples: Keywords obtained from the topic.
@@ -513,13 +514,13 @@ class Topic:
 
         return s
 
-    def num_keywords(self):
+    def num_keywords(self) -> int:
         """
         :return: Number of keywords stored in this topic object.
         """
         return len(self.keywords)
 
-    def as_list_of_tuples(self):
+    def as_list_of_tuples(self) -> List[Tuple[str, float]]:
         """
         :return: Topics as a list of tuples: [(name1, prob1), (name2, prob2), ...].
         """
@@ -532,14 +533,18 @@ class Keyword:
     It's used for data transfer.
     """
 
-    def __init__(self, name, probability):
+    def __init__(self, name: str, probability: float):
+        """
+        :param name: Name of the keyword.
+        :param probability: Probability of the keyword inside it's topic.
+        """
         self.name = name
         self.probability = probability
 
     def __str__(self):
         return '{0}: {1}'.format(self.name, self.probability)
 
-    def as_tuple(self):
+    def as_tuple(self) -> Tuple[str, float]:
         """
         :return: Keyword as a tuple: (name, prob).
         """
@@ -552,8 +557,9 @@ class LdaMalletModel(TopicsModel):
     __MALLET_SOURCE_CODE_PATH = get_abspath_from_project_root('../../mallet-2.0.8/bin/mallet')
     __MALLET_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lda_mallet')
 
-    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None, corpus=None,
-                 num_topics=20, model=None, mallet_path=__MALLET_SOURCE_CODE_PATH, model_name=None,
+    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
+                 corpus: List[List[Tuple[int, int]]] = None, num_topics=20, model=None,
+                 mallet_path=__MALLET_SOURCE_CODE_PATH, model_name: str = None,
                  model_path=__MALLET_SAVED_MODELS_PATH, **kwargs):
         """
         Encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use.
@@ -605,7 +611,7 @@ class LdaMalletModel(TopicsModel):
 
     # noinspection PyMethodOverriding
     @classmethod
-    def _load_gensim_model(cls, path, mallet_path):
+    def _load_gensim_model(cls, path: str, mallet_path: str):
         """
         Loads the gensim.models.wrappers.LdaMallet in the specified path and returns it.
         :param path: Path of the saved gensim.models.wrappers.LdaMallet.
@@ -636,9 +642,9 @@ class LdaMalletModel(TopicsModel):
             f.write(str(self.coherence_value))
 
     @classmethod
-    def load(cls, model_name, dataset: Dataset,
+    def load(cls, model_name: str, dataset: Dataset,
              model_dir_path=__MALLET_SAVED_MODELS_PATH, mallet_path=__MALLET_SOURCE_CODE_PATH,
-             docs_topics_df=None):
+             docs_topics_df: pd.DataFrame = None):
         """
         Loads the model with the given name from the specified path, and
         returns a LdaMalletModel instance.
@@ -660,8 +666,9 @@ class LdaGensimModel(TopicsModel):
 
     __LDA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lda/')
 
-    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None, corpus=None,
-                 num_topics=20, model=None, random_state=RANDOM_STATE, **kwargs):
+    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
+                 corpus: List[List[Tuple[int, int]]] = None, num_topics=20,
+                 model=None, random_state=RANDOM_STATE, **kwargs):
         """
         Encapsulates the functionality of gensim.models.LdaModel, making it easier to use.
         :param dataset: Dataset.
@@ -686,15 +693,16 @@ class LdaGensimModel(TopicsModel):
                                       num_topics=self.num_topics,
                                       **kwargs)  # random_state is passed here
 
-    def save(self, base_name, path=__LDA_SAVED_MODELS_PATH):
+    def save(self, base_name: str, path=__LDA_SAVED_MODELS_PATH):
         super(LdaGensimModel, self).save(base_name, path)
 
     @classmethod
-    def load(cls, model_name, dataset: Dataset, model_dir_path=__LDA_SAVED_MODELS_PATH, docs_topics_df=None):
+    def load(cls, model_name: str, dataset: Dataset, model_dir_path=__LDA_SAVED_MODELS_PATH,
+             docs_topics_df: pd.DataFrame = None):
         return super(LdaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
     @classmethod
-    def _load_gensim_model(cls, path):
+    def _load_gensim_model(cls, path: str):
         """
         Loads the gensim.models.LdaModel in the specified path and returns it.
         :param path: Path of the saved gensim.models.LdaModel.
@@ -708,8 +716,8 @@ class LsaGensimModel(TopicsModel):
 
     __LSA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lsa/')
 
-    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None, corpus=None,
-                 num_topics=20, model=None, **kwargs):
+    def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
+                 corpus: List[List[Tuple[int, int]]] = None, num_topics=20, model=None, **kwargs):
         """
         Encapsulates the functionality of gensim.models.LsiModel, making it easier to use.
         :param dataset: Dataset.
@@ -733,14 +741,15 @@ class LsaGensimModel(TopicsModel):
                                       **kwargs)
 
     @classmethod
-    def load(cls, model_name, dataset: Dataset, model_dir_path=__LSA_SAVED_MODELS_PATH, docs_topics_df=None):
+    def load(cls, model_name: str, dataset: Dataset, model_dir_path=__LSA_SAVED_MODELS_PATH,
+             docs_topics_df: pd.DataFrame = None):
         return super(LsaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
-    def save(self, base_name, path=__LSA_SAVED_MODELS_PATH):
+    def save(self, base_name: str, path=__LSA_SAVED_MODELS_PATH):
         super(LsaGensimModel, self).save(base_name, path)
 
     @classmethod
-    def _load_gensim_model(cls, path):
+    def _load_gensim_model(cls, path: str):
         """
         Loads the gensim.models.LsiModel in the specified path and returns it.
         :param path: Path of the saved gensim.models.LsiModel.
@@ -750,7 +759,7 @@ class LsaGensimModel(TopicsModel):
 
 
 class TopicsModelsList(metaclass=abc.ABCMeta):
-    """Base class for a list of topics models."""
+    """Base class for creating, comparing and storing easily a list of topics models."""
 
     _SAVE_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/')  # Path where the models will be saved
 
@@ -803,7 +812,7 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         return self.models_list[first_index:], coherence_values
 
     @abc.abstractmethod
-    def _create_model(self, num_topics, **kwargs):
+    def _create_model(self, num_topics: int, **kwargs):
         """
         Creates a topics model.
         :param num_topics: Number of topics of the model.
@@ -812,7 +821,7 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
 
     def print_and_plot_coherence_values(self, models_list=None, coherence_values=None,
                                         title="Topic's model coherence comparison",
-                                        save_plot=False, save_plot_path=None):
+                                        save_plot=False, save_plot_path: str = None):
         """
         Prints and plots coherence values of the specified models.
         :param models_list: List of models. If is None, self.models_list is used.
@@ -846,7 +855,7 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
 
         plt.show()
 
-    def save(self, base_name, path=_SAVE_MODELS_PATH, index=None):
+    def save(self, base_name: str, path=_SAVE_MODELS_PATH, index: int = None):
         """
         If index parameter is None, saves all the models to disk.
         If is a number, saves only the model with that index.
@@ -864,11 +873,12 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
 
 
 class LdaMalletModelsList(TopicsModelsList):
+    """Class for creating, comparing and storing easily a list of LdaMalletModels."""
 
     def __init__(self, dataset: Dataset):
         super().__init__(dataset)
 
-    def _create_model(self, num_topics, **kwargs):
+    def _create_model(self, num_topics: int, **kwargs) -> LdaMalletModel:
         return LdaMalletModel(self.dataset, self.dictionary, self.corpus, num_topics, **kwargs)
 
     def create_models_and_compute_coherence_values(self, start=2, stop=20, step=1, coherence='c_v', print_and_plot=True,
@@ -914,7 +924,7 @@ class LdaMalletModelsList(TopicsModelsList):
         return self.models_list[first_index:], coherence_values
 
     # noinspection PyMethodOverriding
-    def save(self, index=None):
+    def save(self, index: int = None):
         """
         If index parameter is None, saves all the models to disk.
         If is a number, saves only the model with that index.
@@ -929,18 +939,20 @@ class LdaMalletModelsList(TopicsModelsList):
 
 
 class LdaModelsList(TopicsModelsList):
+    """Class for creating, comparing and storing easily a list of LdaModels."""
 
     def __init__(self, dataset: Dataset):
         super().__init__(dataset)
 
-    def _create_model(self, num_topics, random_state=RANDOM_STATE, **kwargs):
+    def _create_model(self, num_topics: int, random_state=RANDOM_STATE, **kwargs) -> LdaGensimModel:
         return LdaGensimModel(self.dataset, self.dictionary, self.corpus, num_topics, None, random_state, **kwargs)
 
 
 class LsaModelsList(TopicsModelsList):
+    """Class for creating, comparing and storing easily a list of LsaModels."""
 
     def __init__(self, dataset: Dataset):
         super().__init__(dataset)
 
-    def _create_model(self, num_topics, **kwargs):
+    def _create_model(self, num_topics: int, **kwargs) -> LsaGensimModel:
         return LsaGensimModel(self.dataset, self.dictionary, self.corpus, num_topics, **kwargs)

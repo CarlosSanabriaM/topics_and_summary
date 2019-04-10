@@ -1,8 +1,11 @@
 import re
 from copy import deepcopy
+from typing import Union, Set, Tuple, List
 
 from texttable import Texttable
 
+from datasets.common import Dataset
+from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, make_trigrams_and_get_trigram_model_func
 from preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, remove_stopwords, \
     substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, remove_single_chars, \
@@ -15,13 +18,14 @@ __TRASH_WORDS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'trash_words.txt')
 __TRASH_DOCS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'trash_docs.txt')
 
 
-def print_words_that_contain_elem(dataset, elem):
+def print_words_that_contain_elem(dataset: Dataset, elem: str):
     """
     Prints a table with the following info:
         - Word that contains the given element.
         - Number of occurrences of the word in the whole dataset
     :param dataset: Dataset.
     :param elem: Elem contained in the printed words.
+    Will be used to create a regular expression, containing only that elem.
     """
     elem_re = re.compile(elem)
 
@@ -39,7 +43,7 @@ def print_words_that_contain_elem(dataset, elem):
     for doc in dataset.as_documents_content_list():
         for word in doc:
             if elem_re.search(word) is not None:
-                if not word_occurrence_dict.__contains__(word):
+                if word not in word_occurrence_dict:
                     word_occurrence_dict[word] = 0
                 word_occurrence_dict[word] += 1
                 num_words_contain_elem += 1
@@ -54,7 +58,8 @@ def print_words_that_contain_elem(dataset, elem):
 
 
 # TODO: Change to admit more than one word ?? I think it makes more sense to be used only with one word.
-def print_docs_that_contain_word(dataset, word, num_chars_preview=70):
+# TODO: Change to admit dataset: Dataset
+def print_docs_that_contain_word(dataset: TwentyNewsGroupsDataset, word: str, num_chars_preview=70):
     """
     Prints a table with the following properties of all documents in the dataset that contain the given word:
         - Category name
@@ -99,7 +104,8 @@ def print_docs_that_contain_word(dataset, word, num_chars_preview=70):
 
 
 # TODO: Refactor?
-def print_empty_docs(dataset):
+# TODO: Change to admit dataset: Dataset
+def print_empty_docs(dataset: TwentyNewsGroupsDataset):
     # Create table for better printing
     table = Texttable()
     table.set_cols_width([30, 15, 10, 10, 10])
@@ -127,7 +133,9 @@ def print_empty_docs(dataset):
     print(" Num empty docs:", num_empty_docs)
 
 
-def get_docs_that_contain_any_of_the_words(dataset, words):
+# TODO: Change to admit dataset: Dataset
+def get_docs_that_contain_any_of_the_words(dataset: TwentyNewsGroupsDataset, words: Union[str, Set[str]]) \
+        -> List[Tuple[str, int]]:
     """
     Returns a list of tuples with the category and index of the docs containing any of the given words.
     Words can be a simple string, representing only one word.
@@ -160,7 +168,8 @@ def get_docs_that_contain_any_of_the_words(dataset, words):
     return list_docs_with_any_of_the_words
 
 
-def remove_docs_that_contain_any_of_the_given_words(dataset, words):
+# TODO: Change to admit dataset: Dataset
+def remove_docs_that_contain_any_of_the_given_words(dataset: TwentyNewsGroupsDataset, words: Union[str, Set[str]]):
     """
     Removes from the given dataset the documents that contain one or more of the given words.
     Words can be a simple string, representing only one word.
@@ -189,7 +198,8 @@ def remove_docs_that_contain_any_of_the_given_words(dataset, words):
         dataset.remove_document(category, index_in_category)
 
 
-def remove_docs_that_contain_any_of_the_words_in_file(dataset, file_path=__TRASH_WORDS_PATH):
+# TODO: Change to admit dataset: Dataset
+def remove_docs_that_contain_any_of_the_words_in_file(dataset: TwentyNewsGroupsDataset, file_path=__TRASH_WORDS_PATH):
     """
     Removes from the given dataset the documents that contain one or more of the words in the specified file.
     :param dataset: Dataset where docs will be removed. The dataset is modified.
@@ -201,7 +211,8 @@ def remove_docs_that_contain_any_of_the_words_in_file(dataset, file_path=__TRASH
     remove_docs_that_contain_any_of_the_given_words(dataset, words)
 
 
-def remove_trash_docs_specified_in_file(dataset, file_path=__TRASH_DOCS_PATH, file_sep=' '):
+# TODO: Change to admit dataset: Dataset
+def remove_trash_docs_specified_in_file(dataset: TwentyNewsGroupsDataset, file_path=__TRASH_DOCS_PATH, file_sep=' '):
     """
     Removes from the given dataset the documents specified in a file.
     :param dataset: Dataset where docs will be removed. The dataset is modified.
@@ -224,7 +235,8 @@ def remove_trash_docs_specified_in_file(dataset, file_path=__TRASH_DOCS_PATH, fi
         dataset.remove_document(category, index_in_category)
 
 
-def remove_empty_docs(dataset):
+# TODO: Change to admit dataset: Dataset
+def remove_empty_docs(dataset: TwentyNewsGroupsDataset) -> int:
     """
     Removes the empty documents of the given dataset.
     :param dataset: Dataset where empty docs will be removed. The dataset is modified.
@@ -244,29 +256,12 @@ def remove_empty_docs(dataset):
     return num_empty_docs
 
 
-def remove_duplicate_docs(dataset):
-    """
-    Removes the duplicate documents of the given dataset.
-    :param dataset: Dataset where duplicate docs will be removed. The dataset is modified.
-    :return: The number of documents removed.
-    """
-    # Create a copy of the files dictionary of the dataset
-    files_dict_copy = deepcopy(dataset.files_dict)
-
-    # Iterate over each doc in the dataset
-    for category_name, category_docs in dataset.files_dict.items():
-        doc_index_in_category = 0
-        for doc in category_docs:
-
-            # If the doc content is present in another docs, that docs are removed
-            for category_name_copy in files_dict_copy.keys():
-                files_dict_copy[category_name_copy] = [d for d in files_dict_copy[category_name_copy] if d != doc]
-
-
-def preprocess_dataset(dataset, trash_docs=True, normalize=True, lowercase=True, contractions=True, vulgar_words=True,
-                       stopwords=True, emails=True, punctuation=True, ngrams='uni', min_bigrams_count=50,
-                       bigrams_threshold=75, min_trigrams_count=100, trigrams_threshold=175, lemmatize=True, stem=False,
-                       trash_words=True, apostrophes=True, chars=True, empty_docs=True):
+# TODO: Change to admit dataset: Dataset
+def preprocess_dataset(dataset: TwentyNewsGroupsDataset, trash_docs=True, normalize=True, lowercase=True,
+                       contractions=True, vulgar_words=True, stopwords=True, emails=True, punctuation=True,
+                       ngrams='uni', min_bigrams_count=50, bigrams_threshold=75, min_trigrams_count=100,
+                       trigrams_threshold=175, lemmatize=True, stem=False, trash_words=True, apostrophes=True,
+                       chars=True, empty_docs=True) -> Dataset:
     """
     Creates a copy of the given dataset and returns the copy with the specified preprocessing.
     The original dataset is not modified.

@@ -1,5 +1,6 @@
 import abc
 
+import keras
 import numpy as np
 from gensim.models import KeyedVectors
 
@@ -10,7 +11,7 @@ class EmbeddingsModel(metaclass=abc.ABCMeta):
     """Interface for embedding's models."""
 
     @abc.abstractmethod
-    def get_word_vector(self, word):
+    def get_word_vector(self, word: str):
         """
         Returns the embedding vector of the given word. If the word is
         not present in the embedding's model, a default numpy array full
@@ -21,7 +22,7 @@ class EmbeddingsModel(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def get_vectors_dim(self):
+    def get_vectors_dim(self) -> int:
         """
         :return: The dimension of the embeddings vectors.
         """
@@ -45,7 +46,7 @@ class Word2VecModel(EmbeddingsModel):
         self.vectors_dim = vectors_dim
         self.w2v_model = KeyedVectors.load_word2vec_format(model_path, binary=True)
 
-    def get_word_vector(self, word):
+    def get_word_vector(self, word: str):
         """
         Returns the word2vec vector of the given word. If the word is not present
         in the word2vec model, a default numpy array full of zeros of the same size
@@ -58,7 +59,7 @@ class Word2VecModel(EmbeddingsModel):
         except KeyError:
             return np.zeros(self.vectors_dim)
 
-    def get_word_index(self, word):
+    def get_word_index(self, word: str) -> int:
         """
         Returns the index of the specified word.
         :param word:
@@ -69,14 +70,14 @@ class Word2VecModel(EmbeddingsModel):
             return self.w2v_model.vocab.get('UNK').index
         return self.w2v_model.vocab.get(word).index
 
-    def get_keras_embedding(self, train_embeddings=False):
+    def get_keras_embedding(self, train_embeddings=False) -> keras.layers.Embedding:
         """
         :param train_embeddings: If True, the embedding layer weights are updated during training.
         :return: The keras embedding layer using the Word2Vec model.
         """
         return self.w2v_model.get_keras_embedding(train_embeddings=train_embeddings)
 
-    def get_vectors_dim(self):
+    def get_vectors_dim(self) -> int:
         return self.vectors_dim
 
 
@@ -107,7 +108,7 @@ class Glove(EmbeddingsModel):
                 word_vector = np.asarray(values[1:], dtype='float32')  # the word vector is the rest
                 self.embeddings[word] = word_vector
 
-    def get_word_vector(self, word):
+    def get_word_vector(self, word: str):
         """
         Returns the glove vector of the given word. If the word is not present
         in the glove model, a default numpy array full of zeros of the same size
@@ -115,9 +116,8 @@ class Glove(EmbeddingsModel):
         :param word: Word to be converted as a vector.
         :return: The glove vector of the given word.
         """
-
         # If the word is not present in the dict as a key, an array of zeros is returned
         return self.embeddings.get(word, np.zeros(self.vectors_dim))  # second value is the default if key not present
 
-    def get_vectors_dim(self):
+    def get_vectors_dim(self) -> int:
         return self.vectors_dim

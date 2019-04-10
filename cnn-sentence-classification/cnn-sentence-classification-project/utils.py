@@ -1,6 +1,7 @@
 import pickle
 from datetime import datetime
 from os import path
+from typing import Callable
 
 import dill
 
@@ -9,7 +10,7 @@ RANDOM_STATE = 100
 PROJECT_ROOT_PATH = path.dirname(path.abspath(__file__))
 
 
-def pretty_print(text):
+def pretty_print(text: str):
     """Prints the given text with an underscore line below it."""
     print('\n\n' + str(text))
     print('_' * len(text))
@@ -35,7 +36,7 @@ def now_as_str() -> str:
     return str(datetime.now().strftime('%Y-%m-%d_%H-%M'))
 
 
-def save_obj_to_disk(obj, name):
+def save_obj_to_disk(obj: object, name: str):
     """
     Stores an object on disk, using pickle.
     :param obj: Object to be stored in disk.
@@ -47,7 +48,7 @@ def save_obj_to_disk(obj, name):
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 
-def load_obj_from_disk(name):
+def load_obj_from_disk(name: str) -> object:
     """
     Loads a saved object from disk, using pickle.
     :param name: Name of the pickle file stored in saved-models/objects/.
@@ -58,7 +59,7 @@ def load_obj_from_disk(name):
         return pickle.load(f)
 
 
-def save_func_to_disk(func, name):
+def save_func_to_disk(func: Callable, name: str):
     """
     Stores a function on disk, using dill.
     :param func: Function to be stored in disk.
@@ -70,11 +71,11 @@ def save_func_to_disk(func, name):
         dill.dump(func, f, pickle.HIGHEST_PROTOCOL)
 
 
-def load_func_from_disk(name):
+def load_func_from_disk(name: str) -> Callable:
     """
-    Loads a saved func from disk, using dill.
+    Loads a saved function from disk, using dill.
     :param name: Name of the dill file stored in saved-models/funcs/.
-    :return: The object load from disk.
+    :return: The function load from disk.
     """
     func_path = get_abspath_from_project_root('saved-models/funcs/{}.dill'.format(name))
     with open(func_path, 'rb') as f:

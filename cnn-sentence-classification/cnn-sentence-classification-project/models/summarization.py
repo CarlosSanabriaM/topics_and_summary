@@ -1,3 +1,5 @@
+from typing import List
+
 import networkx as nx
 import numpy as np
 from nltk import sent_tokenize
@@ -7,20 +9,30 @@ from embeddings import Glove, Word2VecModel
 from preprocessing.text import preprocess_text
 
 
+# TODO: Base class Summarization model
+
+
 class TextRank:
 
     def __init__(self, embedding_model='glove', glove_embedding_dim=100):
+        """
+        Creates a TextRank object that uses the specified embedding model to create the sentence vectors.
+        :param embedding_model: Embedding model used to create the sentence vectors.
+        Possible values are: 'glove' or 'word2vec'.
+        :param glove_embedding_dim: Dimension of the embedding word vectors.
+        """
         if embedding_model == 'glove':
             self.embedding_model = Glove(glove_embedding_dim)
         else:
             self.embedding_model = Word2VecModel()
 
-    def get_k_best_sentences_of_text(self, text, num_best_sentences=5):
+    def get_k_best_sentences_of_text(self, text: str, num_best_sentences=5) -> List[str]:
         """
         Get the k best sentences of the given text. This method performs an Extractive Summary of the given text.
         :param text: Text where sentences will be extracted.
         :param num_best_sentences: Number of sentences of the text to be returned.
-        :return: List[str] where each str is a sentence. The list is in descending order by the importance of the sents.
+        :return: List[str] where each str is a sentence.
+        The list is in descending order by the importance of the sentences.
         """
 
         # 1. Split text into sentences

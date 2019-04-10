@@ -116,7 +116,8 @@ class CNNSentenceClassification:
         """
         return self.model.evaluate(x_val, y_val, batch_size=batch_size)
 
-    # TODO: Meter a una clase base? El parametro random_state que está aqui pero no en Keras-Example se podria pasar como kwargs
+    # TODO: Move to a base class? El parametro random_state que está aqui pero
+    #  no en Keras-Example se podria pasar como kwargs
     @classmethod
     def train_and_evaluate(cls, embedding_layer, word_vectors_max_len, dataset_num_classes,
                            random_state, X_train, y_train, X_val, y_val, epochs):

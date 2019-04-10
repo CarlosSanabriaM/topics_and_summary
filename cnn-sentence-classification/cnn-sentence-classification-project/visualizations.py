@@ -16,7 +16,7 @@ from models.topics import TopicsModel
 from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
 
 
-def plot_distribution_of_doc_word_counts(documents):
+def plot_distribution_of_doc_word_counts(documents: List[List[str]]):
     """
     Plot a histogram of the number of words in the documents.
     :param documents: : List[List[str]]
@@ -54,6 +54,7 @@ def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir
                                dir_save_path=dir_save_path, dpi=dpi, show_plot=show_plot)
 
 
+# noinspection PyTypeChecker
 def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False, all_horizontal=True,
                                save=False, dir_save_path=None, dpi=350, show_plot=True):
     """
@@ -236,7 +237,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
             topic_coord[topic_num] = tsne_lda[dominant_topic_per_doc.index(topic_num)]
 
         # List of num_topics keywords as a str per each topic in the model
-        topics_kws = [model.get_k_kws_per_topic_as_str(topic, num_keywords) for topic in range(model.num_topics)]
+        topics_kws = [model.get_k_kws_of_topic_as_str(topic, num_keywords) for topic in range(model.num_topics)]
 
         # Plot the keywords
         for i in range(doc_topic_prob_matrix.shape[1]):

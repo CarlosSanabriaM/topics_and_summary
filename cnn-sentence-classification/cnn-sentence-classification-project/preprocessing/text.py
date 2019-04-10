@@ -1,5 +1,6 @@
 import json
 import re
+from typing import Union, Callable
 
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -17,7 +18,7 @@ __VULGAR_WORDS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'vulgar_words_d
 __NORMALIZE_WORDS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'normalize_words_dict.txt')
 
 
-def to_lowercase(text):
+def to_lowercase(text: str) -> str:
     """
     Returns the given text with all characters in lowercase.
     :param text: The text to be converted to lowercase. (String)
@@ -27,7 +28,7 @@ def to_lowercase(text):
     return text
 
 
-def remove_stopwords(text, basic_stopwords=__BASIC_STOPWORDS, additional_stopwords=True):
+def remove_stopwords(text: str, basic_stopwords=__BASIC_STOPWORDS, additional_stopwords=True) -> str:
     """
     Returns the given text with the stopwords removed.
     :param text: The text to remove stopwords. (String)
@@ -47,7 +48,7 @@ def remove_stopwords(text, basic_stopwords=__BASIC_STOPWORDS, additional_stopwor
                     if word not in _stopwords)
 
 
-def remove_emails(text, emails=__EMAILS_RE):
+def remove_emails(text: str, emails=__EMAILS_RE) -> str:
     """
     Returns the given text with the emails removed.
     :param text:
@@ -57,7 +58,7 @@ def remove_emails(text, emails=__EMAILS_RE):
     return emails.sub('', text)
 
 
-def substitute_punctuation(text, punctuation=__PUNCTUATION_RE, substitute_by=' '):
+def substitute_punctuation(text: str, punctuation=__PUNCTUATION_RE, substitute_by=' ') -> str:
     """
     Substitutes the punctuation of the given text by the specified string.
     :param text: The text where you want to substitute the punctuation.
@@ -68,7 +69,7 @@ def substitute_punctuation(text, punctuation=__PUNCTUATION_RE, substitute_by=' '
     return punctuation.sub(substitute_by, text)
 
 
-def stem_words(text, stemmer=PorterStemmer()):
+def stem_words(text: str, stemmer=PorterStemmer()) -> str:
     """
     Given a string, it applies the specified Stemmer to each word of the string.
     :param text: The text to be stemmed. (String)
@@ -78,7 +79,7 @@ def stem_words(text, stemmer=PorterStemmer()):
     return ' '.join(stemmer.stem(word) for word in text.split())
 
 
-def lemmatize_words(text, lemmatizer=WordNetLemmatizer()):
+def lemmatize_words(text: str, lemmatizer=WordNetLemmatizer()) -> str:
     """
     Given a string, it applies the specified lemmatizer to each word of the string.
     :param text: The text to be lemmatized. (String)
@@ -88,7 +89,7 @@ def lemmatize_words(text, lemmatizer=WordNetLemmatizer()):
     return ' '.join(lemmatizer.lemmatize(word) for word in text.split())
 
 
-def get_first_k_words(text, num_words):
+def get_first_k_words(text: str, num_words: int) -> str:
     """
     Returns the given text with only the first k words.
     if k >= len(text), returns the entire text.
@@ -103,7 +104,7 @@ def get_first_k_words(text, num_words):
     return ' '.join(words[:num_words])
 
 
-def substitute_word(text, word, substitute_by):
+def substitute_word(text: str, word: str, substitute_by: str) -> str:
     """
     Substitutes in the given text the specified word by the substitute_by word.
     It doesn't substitutes part of words. For example, substitute_word('you about u', 'u', '*')
@@ -116,7 +117,7 @@ def substitute_word(text, word, substitute_by):
     return re.sub('\\b' + word + '\\b', substitute_by, text)
 
 
-def substitute_words_with_dict(text, substitutions_dict):
+def substitute_words_with_dict(text: str, substitutions_dict: Union[str, dict]) -> str:
     """
     Substitutes in the given text the elements specified in the substitutions_dict.
     :param text: Text where you want to substitute words.
@@ -145,7 +146,7 @@ def substitute_words_with_dict(text, substitutions_dict):
     return text
 
 
-def expand_contractions(text, expand_contractions_dict=None):
+def expand_contractions(text: str, expand_contractions_dict: dict = None) -> str:
     """
     Expands the contractions (for example: "don't") in the documents of the dataset.
     For example, if expand_contractions_dict has the following pair: "don't": "do not"
@@ -163,7 +164,7 @@ def expand_contractions(text, expand_contractions_dict=None):
     return substitute_words_with_dict(text, expand_contractions_dict)
 
 
-def substitute_vulgar_words(text, vulgar_words_dict=None):
+def substitute_vulgar_words(text: str, vulgar_words_dict: dict = None) -> str:
     """
     Substitutes the vulgar words for their normal version. For example: "u" --> "you".
     :param text: Text where you want to substitute the vulgar words.
@@ -179,7 +180,7 @@ def substitute_vulgar_words(text, vulgar_words_dict=None):
     return substitute_words_with_dict(text, vulgar_words_dict)
 
 
-def normalize_words(text, normalize_words_dict=None):
+def normalize_words(text: str, normalize_words_dict: dict = None) -> str:
     """
     Normalization/canonicalization is a process for converting data that has more than one possible
     representation into a "standard", "normal", or canonical form.
@@ -199,7 +200,7 @@ def normalize_words(text, normalize_words_dict=None):
     return substitute_words_with_dict(text, normalize_words_dict)
 
 
-def remove_single_chars(text):
+def remove_single_chars(text: str) -> str:
     """
     Returns the given text with the words that are simple chars (have length 1) removed.
     :param text: The text to remove single chars. (String)
@@ -209,7 +210,7 @@ def remove_single_chars(text):
                     if len(word) > 1)
 
 
-def remove_apostrophes(text):
+def remove_apostrophes(text: str) -> str:
     """
     Returns the given text with the apostrophes removed.
     :param text: The text to remove apostrophes. (String)
@@ -219,9 +220,9 @@ def remove_apostrophes(text):
     return apostrophes_re.sub(' ', text)
 
 
-def preprocess_text(text, normalize=True, lowercase=True, contractions=True, vulgar_words=True,
-                    stopwords=True, emails=True, punctuation=True, ngrams='uni', ngrams_model_func=None,
-                    lemmatize=True, stem=False, apostrophes=True, chars=True):
+def preprocess_text(text: str, normalize=True, lowercase=True, contractions=True, vulgar_words=True,
+                    stopwords=True, emails=True, punctuation=True, ngrams='uni', ngrams_model_func: Callable = None,
+                    lemmatize=True, stem=False, apostrophes=True, chars=True) -> str:
     """
     Receives a str containing a text and returns a list of words after applying the specified preprocessing.
     The original dataset is not modified.

@@ -1,7 +1,11 @@
+from typing import Tuple, Callable
+
 import gensim
 
+from datasets.common import Dataset
 
-def create_bigram_model(dataset, min_count=50, threshold=75):
+
+def create_bigram_model(dataset: Dataset, min_count=50, threshold=75) -> gensim.models.phrases.Phraser:
     """
     Returns a bigram model based on the documents in the dataset.
     :param dataset: Dataset.
@@ -18,7 +22,8 @@ def create_bigram_model(dataset, min_count=50, threshold=75):
     return gensim.models.phrases.Phraser(bigram)
 
 
-def create_trigram_model(dataset, min_count1=50, threshold1=75, min_count2=100, threshold2=175):
+def create_trigram_model(dataset: Dataset, min_count1=50, threshold1=75, min_count2=100, threshold2=175) \
+        -> Tuple[gensim.models.phrases.Phraser, gensim.models.phrases.Phraser]:
     """
     Returns a bigram and a trigram model based on the documents in the dataset.
     :param dataset: Dataset.
@@ -43,7 +48,7 @@ def create_trigram_model(dataset, min_count1=50, threshold1=75, min_count2=100, 
     return gensim.models.phrases.Phraser(bigram), gensim.models.phrases.Phraser(trigram)
 
 
-def make_ngrams(dataset, ngram_model_func):
+def make_ngrams(dataset: Dataset, ngram_model_func: Callable):
     """
     Applies the given ngram model function to the documents in the given dataset.
     :param dataset: Dataset where ngrams will be created.
@@ -54,7 +59,7 @@ def make_ngrams(dataset, ngram_model_func):
     dataset.apply_function_to_files(lambda doc: ' '.join(ngram_model_func(doc.split())))
 
 
-def make_bigrams_and_get_bigram_model_func(dataset, min_count=50, threshold=75):
+def make_bigrams_and_get_bigram_model_func(dataset: Dataset, min_count=50, threshold=75) -> Callable:
     """
     Creates a bigram model based on the documents in the dataset, makes bigrams in the
     dataset using that model, and returns a function that allows to obtain bigrams
@@ -73,7 +78,8 @@ def make_bigrams_and_get_bigram_model_func(dataset, min_count=50, threshold=75):
     return bigram_model_func
 
 
-def make_trigrams_and_get_trigram_model_func(dataset, min_count1=50, threshold1=75, min_count2=100, threshold2=175):
+def make_trigrams_and_get_trigram_model_func(dataset: Dataset, min_count1=50, threshold1=75,
+                                             min_count2=100, threshold2=175) -> Callable:
     """
     Creates a trigram model based on the documents in the dataset, makes trigrams in the
     dataset using that model, and returns a function that allows to obtain trigrams
