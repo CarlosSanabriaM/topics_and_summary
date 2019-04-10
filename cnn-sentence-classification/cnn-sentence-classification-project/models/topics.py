@@ -238,7 +238,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return topic_prob_vector[:num_best_topics]
 
-    def get_related_docs_as_df(self, text, num_docs=5, preprocess=True, ngrams='uni', ngrams_model_func=None):
+    def get_related_docs_as_df(self, text, num_docs=5, preprocess=True, ngrams='uni', ngrams_model_func=None,
+                               remove_duplicates=True):
         """
         Given a text, this method returns a df with the index and the content of the most similar documents
         in the corpus. The similar/related documents are obtained as follows:
@@ -257,8 +258,12 @@ class TopicsModel(metaclass=abc.ABCMeta):
         possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function
         is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions
         in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
+        :param remove_duplicates: If True, duplicate documents are not present in the returned DataFrame.
+        Even so, num_docs documents are returned, obtained from below of the removed documents (the documents are
+        ordered descending).
         :return: The pandas DataFrame.
         """
+        # TODO: Remove duplicates
         # 1. Obtain the list of topics more related with the text
         topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess=preprocess, ngrams=ngrams,
                                                             ngrams_model_func=ngrams_model_func, print_table=False)
@@ -336,12 +341,15 @@ class TopicsModel(metaclass=abc.ABCMeta):
         self.docs_topics_df.reset_index(drop=True, inplace=True)
         return self.docs_topics_df
 
-    def get_k_most_representative_docs_per_topic_as_df(self, k=1):
+    def get_k_most_representative_docs_per_topic_as_df(self, k=1, remove_duplicates=True):
         """
         Returns a DataFrame where the topics are grouped in ascending order by their indices, and inside each
         topic group there are k rows, where each row contains the topic and one of the most representative documents
         of that topic, in descending order.
         :param k: Number of the most representative documents per topic you want.
+        :param remove_duplicates: If True, duplicate documents are not present in the same topic in the returned
+        DataFrame. Even so, k documents per topic are returned, obtained from below of the removed documents
+        (the documents are ordered descending).
         :return: A pandas DataFrame with the following columns: Topic index, Doc index, Topic prob, Topic keywords and
         Doc text.
         """
@@ -353,9 +361,34 @@ class TopicsModel(metaclass=abc.ABCMeta):
         # Group rows by the topic index
         doc_topics_grouped_by_topic_df = self.docs_topics_df.groupby('Dominant topic index')
 
-        # For each topic group, sort the docs by the 'Topic prob' (in descending order) and select the first k ones
+        # For each topic group, sort the docs by the 'Topic prob' (in descending order) and select k ones
         for topic, group in doc_topics_grouped_by_topic_df:
-            most_repr_docs = group.sort_values(['Topic prob'], ascending=[False]).head(k)
+            topic_ordered_docs = group.sort_values(['Topic prob'], ascending=[False])
+
+            if remove_duplicates:
+                # The first k non duplicate documents are selected
+                k_non_duplicate_docs_list = []
+                i = 0
+                while len(k_non_duplicate_docs_list) < k:
+                    if topic_ordered_docs.iloc[i]['Doc text'] not in \
+                            map(lambda pd_series: pd_series['Doc text'], k_non_duplicate_docs_list):
+                        k_non_duplicate_docs_list.append(
+                            topic_ordered_docs.iloc[i]
+                            # pd.DataFrame([
+                            #     [doc_index, dominant_topic_index, dominant_topic_prob, dominant_topic_kws,
+                            #      ' '.join(self.documents[doc_index])]
+                            # ], columns=['Doc index', 'Dominant topic index', 'Topic prob', 'Topic keywords',
+                            #             'Doc text'])
+                        )
+                    i += 1
+                # Concat the series list into a single df
+                # most_repr_docs = pd.concat(k_non_duplicate_docs_list)  # TODO !!!
+                # most_repr_docs = pd.concat(k_non_duplicate_docs_list, axis=1)  # TODO !!!
+                most_repr_docs = pd.DataFrame(k_non_duplicate_docs_list)
+            else:
+                # The first k documents of each topic are selected (duplicate documents can exist)
+                most_repr_docs = topic_ordered_docs.head(k)
+
             k_most_repr_doc_per_topic_df = pd.concat([k_most_repr_doc_per_topic_df, most_repr_docs],
                                                      axis=0)
 
@@ -365,7 +398,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         k_most_repr_doc_per_topic_df.columns = ['Doc index', 'Topic index', 'Topic prob', 'Topic keywords', 'Doc text']
         # Change columns order
         k_most_repr_doc_per_topic_df = \
-            k_most_repr_doc_per_topic_df[['Topic index', 'Doc index', 'Topic prob', 'Topic keywords', 'Doc text']]
+            k_most_repr_doc_per_topic_df[['Topic index', 'Doc index', 'Topic prob', 'Doc text', 'Topic keywords']]
 
         # Add a last column with the original document text, obtained from disk (no preprocessing, no tokenization, ...)
         #  Iterate for each row and get the value of the column 'Doc index'. Using the doc index, obtain the
@@ -384,16 +417,19 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return k_most_repr_doc_per_topic_df
 
-    def get_k_most_representative_docs_of_topic_as_df(self, topic, k=1):
+    def get_k_most_representative_docs_of_topic_as_df(self, topic, k=1, remove_duplicates=True):
         """
         Returns a DataFrame with the k most representative documents of the given topic.
         The DataFrame has k rows, where each row contains the document index, the document-topic probability and
         the document text, in descending order.
         :param topic: Index of the topic.
         :param k: Number of the most representative documents of the topic you want.
+        :param remove_duplicates: If True, duplicate documents are not present in the returned DataFrame.
+        Even so, k documents are returned, obtained from below of the removed documents (the documents are
+        ordered descending).
         :return: A pandas DataFrame with the following columns: Doc index, Topic prob and Doc text.
         """
-        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k)
+        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k, remove_duplicates)
         # Keep only the rows where the 'Topic index' equals the topic index passed as a parameter
         k_most_repr_doc_per_topic_df = \
             k_most_repr_doc_per_topic_df.loc[k_most_repr_doc_per_topic_df['Topic index'] == topic]
