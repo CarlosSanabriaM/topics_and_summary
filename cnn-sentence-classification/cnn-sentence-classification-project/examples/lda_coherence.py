@@ -181,8 +181,8 @@ if __name__ == '__main__':
     # Callbacks that are called during training
     now = str(datetime.datetime.now())
     model_name = "lda_tuned_model_" + now
-    os.mkdir('../saved-models/lda/' + model_name)
-    path = get_abspath_from_project_root(join_paths("saved-models/lda/", model_name, model_name))
+    os.mkdir('../saved-elements/lda/' + model_name)
+    path = get_abspath_from_project_root(join_paths("saved-elements/lda/", model_name, model_name))
 
     epoch_saver = EpochSaver(path)
     epoch_logger = EpochLogger()

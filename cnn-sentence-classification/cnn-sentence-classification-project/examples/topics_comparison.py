@@ -114,7 +114,7 @@ if __name__ == '__main__':
     # Topics info for the models
     MIN_TOPICS = 10
     MAX_TOPICS = 20
-    BASE_PATH = get_abspath_from_project_root('saved-models/topics/comparison')
+    BASE_PATH = get_abspath_from_project_root('saved-elements/topics/comparison')
 
     # %%
     # Unigrams

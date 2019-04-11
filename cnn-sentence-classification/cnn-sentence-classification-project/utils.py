@@ -36,47 +36,59 @@ def now_as_str() -> str:
     return str(datetime.now().strftime('%Y-%m-%d_%H-%M'))
 
 
-def save_obj_to_disk(obj: object, name: str):
+def save_obj_to_disk(obj: object, name: str, obj_path: str = None):
     """
     Stores an object on disk, using pickle.
     :param obj: Object to be stored in disk.
-    :param name: Name of the pickle file to be created in saved-models/objects/ and
+    :param name: Name of the pickle file to be created in saved-elements/objects/ and
+    :param obj_path: Path of the folder where the object will be stored in disk.
     where the object info will be stored.
     """
-    obj_path = get_abspath_from_project_root('saved-models/objects/{}.pickle'.format(name))
+    if obj_path is None:
+        obj_path = get_abspath_from_project_root('saved-elements/objects/{}.pickle'.format(name))
+
     with open(obj_path, 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 
-def load_obj_from_disk(name: str) -> object:
+def load_obj_from_disk(name: str, obj_path: str = None) -> object:
     """
     Loads a saved object from disk, using pickle.
-    :param name: Name of the pickle file stored in saved-models/objects/.
+    :param name: Name of the pickle file stored in saved-elements/objects/.
+    :param obj_path: Path of the folder where the object is stored in disk.
     :return: The object load from disk.
     """
-    obj_path = get_abspath_from_project_root('saved-models/objects/{}.pickle'.format(name))
+    if obj_path is None:
+        obj_path = get_abspath_from_project_root('saved-elements/objects/{}.pickle'.format(name))
+
     with open(obj_path, 'rb') as f:
         return pickle.load(f)
 
 
-def save_func_to_disk(func: Callable, name: str):
+def save_func_to_disk(func: Callable, name: str, func_path: str = None):
     """
     Stores a function on disk, using dill.
     :param func: Function to be stored in disk.
-    :param name: Name of the dill file to be created in saved-models/funcs/ and
+    :param name: Name of the dill file to be created in saved-elements/funcs/ and
+    :param func_path: Path of the folder where the function will be stored in disk.
     where the object info will be stored.
     """
-    obj_path = get_abspath_from_project_root('saved-models/funcs/{}.dill'.format(name))
-    with open(obj_path, 'wb') as f:
+    if func_path is None:
+        func_path = get_abspath_from_project_root('saved-elements/funcs/{}.dill'.format(name))
+
+    with open(func_path, 'wb') as f:
         dill.dump(func, f, pickle.HIGHEST_PROTOCOL)
 
 
-def load_func_from_disk(name: str) -> Callable:
+def load_func_from_disk(name: str, func_path: str = None) -> Callable:
     """
     Loads a saved function from disk, using dill.
-    :param name: Name of the dill file stored in saved-models/funcs/.
+    :param name: Name of the dill file stored in saved-elements/funcs/.
+    :param func_path: Path of the folder where the function is stored in disk.
     :return: The function load from disk.
     """
-    func_path = get_abspath_from_project_root('saved-models/funcs/{}.dill'.format(name))
+    if func_path is None:
+        func_path = get_abspath_from_project_root('saved-elements/funcs/{}.dill'.format(name))
+
     with open(func_path, 'rb') as f:
         return dill.load(f)

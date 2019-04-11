@@ -216,8 +216,8 @@ def remove_trash_docs_specified_in_file(dataset: TwentyNewsGroupsDataset, file_p
     """
     Removes from the given dataset the documents specified in a file.
     :param dataset: Dataset where docs will be removed. The dataset is modified.
-    :param file_path: Path to the file. The file must contain in each line the category
-    and then the name of the file to be removed. Category and name must be separeted by
+    :param file_path: Path to the file where the trash docs are specified. The file must contain in each line
+    the category and then the name of the file to be removed. Category and name must be separeted by
     the element specified in 'file_sep' parameter.
     :param file_sep: Separator of the category and the name in the file.
     """

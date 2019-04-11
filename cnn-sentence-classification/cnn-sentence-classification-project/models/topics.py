@@ -46,7 +46,7 @@ def get_corpus(dictionary, documents) -> List[List[Tuple[int, int]]]:
 class TopicsModel(metaclass=abc.ABCMeta):
     """Base class that represents a topics model."""
 
-    __SAVE_PATH = get_abspath_from_project_root('saved-models/topics/')  # Path where the models will be saved
+    __SAVE_PATH = get_abspath_from_project_root('saved-elements/topics/')  # Path where the models will be saved
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20,
@@ -555,7 +555,7 @@ class LdaMalletModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use."""
 
     __MALLET_SOURCE_CODE_PATH = get_abspath_from_project_root('../../mallet-2.0.8/bin/mallet')
-    __MALLET_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lda_mallet')
+    __MALLET_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lda_mallet')
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20, model=None,
@@ -664,7 +664,7 @@ class LdaMalletModel(TopicsModel):
 class LdaGensimModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LdaModel, making it easier to use."""
 
-    __LDA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lda/')
+    __LDA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lda/')
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20,
@@ -714,7 +714,7 @@ class LdaGensimModel(TopicsModel):
 class LsaGensimModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LsiModel, making it easier to use."""
 
-    __LSA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/lsa/')
+    __LSA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lsa/')
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20, model=None, **kwargs):
@@ -761,7 +761,7 @@ class LsaGensimModel(TopicsModel):
 class TopicsModelsList(metaclass=abc.ABCMeta):
     """Base class for creating, comparing and storing easily a list of topics models."""
 
-    _SAVE_MODELS_PATH = get_abspath_from_project_root('saved-models/topics/')  # Path where the models will be saved
+    _SAVE_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/')  # Path where the models will be saved
 
     def __init__(self, dataset: Dataset):
         self.dataset = dataset

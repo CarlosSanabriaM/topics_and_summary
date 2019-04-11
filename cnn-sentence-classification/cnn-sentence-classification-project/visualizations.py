@@ -154,7 +154,7 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
         plt.clf()
 
 
-__TSNE_SAVE_PATH = get_abspath_from_project_root('saved-models/topics/tsne')
+__TSNE_SAVE_PATH = get_abspath_from_project_root('saved-elements/topics/tsne')
 
 
 def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_threshold=0,

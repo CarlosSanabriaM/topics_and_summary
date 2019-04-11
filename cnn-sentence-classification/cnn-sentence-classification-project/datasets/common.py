@@ -68,6 +68,11 @@ class Dataset(metaclass=abc.ABCMeta):
         :return: List of Document objects of the documents in the dataset.
         """
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.as_documents_obj_list() == other.as_documents_obj_list()
+        return False
+
     # TODO: Create a method remove_document()
 
 
