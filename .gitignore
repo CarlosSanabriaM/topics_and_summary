@@ -13,8 +13,8 @@ __pycache__/
 .DS_Store
 
 cnn-sentence-classification/Keras example.ipynb
-cnn-sentence-classification/cnn-sentence-classification-project/saved-models/
-cnn-sentence-classification/cnn-sentence-classification-project/tests/lda_results/
+cnn-sentence-classification/cnn-sentence-classification-project/saved-elements/
+cnn-sentence-classification/cnn-sentence-classification-project/tests/saved-elements/
 glove/
 mallet-2.0.8/
 text-preprocessing/20_newsgroups/
