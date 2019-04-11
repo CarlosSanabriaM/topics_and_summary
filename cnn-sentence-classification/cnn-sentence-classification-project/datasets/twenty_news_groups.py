@@ -217,6 +217,7 @@ class TwentyNewsGroupsDataset(Dataset):
     def print_some_files(self):
         """
         Prints some text files from the corpus.
+        This function can be used to see how the preprocessing affects the dataset documents.
         """
         pretty_print('File 1')
         print(self.files_dict['sci.med'][1].content)
@@ -224,6 +225,14 @@ class TwentyNewsGroupsDataset(Dataset):
         print(self.files_dict['sci.electronics'][0].content)
         pretty_print('File 3')
         print(self.files_dict['rec.autos'][16].content)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.files_dict == other.files_dict and \
+                   self.remove_header == other.remove_header and \
+                   self.remove_footer == other.remove_footer and \
+                   self.remove_quotes == other.remove_quotes
+        return False
 
 
 class TwentyNewsGroupsDocument(Document):
@@ -233,7 +242,7 @@ class TwentyNewsGroupsDocument(Document):
     because documents in this dataset are stored in folders.
     """
 
-    def __init__(self, directory_name: str, name: str, content: str):
+    def __init__(self, directory_name: str, name: str, content: str = None):
         """
         :param directory_name: Name of the directory this document is stored in.
         The directory is inside the dataset directory.

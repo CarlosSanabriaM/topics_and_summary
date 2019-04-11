@@ -82,7 +82,7 @@ class Document(metaclass=abc.ABCMeta):
     Stores the info needed to access that doc in the dataset directory and the document content.
     """
 
-    def __init__(self, name: str, content: str):
+    def __init__(self, name: str, content: str = None):
         """
         :param name: Name of the document.
         :param content: Content of the document.
