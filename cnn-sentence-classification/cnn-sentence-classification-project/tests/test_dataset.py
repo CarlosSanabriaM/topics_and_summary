@@ -13,10 +13,10 @@ class TestTwentyNewsGroupsDataset(unittest.TestCase):
 
     def test_create_dataset(self):
         # Obtain the dataset stored in disk
-        dataset_from_disk = load_obj_from_disk('dataset',
-                                               join_paths(self.TESTS_BASE_PATH, 'saved-elements/objects'))
+        expected_dataset = load_obj_from_disk('dataset',
+                                              join_paths(self.TESTS_BASE_PATH, 'saved-elements/objects'))
 
-        self.assertEqual(self.dataset, dataset_from_disk)
+        self.assertEqual(expected_dataset, self.dataset)
 
     def test_get_original_doc_content_from_disk_method(self):
         # Obtain the original content of a specific document
@@ -33,17 +33,17 @@ others are named, they do not count as an argument because what these
 people did was not done as a true Muslims. No mention is made how Muslims
 are the cause of a bad situation of another party."""
 
-        self.assertEqual(original_doc_content, expected_original_doc_content)
+        self.assertEqual(expected_original_doc_content, original_doc_content)
 
     def test_as_documents_obj_list_method(self):
         expected_as_documents_obj_list = load_obj_from_disk('as_documents_obj_list',
                                                             join_paths(self.TESTS_BASE_PATH, 'saved-elements/objects'))
-        self.assertEqual(self.dataset.as_documents_obj_list(), expected_as_documents_obj_list)
+        self.assertEqual(expected_as_documents_obj_list, self.dataset.as_documents_obj_list())
 
     def test_as_documents_content_list_method(self):
         expected_as_documents_content_list = \
             load_obj_from_disk('as_documents_content_list', join_paths(self.TESTS_BASE_PATH, 'saved-elements/objects'))
-        self.assertEqual(self.dataset.as_documents_content_list(), expected_as_documents_content_list)
+        self.assertEqual(expected_as_documents_content_list, self.dataset.as_documents_content_list())
 
 
 if __name__ == '__main__':
