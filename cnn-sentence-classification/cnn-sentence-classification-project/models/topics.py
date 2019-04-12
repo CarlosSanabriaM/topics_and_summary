@@ -546,6 +546,12 @@ class Topic:
         """
         return [kw.as_tuple() for kw in self.keywords]
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            return self.id == other.id and \
+                   self.keywords == other.keywords
+        return False
+
 
 class Keyword:
     """
@@ -569,6 +575,12 @@ class Keyword:
         :return: Keyword as a tuple: (name, prob).
         """
         return self.name, self.probability
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            return self.name == other.name and \
+                   self.probability == other.probability
+        return False
 
 
 class LdaMalletModel(TopicsModel):

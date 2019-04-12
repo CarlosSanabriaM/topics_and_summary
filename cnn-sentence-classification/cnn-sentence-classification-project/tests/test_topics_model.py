@@ -2,11 +2,13 @@ import unittest
 from shutil import rmtree
 
 from models.topics import LdaGensimModel, LdaMalletModel, LsaGensimModel
-from utils import get_abspath_from_project_root, join_paths, load_obj_from_disk
+from utils import get_abspath_from_project_root, join_paths, load_obj_from_disk, load_func_from_disk
 
 
 class TestTopicsModel(unittest.TestCase):
     TESTS_BASE_PATH = get_abspath_from_project_root('tests')
+    SAVED_OBJECTS_PATH = join_paths(TESTS_BASE_PATH, 'saved-elements/objects')
+    SAVED_FUNCS_PATH = join_paths(TESTS_BASE_PATH, 'saved-elements/funcs')
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -61,6 +63,126 @@ class TestTopicsModel(unittest.TestCase):
         rmtree(join_paths(self.models_dir_path, model_name))
 
         self.assertEqual(model, test_model_from_disk)
+
+    # noinspection PyTypeChecker
+    def test_get_topics(self):
+        # For testing this method, an LdaMalletModel loaded from disk will be used
+        model = LdaMalletModel.load('lda-mallet-model', self.dataset, self.models_dir_path)
+
+        # Expected result was previously calculated and stored in disk
+        expected_result = load_obj_from_disk('test_get_topics_expected_result', self.SAVED_OBJECTS_PATH)
+
+        result = model.get_topics()
+
+        self.assertEqual(expected_result, result)
+
+    # noinspection PyTypeChecker
+    def test_predict_topic_prob_on_text(self):
+        # For testing this method, an LdaMalletModel loaded from disk will be used
+        model = LdaMalletModel.load('lda-mallet-model', self.dataset, self.models_dir_path)
+        trigrams_func = load_func_from_disk('trigrams_func', self.SAVED_FUNCS_PATH)
+
+        text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not
+        directly describe Jesus' baptism. Most modern theologians view the baptism of Jesus by John the Baptist as a
+        historical event to which a high degree of certainty can be assigned.[1][2][3][4][5] Along with the crucifixion
+        of Jesus, most biblical scholars view it as one of the two historically certain facts about him, and often use 
+        it as the starting point for the study of the historical Jesus.[6]"""
+
+        # Expected result was previously calculated and stored in disk
+        expected_result = load_obj_from_disk('test_predict_topic_prob_on_text_expected_result',
+                                             self.SAVED_OBJECTS_PATH)
+
+        result = model.predict_topic_prob_on_text(text, ngrams='tri', ngrams_model_func=trigrams_func,
+                                                  print_table=False)
+
+        self.assertEqual(expected_result, result)
+
+    # noinspection PyTypeChecker
+    def test_get_dominant_topic_of_each_doc_as_df(self):
+        # For testing this method, an LdaGensimModel loaded from disk will be used,
+        # because LdaMallet is extremely slow to generate the docs_topics_df
+        model = LdaGensimModel.load('lda-gensim-model', self.dataset, self.models_dir_path)
+
+        # Expected result was previously calculated and stored in disk
+        expected_result = load_obj_from_disk('test_get_dominant_topic_of_each_doc_as_df_expected_result',
+                                             self.SAVED_OBJECTS_PATH)
+
+        result = model.get_dominant_topic_of_each_doc_as_df()
+
+        # noinspection PyUnresolvedReferences
+        self.assertTrue(expected_result.equals(result))
+
+    # noinspection PyTypeChecker
+    def test_get_related_docs_as_df(self):
+        # TODO: Change this test to use LdaMallet with docs_topics_df loaded from disk
+        # # For testing this method, an LdaMalletModel loaded from disk will be used
+        # docs_topics_df = load_obj_from_disk('lda_mallet_docs_topics_df', self.SAVED_OBJECTS_PATH)
+        # model = LdaMalletModel.load('lda-mallet-model', self.dataset, self.models_dir_path,
+        #                             docs_topics_df=docs_topics_df)
+        # trigrams_func = load_func_from_disk('trigrams_func', self.SAVED_FUNCS_PATH)
+
+        docs_topics_df = load_obj_from_disk('test_get_dominant_topic_of_each_doc_as_df_expected_result',
+                                            self.SAVED_OBJECTS_PATH)
+        model = LdaGensimModel.load('lda-gensim-model', self.dataset, self.models_dir_path, docs_topics_df)
+        trigrams_func = load_func_from_disk('trigrams_func', self.SAVED_FUNCS_PATH)
+
+        text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not
+        directly describe Jesus' baptism. Most modern theologians view the baptism of Jesus by John the Baptist as a
+        historical event to which a high degree of certainty can be assigned.[1][2][3][4][5] Along with the crucifixion
+        of Jesus, most biblical scholars view it as one of the two historically certain facts about him, and often use 
+        it as the starting point for the study of the historical Jesus.[6]"""
+
+        # Expected result was previously calculated and stored in disk
+        expected_result = load_obj_from_disk('test_get_related_docs_as_df_expected_result', self.SAVED_OBJECTS_PATH)
+
+        result = model.get_related_docs_as_df(text, ngrams='tri', ngrams_model_func=trigrams_func)
+
+        # noinspection PyUnresolvedReferences
+        self.assertTrue(expected_result.equals(result))
+
+    # noinspection PyTypeChecker
+    def test_get_k_most_representative_docs_per_topic_as_df(self):
+        # TODO: Change this test to use LdaMallet with docs_topics_df loaded from disk
+        # # For testing this method, an LdaMalletModel loaded from disk will be used
+        # docs_topics_df = load_obj_from_disk('lda_mallet_docs_topics_df', self.SAVED_OBJECTS_PATH)
+        # model = LdaMalletModel.load('lda-mallet-model', self.dataset, self.models_dir_path,
+        #                             docs_topics_df=docs_topics_df)
+        # trigrams_func = load_func_from_disk('trigrams_func', self.SAVED_FUNCS_PATH)
+
+        docs_topics_df = load_obj_from_disk('test_get_dominant_topic_of_each_doc_as_df_expected_result',
+                                            self.SAVED_OBJECTS_PATH)
+        model = LdaGensimModel.load('lda-gensim-model', self.dataset, self.models_dir_path, docs_topics_df)
+
+        # Expected result was previously calculated and stored in disk
+        expected_result = load_obj_from_disk('test_get_k_most_representative_docs_per_topic_as_df_expected_result',
+                                             self.SAVED_OBJECTS_PATH)
+
+        result = model.get_k_most_representative_docs_per_topic_as_df(k=5)
+
+        # noinspection PyUnresolvedReferences
+        self.assertTrue(expected_result.equals(result))
+
+    # noinspection PyTypeChecker
+    def test_get_k_most_representative_docs_of_topic_as_df(self):
+        # TODO: Change this test to use LdaMallet with docs_topics_df loaded from disk
+        # # For testing this method, an LdaMalletModel loaded from disk will be used
+        # docs_topics_df = load_obj_from_disk('lda_mallet_docs_topics_df', self.SAVED_OBJECTS_PATH)
+        # model = LdaMalletModel.load('lda-mallet-model', self.dataset, self.models_dir_path,
+        #                             docs_topics_df=docs_topics_df)
+        # trigrams_func = load_func_from_disk('trigrams_func', self.SAVED_FUNCS_PATH)
+
+        docs_topics_df = load_obj_from_disk('test_get_dominant_topic_of_each_doc_as_df_expected_result',
+                                            self.SAVED_OBJECTS_PATH)
+        model = LdaGensimModel.load('lda-gensim-model', self.dataset, self.models_dir_path, docs_topics_df)
+
+        # Expected result was previously calculated and stored in disk
+        expected_result = load_obj_from_disk('test_get_k_most_representative_docs_of_topic_as_df_expected_result',
+                                             self.SAVED_OBJECTS_PATH)
+
+        result = model.get_k_most_representative_docs_of_topic_as_df(topic=0, k=5)
+
+        # noinspection PyUnresolvedReferences
+        self.assertTrue(expected_result.equals(result))
 
 
 if __name__ == '__main__':
