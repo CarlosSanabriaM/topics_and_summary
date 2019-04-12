@@ -1,11 +1,11 @@
 import unittest
 
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset, TwentyNewsGroupsDocument
-from utils import load_obj_from_disk, get_abspath_from_project_root, join_paths
+from tests.paths import TESTS_BASE_PATH
+from utils import load_obj_from_disk, join_paths
 
 
 class TestTwentyNewsGroupsDataset(unittest.TestCase):
-    TESTS_BASE_PATH = get_abspath_from_project_root('tests')
 
     @classmethod
     def setUpClass(cls):
@@ -14,7 +14,7 @@ class TestTwentyNewsGroupsDataset(unittest.TestCase):
     def test_create_dataset(self):
         # Obtain the dataset stored in disk
         expected_dataset = load_obj_from_disk('dataset',
-                                              join_paths(self.TESTS_BASE_PATH, 'saved-elements/objects'))
+                                              join_paths(TESTS_BASE_PATH, 'saved-elements/objects'))
 
         self.assertEqual(expected_dataset, self.dataset)
 
@@ -37,12 +37,12 @@ are the cause of a bad situation of another party."""
 
     def test_as_documents_obj_list_method(self):
         expected_as_documents_obj_list = load_obj_from_disk('as_documents_obj_list',
-                                                            join_paths(self.TESTS_BASE_PATH, 'saved-elements/objects'))
+                                                            join_paths(TESTS_BASE_PATH, 'saved-elements/objects'))
         self.assertEqual(expected_as_documents_obj_list, self.dataset.as_documents_obj_list())
 
     def test_as_documents_content_list_method(self):
         expected_as_documents_content_list = \
-            load_obj_from_disk('as_documents_content_list', join_paths(self.TESTS_BASE_PATH, 'saved-elements/objects'))
+            load_obj_from_disk('as_documents_content_list', join_paths(TESTS_BASE_PATH, 'saved-elements/objects'))
         self.assertEqual(expected_as_documents_content_list, self.dataset.as_documents_content_list())
 
 

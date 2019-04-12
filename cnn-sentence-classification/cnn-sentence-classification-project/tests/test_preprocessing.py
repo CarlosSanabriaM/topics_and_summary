@@ -3,11 +3,11 @@ import unittest
 from datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from preprocessing.dataset import preprocess_dataset
 from preprocessing.text import preprocess_text
-from utils import load_obj_from_disk, get_abspath_from_project_root, join_paths, load_func_from_disk
+from tests.paths import TESTS_BASE_PATH
+from utils import load_obj_from_disk, join_paths, load_func_from_disk
 
 
 class TestPreprocessing(unittest.TestCase):
-    TESTS_BASE_PATH = get_abspath_from_project_root('tests')
 
     def test_preprocess_text(self):
         text = """
@@ -17,7 +17,7 @@ class TestPreprocessing(unittest.TestCase):
         expected_preprocessed_text = 'window disk_operating_system family disk_operating system good mike house big'
 
         trigrams_func = load_func_from_disk('trigrams_func',
-                                            join_paths(self.TESTS_BASE_PATH, 'saved-elements/funcs'))
+                                            join_paths(TESTS_BASE_PATH, 'saved-elements/funcs'))
         preprocessed_text = preprocess_text(text, ngrams='tri', ngrams_model_func=trigrams_func)
 
         self.assertEqual(expected_preprocessed_text, preprocessed_text)
@@ -29,7 +29,7 @@ class TestPreprocessing(unittest.TestCase):
 
         # Obtain the dataset stored in disk (it has been preprocessed too, with the same options)
         expected_preprocessed_dataset = load_obj_from_disk('trigrams_dataset',
-                                                           join_paths(self.TESTS_BASE_PATH, 'saved-elements/objects'))
+                                                           join_paths(TESTS_BASE_PATH, 'saved-elements/objects'))
 
         self.assertEqual(expected_preprocessed_dataset, preprocessed_dataset)
 
