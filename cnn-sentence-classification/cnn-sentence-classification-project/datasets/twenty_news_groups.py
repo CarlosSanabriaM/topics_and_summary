@@ -226,7 +226,7 @@ class TwentyNewsGroupsDataset(Dataset):
         pretty_print('File 3')
         print(self.files_dict['rec.autos'][16].content)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return self.files_dict == other.files_dict and \
                    self.remove_header == other.remove_header and \

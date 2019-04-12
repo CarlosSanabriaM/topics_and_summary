@@ -103,20 +103,23 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return self.coherence_value
 
-    def save(self, base_name: str, path=__SAVE_PATH):
+    def save(self, model_name: str, path=__SAVE_PATH, add_metadata_to_base_name=False):
         """
         Saves the model to disk.
-        :param base_name: Base name of the model. After it, the current time, the number of topics, and
-        the coherence value are added.
+        :param model_name: Name of the model.
         :param path: Path were the models will be stored.
-        and the coherence value of the models is added.
+        :param add_metadata_to_base_name: If True, the number of topics, the coherence value and the current time
+        are added at the end of the model name.
         """
+        # Coherence value is calculated even if add_metadata_to_base_name is False,
+        # because a file with it's value is created and stored inside the model folder.
         if self.coherence_value is None:
             self.compute_coherence_value()
 
-        now = now_as_str()
-        model_name = "{0}_{1}topics_coherence{2}_{3}".format(base_name, str(self.model.num_topics),
-                                                             str(self.coherence_value), now)
+        if add_metadata_to_base_name:
+            now = now_as_str()
+            model_name = "{0}_{1}topics_coherence{2}_{3}".format(model_name, str(self.model.num_topics),
+                                                                 str(self.coherence_value), now)
 
         self.dir_path = join_paths(path, model_name)
         os.mkdir(self.dir_path)
@@ -487,6 +490,23 @@ class TopicsModel(metaclass=abc.ABCMeta):
         """
         return ' '.join(list(map(lambda x: x[0], self.model.show_topic(topic)))[:k])
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            # docs_topics_df can be None, so we need to do this if-else to check it's equality
+            if self.docs_topics_df is None and other.docs_topics_df is not None:
+                docs_topics_df_are_equal = False
+            else:
+                # Here self.docs_topics_df can't be None
+                docs_topics_df_are_equal = (self.docs_topics_df is None and other.docs_topics_df is None) or \
+                                           self.docs_topics_df.equals(other.docs_topics_df)
+
+            return self.dataset == other.dataset and \
+                   self.num_topics == other.num_topics and \
+                   self.compute_coherence_value() == other.compute_coherence_value() and \
+                   docs_topics_df_are_equal
+
+        return False
+
 
 class Topic:
     """
@@ -660,6 +680,11 @@ class LdaMalletModel(TopicsModel):
         return cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
                    docs_topics_df=docs_topics_df)
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            return super().__eq__(other) and self.model_name == other.model_name
+        return False
+
 
 class LdaGensimModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LdaModel, making it easier to use."""
@@ -693,8 +718,8 @@ class LdaGensimModel(TopicsModel):
                                       num_topics=self.num_topics,
                                       **kwargs)  # random_state is passed here
 
-    def save(self, base_name: str, path=__LDA_SAVED_MODELS_PATH):
-        super(LdaGensimModel, self).save(base_name, path)
+    def save(self, model_name: str, path=__LDA_SAVED_MODELS_PATH, add_metadata_to_base_name=False):
+        super(LdaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
 
     @classmethod
     def load(cls, model_name: str, dataset: Dataset, model_dir_path=__LDA_SAVED_MODELS_PATH,
@@ -745,8 +770,8 @@ class LsaGensimModel(TopicsModel):
              docs_topics_df: pd.DataFrame = None):
         return super(LsaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
-    def save(self, base_name: str, path=__LSA_SAVED_MODELS_PATH):
-        super(LsaGensimModel, self).save(base_name, path)
+    def save(self, model_name: str, path=__LSA_SAVED_MODELS_PATH, add_metadata_to_base_name=False):
+        super(LsaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
 
     @classmethod
     def _load_gensim_model(cls, path: str):

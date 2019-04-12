@@ -68,7 +68,7 @@ class Dataset(metaclass=abc.ABCMeta):
         :return: List of Document objects of the documents in the dataset.
         """
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return self.as_documents_obj_list() == other.as_documents_obj_list()
         return False
@@ -97,7 +97,7 @@ class Document(metaclass=abc.ABCMeta):
         :return:
         """
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return self.content == other.content
         return False
