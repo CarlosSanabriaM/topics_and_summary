@@ -13,6 +13,10 @@ from preprocessing.text import preprocess_text
 
 
 class TextRank:
+    # Max number of iterations in the power method eigenvalue solver. If the algorithm fails to converge to the
+    # specified tolerance within the specified number of iterations of the power iteration method, the
+    # PowerIterationFailedConvergence is raised.
+    MAX_NUM_ITERATIONS = 500
 
     def __init__(self, embedding_model='glove', glove_embedding_dim=100):
         """
@@ -26,6 +30,7 @@ class TextRank:
         else:
             self.embedding_model = Word2VecModel()
 
+    # TODO: Sometimes it can't converge, so it throws an Exception
     def get_k_best_sentences_of_text(self, text: str, num_best_sentences=5) -> List[str]:
         """
         Get the k best sentences of the given text. This method performs an Extractive Summary of the given text.
@@ -33,6 +38,7 @@ class TextRank:
         :param num_best_sentences: Number of sentences of the text to be returned.
         :return: List[str] where each str is a sentence.
         The list is in descending order by the importance of the sentences.
+        It can raise a PowerIterationFailedConvergence exception if the algorithm doesn't converge.
         """
 
         # 1. Split text into sentences
@@ -77,7 +83,7 @@ class TextRank:
         nx_graph = nx.from_numpy_array(similarity_matrix)
 
         # 6. Apply TextRank to the graph
-        sentence_scores = nx.pagerank(nx_graph)
+        sentence_scores = nx.pagerank(nx_graph, max_iter=self.MAX_NUM_ITERATIONS)
 
         # 7. Order sentences by the Page Rank score
         sorted_sentences = sorted(((sentence_scores[i], sent) for i, sent in enumerate(text_sentences)), reverse=True)

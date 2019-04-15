@@ -19,3 +19,6 @@ glove/
 mallet-2.0.8/
 text-preprocessing/20_newsgroups/
 word2vec/
+
+### SonarQube ###
+.scannerwork

@@ -170,7 +170,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
             for topic in topics_sequence:
                 print('Topic ' + str(topic[0]) + ': ' + topic[1])
         else:
-            print(*self.get_topics(), sep='\n')
+            print(*self.get_topics(num_keywords), sep='\n')
 
     def get_topics(self, num_keywords=10) -> List['Topic']:
         """
@@ -430,9 +430,13 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :return: A pandas DataFrame with the following columns: Doc index, Topic prob and Doc text.
         """
         k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k, remove_duplicates)
+
         # Keep only the rows where the 'Topic index' equals the topic index passed as a parameter
         k_most_repr_doc_per_topic_df = \
             k_most_repr_doc_per_topic_df.loc[k_most_repr_doc_per_topic_df['Topic index'] == topic]
+
+        k_most_repr_doc_per_topic_df.reset_index(inplace=True)
+
         # Return a df with only the following columns: Doc index, Topic prob, Doc text and Original doc text
         return k_most_repr_doc_per_topic_df[['Doc index', 'Topic prob', 'Doc text', 'Original doc text']]
 
