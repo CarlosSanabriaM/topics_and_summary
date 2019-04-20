@@ -36,7 +36,7 @@ if __name__ == '__main__':
     plot_word_clouds_of_topics(model.get_topics())
 
     docs_topics_df = model.get_dominant_topic_of_each_doc_as_df()
-    three_most_repr_doc_per_topic_df = model.get_k_most_representative_docs_per_topic_as_df(k=3)
+    three_most_repr_doc_per_topic_df = model.get_k_most_repr_docs_per_topic_as_df(k=3)
     topic_distribution_df = model.get_topic_distribution_as_df()
 
     text1 = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not

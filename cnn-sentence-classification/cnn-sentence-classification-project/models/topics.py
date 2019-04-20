@@ -275,7 +275,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         # 2. Obtain a df with the documents more related with the topics in the previous step
         # Maybe all the best docs are from a unique topic,
         # so we need to obtain num_docs docs from each topic in the topics list
-        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(num_docs, remove_duplicates)
+        k_most_repr_doc_per_topic_df = self.get_k_most_repr_docs_per_topic_as_df(num_docs, remove_duplicates)
         # Only the docs of the topics in the topics list are kept
         related_docs_df = k_most_repr_doc_per_topic_df.loc[k_most_repr_doc_per_topic_df['Topic index'].isin(topics)]
 
@@ -348,7 +348,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         self.docs_topics_df.reset_index(drop=True, inplace=True)
         return self.docs_topics_df
 
-    def get_k_most_representative_docs_per_topic_as_df(self, k=1, remove_duplicates=True) -> pd.DataFrame:
+    def get_k_most_repr_docs_per_topic_as_df(self, k=1, remove_duplicates=True) -> pd.DataFrame:
         """
         Returns a DataFrame where the topics are grouped in ascending order by their indices, and inside each
         topic group there are k rows, where each row contains the topic and one of the most representative documents
@@ -417,7 +417,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return k_most_repr_doc_per_topic_df
 
-    def get_k_most_representative_docs_of_topic_as_df(self, topic: int, k=1, remove_duplicates=True) -> pd.DataFrame:
+    def get_k_most_repr_docs_of_topic_as_df(self, topic: int, k=1, remove_duplicates=True) -> pd.DataFrame:
         """
         Returns a DataFrame with the k most representative documents of the given topic.
         The DataFrame has k rows, where each row contains the document index, the document-topic probability and
@@ -429,7 +429,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         ordered descending).
         :return: A pandas DataFrame with the following columns: Doc index, Topic prob and Doc text.
         """
-        k_most_repr_doc_per_topic_df = self.get_k_most_representative_docs_per_topic_as_df(k, remove_duplicates)
+        k_most_repr_doc_per_topic_df = self.get_k_most_repr_docs_per_topic_as_df(k, remove_duplicates)
 
         # Keep only the rows where the 'Topic index' equals the topic index passed as a parameter
         k_most_repr_doc_per_topic_df = \

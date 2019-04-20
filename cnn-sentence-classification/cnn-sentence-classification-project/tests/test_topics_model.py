@@ -154,7 +154,7 @@ class TestTopicsModel(unittest.TestCase):
         expected_result = load_obj_from_disk('test_get_k_most_representative_docs_per_topic_as_df_expected_result',
                                              SAVED_OBJECTS_PATH)
 
-        result = model.get_k_most_representative_docs_per_topic_as_df(k=5)
+        result = model.get_k_most_repr_docs_per_topic_as_df(k=5)
 
         # noinspection PyUnresolvedReferences
         self.assertTrue(expected_result.equals(result))
@@ -176,7 +176,7 @@ class TestTopicsModel(unittest.TestCase):
         expected_result = load_obj_from_disk('test_get_k_most_representative_docs_of_topic_as_df_expected_result',
                                              SAVED_OBJECTS_PATH)
 
-        result = model.get_k_most_representative_docs_of_topic_as_df(topic=0, k=5)
+        result = model.get_k_most_repr_docs_of_topic_as_df(topic=0, k=5)
 
         # noinspection PyUnresolvedReferences
         self.assertTrue(expected_result.equals(result))
