@@ -111,16 +111,10 @@ class TestTopicsModel(unittest.TestCase):
 
     # noinspection PyTypeChecker
     def test_get_related_docs_as_df(self):
-        # TODO: Change this test to use LdaMallet with docs_topics_df loaded from disk
-        # # For testing this method, an LdaMalletModel loaded from disk will be used
-        # docs_topics_df = load_obj_from_disk('lda_mallet_docs_topics_df', SAVED_OBJECTS_PATH)
-        # model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH,
-        #                             docs_topics_df=docs_topics_df)
-        # trigrams_func = load_func_from_disk('trigrams_func', SAVED_FUNCS_PATH)
-
-        docs_topics_df = load_obj_from_disk('test_get_dominant_topic_of_each_doc_as_df_expected_result',
-                                            SAVED_OBJECTS_PATH)
-        model = LdaGensimModel.load('lda-gensim-model', self.dataset, SAVED_TOPICS_MODELS_PATH, docs_topics_df)
+        # For testing this method, an LdaMalletModel loaded from disk will be used
+        docs_topics_df = load_obj_from_disk('lda_mallet_17topics_docs_topics_df', SAVED_OBJECTS_PATH)
+        model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH,
+                                    docs_topics_df=docs_topics_df)
         trigrams_func = load_func_from_disk('trigrams_func', SAVED_FUNCS_PATH)
 
         text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not
@@ -139,16 +133,10 @@ class TestTopicsModel(unittest.TestCase):
 
     # noinspection PyTypeChecker
     def test_get_k_most_representative_docs_per_topic_as_df(self):
-        # TODO: Change this test to use LdaMallet with docs_topics_df loaded from disk
-        # # For testing this method, an LdaMalletModel loaded from disk will be used
-        # docs_topics_df = load_obj_from_disk('lda_mallet_docs_topics_df', SAVED_OBJECTS_PATH)
-        # model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH,
-        #                             docs_topics_df=docs_topics_df)
-        # trigrams_func = load_func_from_disk('trigrams_func', SAVED_FUNCS_PATH)
-
-        docs_topics_df = load_obj_from_disk('test_get_dominant_topic_of_each_doc_as_df_expected_result',
-                                            SAVED_OBJECTS_PATH)
-        model = LdaGensimModel.load('lda-gensim-model', self.dataset, SAVED_TOPICS_MODELS_PATH, docs_topics_df)
+        # For testing this method, an LdaMalletModel loaded from disk will be used
+        docs_topics_df = load_obj_from_disk('lda_mallet_17topics_docs_topics_df', SAVED_OBJECTS_PATH)
+        model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH,
+                                    docs_topics_df=docs_topics_df)
 
         # Expected result was previously calculated and stored in disk
         expected_result = load_obj_from_disk('test_get_k_most_representative_docs_per_topic_as_df_expected_result',
@@ -161,16 +149,10 @@ class TestTopicsModel(unittest.TestCase):
 
     # noinspection PyTypeChecker
     def test_get_k_most_representative_docs_of_topic_as_df(self):
-        # TODO: Change this test to use LdaMallet with docs_topics_df loaded from disk
-        # # For testing this method, an LdaMalletModel loaded from disk will be used
-        # docs_topics_df = load_obj_from_disk('lda_mallet_docs_topics_df', SAVED_OBJECTS_PATH)
-        # model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH,
-        #                             docs_topics_df=docs_topics_df)
-        # trigrams_func = load_func_from_disk('trigrams_func', SAVED_FUNCS_PATH)
-
-        docs_topics_df = load_obj_from_disk('test_get_dominant_topic_of_each_doc_as_df_expected_result',
-                                            SAVED_OBJECTS_PATH)
-        model = LdaGensimModel.load('lda-gensim-model', self.dataset, SAVED_TOPICS_MODELS_PATH, docs_topics_df)
+        # For testing this method, an LdaMalletModel loaded from disk will be used
+        docs_topics_df = load_obj_from_disk('lda_mallet_17topics_docs_topics_df', SAVED_OBJECTS_PATH)
+        model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH,
+                                    docs_topics_df=docs_topics_df)
 
         # Expected result was previously calculated and stored in disk
         expected_result = load_obj_from_disk('test_get_k_most_representative_docs_of_topic_as_df_expected_result',
