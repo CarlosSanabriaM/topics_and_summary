@@ -57,7 +57,6 @@ def print_words_that_contain_elem(dataset: Dataset, elem: str):
     print(" Num words with the elem " + elem + ":", num_words_contain_elem)
 
 
-# TODO: Change to admit more than one word ?? I think it makes more sense to be used only with one word.
 # TODO: Change to admit dataset: Dataset
 def print_docs_that_contain_word(dataset: TwentyNewsGroupsDataset, word: str, num_chars_preview=70):
     """
@@ -103,7 +102,6 @@ def print_docs_that_contain_word(dataset: TwentyNewsGroupsDataset, word: str, nu
     print(" Num docs with the word " + word + ":", num_docs_contain_word)
 
 
-# TODO: Refactor?
 # TODO: Change to admit dataset: Dataset
 def print_empty_docs(dataset: TwentyNewsGroupsDataset):
     # Create table for better printing
@@ -294,21 +292,19 @@ def preprocess_dataset(dataset: TwentyNewsGroupsDataset, trash_docs=True, normal
     pretty_print('Preprocessing the dataset')  # TODO: Print the options selected: lowercase, contractions, ...
     dataset_copy = deepcopy(dataset)
 
-    # TODO: Revise order of functions
     if trash_docs:
         remove_trash_docs_specified_in_file(dataset_copy)
     if normalize:
-        # TODO: Pasamos de tener 246 apariciones de 'usa' a tener 1231.
         # TODO: Problem: Here we can have 'USA,' and 'USA' doesn't detect that.
         # TODO: Problem: It only can transform words. You can't transform 'United States' to 'USA'
         dataset_copy.apply_function_to_files(normalize_words)
     if lowercase:
         dataset_copy.apply_function_to_files(to_lowercase)
-    if stopwords:  # TODO: Remove also STOPWORDS here??
+    if stopwords:
         dataset_copy.apply_function_to_files(remove_stopwords)
-    if contractions:  # TODO: Some of the keys in the file are also in the STOPWORDS. What to do??
+    if contractions:
         dataset_copy.apply_function_to_files(expand_contractions)
-    if vulgar_words:  # TODO: remove this and put the words in that dict in 'normalize_words_dict.txt'????
+    if vulgar_words:
         dataset_copy.apply_function_to_files(substitute_vulgar_words)
     if emails:
         dataset_copy.apply_function_to_files(remove_emails)
@@ -334,12 +330,6 @@ def preprocess_dataset(dataset: TwentyNewsGroupsDataset, trash_docs=True, normal
         dataset_copy.apply_function_to_files(remove_single_chars)
     if empty_docs:
         remove_empty_docs(dataset_copy)
-
-    # TODO: Posible stopwords: people, thing, time, mr, de, st, make
-
-    # TODO: Problems with removing '.'  For example: 'A.M.O.R.C' converts in 'a m o r c'. Try to maintain that letter together and removing '.'.
-    # TODO: Windows lemmatizes to window
-    # TODO: Where are the numbers removed??
 
     if ngrams == 'bi':
         return dataset_copy, bigram_model_func

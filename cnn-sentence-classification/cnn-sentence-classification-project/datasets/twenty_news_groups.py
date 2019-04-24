@@ -143,7 +143,7 @@ class TwentyNewsGroupsDataset(Dataset):
         """
         self.apply_function_to_files(self.__strip_footer)
 
-    # TODO: Change to override superclass method
+    # TODO: Change to override superclass method (if is created)
     def remove_document(self, category: str, index_in_category: int):
         """
         Removes from the dataset the document in the given category with the given index inside that category.

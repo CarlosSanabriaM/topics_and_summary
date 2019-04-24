@@ -249,17 +249,16 @@ def preprocess_text(text: str, normalize=True, lowercase=True, contractions=True
     Note that lemmatize and stem shouldn't be both True.
     """
 
-    # TODO: Revise order of functions
     if normalize:
         # TODO: Problem: Here we can have 'USA,' and 'USA' doesn't detect that.
         text = normalize_words(text)
     if lowercase:
         text = to_lowercase(text)
-    if stopwords:  # TODO: Remove also STOPWORDS here??
+    if stopwords:
         text = remove_stopwords(text)
-    if contractions:  # TODO: Some of the keys in the file are also in the STOPWORDS. What to do??
+    if contractions:
         text = expand_contractions(text)
-    if vulgar_words:  # TODO: remove this and put the words in that dict in 'normalize_words_dict.txt'????
+    if vulgar_words:
         text = substitute_vulgar_words(text)
     if emails:
         text = remove_emails(text)
@@ -273,14 +272,9 @@ def preprocess_text(text: str, normalize=True, lowercase=True, contractions=True
         text = lemmatize_words(text)
     elif stem:
         text = stem_words(text)
-    if apostrophes:
+    if apostrophes:  # TODO: Move below substitute_punctuation?
         text = remove_apostrophes(text)
     if chars:
         text = remove_single_chars(text)
-
-    # TODO: Posible stopwords: people, thing, time, mr, de, st, make
-    # TODO: Problems with removing '.'  For example: 'A.M.O.R.C' converts in 'a m o r c'. Try to maintain that letter together and removing '.'.
-    # TODO: Windows lemmatizes to window
-    # TODO: Where are the numbers removed??
 
     return text

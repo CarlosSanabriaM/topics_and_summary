@@ -7,7 +7,7 @@ from utils import pretty_print
 
 if __name__ == '__main__':
     dataset = TwentyNewsGroupsDataset()
-    dataset = preprocess_dataset(dataset)
+    dataset, trigrams_func = preprocess_dataset(dataset, ngrams='tri')
     df = dataset.as_dataframe()
 
     # Create a new column with a list of the words in each document

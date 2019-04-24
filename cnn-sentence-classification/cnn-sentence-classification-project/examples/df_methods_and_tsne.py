@@ -54,10 +54,30 @@ if __name__ == '__main__':
     Mysteries sometimes added to the Rosary. It is a Trinitarian feast in the Eastern Orthodox Churches."""
 
     text2 = """Windows 10 is a very good operating system. Many files can be opened at the same time, and it manages
-    the disk space very well."""
+    the disk space very well. But sometimes, it has many issues."""
 
     text3 = """Car gas speed wheels Windows MSDOS issue space jesus god bible people mac U.S.A. guns lebanese"""
 
-    related_docs_text1_df = model.get_related_docs_as_df(text1, k_docs_per_topic=3)
-    related_docs_text2_df = model.get_related_docs_as_df(text2, k_docs_per_topic=3)
-    related_docs_text3_df = model.get_related_docs_as_df(text3, k_docs_per_topic=3)
+    text4 = """Penicillin (PCN or pen) is a group of antibiotics which include penicillin G (intravenous use), 
+    penicillin V (use by mouth), procaine penicillin, and benzathine penicillin (intramuscular use). 
+    Penicillin antibiotics were among the first medications to be effective against many bacterial infections caused by 
+    staphylococci and streptococci. They are still widely used today, though many types of bacteria have developed 
+    resistance following extensive use."
+    About 10% of people report that they are allergic to penicillin; however, up to 90% of this group may not
+    actually be allergic.[2] Serious allergies only occur in about 0.03%.[2] All penicillins are β-lactam
+    antibiotics."
+    Penicillin was discovered in 1928 by Scottish scientist Alexander Fleming.[3] People began using
+    it to treat infections in 1942.[4] There are several enhanced penicillin families which are effective
+    against additional bacteria; these include the antistaphylococcal penicillins, aminopenicillins and the
+    antipseudomonal penicillins. They are derived from Penicillium fungi.[5]"""
+
+    text5 = """"The violence, corruption, and abuse in Central American countries tend to be the biggest factors driving
+    migration to the United States—a phenomenon the Trump administration has dedicated itself to curbing.
+    Since the gun sales fuel the violence and corruption, the United States has effectively undermined its own
+    objectives by allowing the weapons deals, according to experts."""
+
+    related_docs_text1_df = model.get_related_docs_as_df(text1, num_docs=3)
+    related_docs_text2_df = model.get_related_docs_as_df(text2, num_docs=3)
+    related_docs_text3_df = model.get_related_docs_as_df(text3, num_docs=3)
+
+    df = model.get_related_docs_as_df(text, num_docs=7, ngrams='tri', ngrams_model_func=trigrams_func)

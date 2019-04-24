@@ -43,7 +43,6 @@ def generate_and_store_models(path, documents, plot_first_name):
     # Store the models and a txt file with the coherence value of each model
     pretty_print('Storing models')
     lsa_models_list.save(base_name='model', path=lsa_path)
-    # store_plots(lsa_models, lsa_coherence_values)  # TODO: Raises Process finished with exit code 139 (interrupted by signal 11: SIGSEGV)
     # endregion
 
     # region LDA Mallet

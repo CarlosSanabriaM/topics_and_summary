@@ -295,7 +295,6 @@ class TopicsModel(metaclass=abc.ABCMeta):
         related_docs_df.insert(2, 'Doc prob', doc_prob_column, allow_duplicates=True)
 
         # Change columns order
-        # TODO: When everything works, remove Doc text column?
         related_docs_df = related_docs_df[['Doc index', 'Doc prob', 'Doc text', 'Original doc text',
                                            'Topic index', 'Topic keywords']]
 
@@ -462,7 +461,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         df_dominant_topics.reset_index(inplace=True)
 
         # Obtain Topic keywords and add a column with them to the df
-        topic_kws = pd.Series([self.model.show_topic(i) for i in range(20)])
+        topic_kws = pd.Series([self.model.show_topic(i) for i in range(self.num_topics)])
         df_dominant_topics = pd.concat([df_dominant_topics, topic_kws], axis=1)
 
         # Change Column names

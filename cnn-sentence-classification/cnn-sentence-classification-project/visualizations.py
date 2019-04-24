@@ -150,20 +150,19 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
         if show_plot:
             plt.show()
 
-        # TODO: Does this avoid showing the plots when show_plot is False and plt.show() is called in another part?
+        # Avoid showing the plots when show_plot is False and plt.show() is called in another place
         plt.clf()
 
 
 __TSNE_SAVE_PATH = get_abspath_from_project_root('saved-elements/topics/tsne')
 
 
-def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_threshold=0,
+def tsne_clustering_chart(model: TopicsModel, angle=.99, doc_threshold=0,
                           plot_keywords=True, num_keywords=5, keywords_color_is_black=True,
                           save_path=__TSNE_SAVE_PATH, plot_name=None, show_plot=True):
     """
     Use t-SNE technique for dimensionality reduction.
     :param model: Topics Model.
-    :param num_dimensions: Number of dimensions of the tSNE result. Should be 2 or 3.
     :param angle: Number between 0 and 1. Angle less than 0.2 has quickly increasing computation
     time and angle greater 0.8 has quickly increasing error.
     :param doc_threshold: Threshold that each document has to pass to be added to the plot.
@@ -174,9 +173,6 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
     :param plot_name: Name of the plot to be saved.
     :param show_plot: If true, opens a browser and shows the html with the plot.
     """
-
-    # TODO: 3d?
-
     # Get doc topic prob matrix
     doc_topic_prob_matrix = model.get_doc_topic_prob_matrix()
 
@@ -184,7 +180,9 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
     _idx = np.amax(doc_topic_prob_matrix, axis=1) > doc_threshold  # idx of doc that above the threshold
     doc_topic_prob_matrix = doc_topic_prob_matrix[_idx]
 
-    # tSNE Dimension Reduction: 20-D -> 2-D or 3-D
+    # tSNE Dimension Reduction: 20-D -> 2-D
+    # n_components is the number of dimensions of the plot. n_components=2 -> 2D
+    num_dimensions = 2
     tsne_model = TSNE(n_components=num_dimensions, verbose=1, random_state=RANDOM_STATE, angle=angle, init='pca')
     tsne_lda = tsne_model.fit_transform(doc_topic_prob_matrix)
 
@@ -244,7 +242,7 @@ def tsne_clustering_chart(model: TopicsModel, num_dimensions=2, angle=.99, doc_t
             if keywords_color_is_black:
                 text_color = ['#000000']
             else:
-                # TODO: The library doesn't permit put a color in the contour,
+                # TODO: The library doesn't allow to put a color in the contour,
                 #  so this option doesn't let to visualize the words correctly
                 text_color = [colormap[i]]
 

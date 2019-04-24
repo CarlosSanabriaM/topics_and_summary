@@ -1,3 +1,4 @@
+import abc
 from typing import List
 
 import networkx as nx
@@ -9,14 +10,28 @@ from embeddings import Glove, Word2VecModel
 from preprocessing.text import preprocess_text
 
 
-# TODO: Base class Summarization model
+class SummarizationModel(metaclass=abc.ABCMeta):
+    """Interface that represents a summarization model."""
+
+    @abc.abstractmethod
+    def get_k_best_sentences_of_text(self, text: str, num_best_sentences=5) -> List[str]:
+        """
+        Get the k best sentences of the given text.
+        :param text: Text where summary sentences will be obtained.
+        :param num_best_sentences: Number of summary sentences to be returned.
+        :return: List[str] where each str is a sentence.
+        """
 
 
-class TextRank:
-    # Max number of iterations in the power method eigenvalue solver. If the algorithm fails to converge to the
-    # specified tolerance within the specified number of iterations of the power iteration method, the
-    # PowerIterationFailedConvergence is raised.
+class TextRank(SummarizationModel):
+    """Summarization class using the TextRank algorithm"""
+
     MAX_NUM_ITERATIONS = 500
+    """
+    Max number of iterations in the power method eigenvalue solver. If the algorithm fails to converge to the
+    specified tolerance within the specified number of iterations of the power iteration method, the
+    PowerIterationFailedConvergence is raised.
+    """
 
     def __init__(self, embedding_model='glove', glove_embedding_dim=100):
         """
