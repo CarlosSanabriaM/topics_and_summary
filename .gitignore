@@ -22,3 +22,7 @@ word2vec/
 
 ### SonarQube ###
 .scannerwork
+
+### Documentation files ###
+.scannerwork
+cnn-sentence-classification/cnn-sentence-classification-project/docs/build/
