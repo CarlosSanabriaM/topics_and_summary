@@ -605,7 +605,7 @@ class Keyword:
 class LdaMalletModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use."""
 
-    __MALLET_SOURCE_CODE_PATH = get_abspath_from_project_root('../../mallet-2.0.8/bin/mallet')
+    __MALLET_SOURCE_CODE_PATH = get_abspath_from_project_root('../mallet-2.0.8/bin/mallet')
     __MALLET_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lda_mallet')
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,

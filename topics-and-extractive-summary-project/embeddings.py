@@ -34,7 +34,7 @@ class Word2VecModel(EmbeddingsModel):
     """Word2Vec word embedding model."""
 
     __WORD2VEC_VECTORS_DIM = 300
-    __MODEL_PATH = get_abspath_from_project_root('../../embeddings/word2vec/GoogleNews-vectors-negative{}.bin.gz'
+    __MODEL_PATH = get_abspath_from_project_root('../embeddings/word2vec/GoogleNews-vectors-negative{}.bin.gz'
                                                  .format(__WORD2VEC_VECTORS_DIM))
 
     def __init__(self, model_path=__MODEL_PATH, vectors_dim=__WORD2VEC_VECTORS_DIM):
@@ -90,7 +90,7 @@ class Word2VecModel(EmbeddingsModel):
 class Glove(EmbeddingsModel):
     """Glove word embedding model."""
 
-    __GLOVE_DIR = get_abspath_from_project_root('../../embeddings/glove/glove.6B')
+    __GLOVE_DIR = get_abspath_from_project_root('../embeddings/glove/glove.6B')
     __GLOVE_VECTORS_DIM = 100
 
     def __init__(self, vectors_dim=__GLOVE_VECTORS_DIM, glove_dir=__GLOVE_DIR):

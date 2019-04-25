@@ -1,5 +1,5 @@
-cnn-sentence-classification-project
-===================================
+topics-and-extractive-summary-project
+=====================================
 
 .. toctree::
    :maxdepth: 4

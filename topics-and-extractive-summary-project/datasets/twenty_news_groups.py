@@ -16,7 +16,7 @@ class TwentyNewsGroupsDataset(Dataset):
     This class can apply a first specific preprocessing on the dataset files.
     """
 
-    __DATASET_PATH = get_abspath_from_project_root('../../datasets/20_newsgroups')
+    __DATASET_PATH = get_abspath_from_project_root('../datasets/20_newsgroups')
     __DATASET_ENCODING = 'latin1'
 
     def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=__DATASET_PATH):
