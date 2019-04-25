@@ -19,6 +19,7 @@ from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project
 def plot_distribution_of_doc_word_counts(documents: List[List[str]]):
     """
     Plot a histogram of the number of words in the documents.
+
     :param documents: : List[List[str]]
     """
     docs_word_counts = [len(doc) for doc in documents]
@@ -43,6 +44,7 @@ def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir
                               show_plot=True):
     """
     Plots the specified topic and it's keywords as a word-cloud.
+
     :param topic: Topic obtained with the get_topic() method of the TopicsModel class.
     :param all_horizontal: If True, all the keywords are plotted in horizontal.
     :param save: If true, the plots are saved to disk.
@@ -59,8 +61,9 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
                                save=False, dir_save_path=None, dpi=350, show_plot=True):
     """
     Plots the specified topics and it's keywords as word-clouds.
+
     :param topics: Topics obtained with the get_topics() method of the TopicsModel class.
-    :param single_plot_per_topic: If True, each topic is plotted in a separated plot.
+    :param single_plot_per_topic: If True, each topic is plotted in a separated plot. \
     If False, each plot contains 4 topics.
     :param all_horizontal: If True, all the keywords are plotted in horizontal.
     :param save: If true, the plots are saved to disk.
@@ -162,8 +165,9 @@ def tsne_clustering_chart(model: TopicsModel, angle=.99, doc_threshold=0,
                           save_path=__TSNE_SAVE_PATH, plot_name=None, show_plot=True):
     """
     Use t-SNE technique for dimensionality reduction.
+
     :param model: Topics Model.
-    :param angle: Number between 0 and 1. Angle less than 0.2 has quickly increasing computation
+    :param angle: Number between 0 and 1. Angle less than 0.2 has quickly increasing computation \
     time and angle greater 0.8 has quickly increasing error.
     :param doc_threshold: Threshold that each document has to pass to be added to the plot.
     :param plot_keywords: If True, the keywords of each topic are plotted near a document of the topic.

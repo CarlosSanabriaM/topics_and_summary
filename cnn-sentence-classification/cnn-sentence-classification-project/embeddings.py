@@ -13,9 +13,10 @@ class EmbeddingsModel(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def get_word_vector(self, word: str):
         """
-        Returns the embedding vector of the given word. If the word is
-        not present in the embedding's model, a default numpy array full
+        Returns the embedding vector of the given word. If the word is \
+        not present in the embedding's model, a default numpy array full \
         of zeros of the same size of the vectors in the embedding's model is returned.
+
         :param word: Word to be converted as a vector.
         :return: The embedding vector of the given word.
         """
@@ -39,8 +40,9 @@ class Word2VecModel(EmbeddingsModel):
     def __init__(self, model_path=__MODEL_PATH, vectors_dim=__WORD2VEC_VECTORS_DIM):
         """
         Constructs a Word2Vec model using the gensim library.
+
         :param model_path: The path of the binary word2vec model.
-        :param vectors_dim: Dimension of the vectors of the word2vec model.
+        :param vectors_dim: Dimension of the vectors of the word2vec model. \
         Default is the 100 billion words model pretrained on Google News.
         """
         self.vectors_dim = vectors_dim
@@ -48,9 +50,10 @@ class Word2VecModel(EmbeddingsModel):
 
     def get_word_vector(self, word: str):
         """
-        Returns the word2vec vector of the given word. If the word is not present
-        in the word2vec model, a default numpy array full of zeros of the same size
+        Returns the word2vec vector of the given word. If the word is not present \
+        in the word2vec model, a default numpy array full of zeros of the same size \
         of the vectors in the word2vec model is returned.
+
         :param word: Word to be converted as a vector.
         :return: The word2vec vector of the given word.
         """
@@ -62,8 +65,9 @@ class Word2VecModel(EmbeddingsModel):
     def get_word_index(self, word: str) -> int:
         """
         Returns the index of the specified word.
+
         :param word:
-        :return: Index of the specified word. If the word isn't in the vocabulary of the model,
+        :return: Index of the specified word. If the word isn't in the vocabulary of the model, \
         returns the index of the UNK token.
         """
         if self.w2v_model.vocab.get(word) is None:
@@ -72,6 +76,8 @@ class Word2VecModel(EmbeddingsModel):
 
     def get_keras_embedding(self, train_embeddings=False) -> keras.layers.Embedding:
         """
+        Returns a keras embedding layer using the Word2Vec model.
+
         :param train_embeddings: If True, the embedding layer weights are updated during training.
         :return: The keras embedding layer using the Word2Vec model.
         """
@@ -89,9 +95,10 @@ class Glove(EmbeddingsModel):
 
     def __init__(self, vectors_dim=__GLOVE_VECTORS_DIM, glove_dir=__GLOVE_DIR):
         """
-        Reads a glove file where contains in each row, in the first position the word,
+        Reads a glove file where contains in each row, in the first position the word, \
         and in the rest of the line the elements of the word vector.
-        :param glove_dir: Path where the glove directory is located. That directory must contain
+
+        :param glove_dir: Path where the glove directory is located. That directory must contain \
         text files with the structure mentioned above.
         :param vectors_dim: Size of the word vector. Possible values are: 50, 100, 200, 300.
         """
@@ -110,9 +117,10 @@ class Glove(EmbeddingsModel):
 
     def get_word_vector(self, word: str):
         """
-        Returns the glove vector of the given word. If the word is not present
-        in the glove model, a default numpy array full of zeros of the same size
+        Returns the glove vector of the given word. If the word is not present \
+        in the glove model, a default numpy array full of zeros of the same size \
         of the vectors in the glove model is returned.
+
         :param word: Word to be converted as a vector.
         :return: The glove vector of the given word.
         """

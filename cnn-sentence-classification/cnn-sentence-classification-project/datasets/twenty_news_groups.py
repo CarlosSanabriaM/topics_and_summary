@@ -48,7 +48,7 @@ class TwentyNewsGroupsDataset(Dataset):
 
     def _load_files(self):
         """
-        Load the files in the files_dict with the keys being the category of the files,
+        Load the files in the files_dict with the keys being the category of the files, \
         and the values being a list of document objects, where each document is a file of that category.
         """
         for directory in sorted(listdir(self.dataset_path)):
@@ -74,6 +74,7 @@ class TwentyNewsGroupsDataset(Dataset):
     def apply_function_to_files(self, func: Callable):
         """
         Applies the given function to each of the text files in the corpus.
+
         :param func: The function to be applied to each text file.
         """
         for category in self.files_dict:
@@ -83,7 +84,7 @@ class TwentyNewsGroupsDataset(Dataset):
     @classmethod
     def __strip_header(cls, file_text):
         """
-        Returns the given text file with the header removed.
+        Returns the given text file with the header removed. \
         The header is the text before the first blank line.
         """
         _before, _blankline, after = file_text.partition('\n\n')
@@ -91,7 +92,7 @@ class TwentyNewsGroupsDataset(Dataset):
 
     def _strip_header(self):
         """
-        Removes the header of all the files in the corpus.
+        Removes the header of all the files in the corpus. \
         The header is the text before the first blank line.
         """
         self.apply_function_to_files(self.__strip_header)
@@ -101,8 +102,8 @@ class TwentyNewsGroupsDataset(Dataset):
     @classmethod
     def __strip_quotes(cls, file_text):
         """
-        Returns the given text file with the quotes removed:
-        Lines beginning with the quote characters > or |
+        Returns the given text file with the quotes removed: \
+        Lines beginning with the quote characters > or | \
         and lines that commonly introduce quoted sections.
         """
         good_lines = [line for line in file_text.split('\n')
@@ -111,8 +112,8 @@ class TwentyNewsGroupsDataset(Dataset):
 
     def _strip_quotes(self):
         """
-        Removes the quotes of all the files in the corpus.
-        Lines beginning with the quote characters > or |
+        Removes the quotes of all the files in the corpus. \
+        Lines beginning with the quote characters > or | \
         and lines that commonly introduce quoted sections.
         """
         self.apply_function_to_files(self.__strip_quotes)
@@ -120,8 +121,8 @@ class TwentyNewsGroupsDataset(Dataset):
     @classmethod
     def __strip_footer(cls, file_text):
         """
-        Returns the file with the signature block removed:
-        We assume that signatures are at the end of the text,
+        Returns the file with the signature block removed: \
+        We assume that signatures are at the end of the text, \
         separated by a blank line or a line made of -.
         """
         lines = file_text.strip().split('\n')
@@ -137,8 +138,8 @@ class TwentyNewsGroupsDataset(Dataset):
 
     def _strip_footer(self):
         """
-        Removes the footer (signature) of all the files in the corpus.
-        We assume that signatures are at the end of the text,
+        Removes the footer (signature) of all the files in the corpus. \
+        We assume that signatures are at the end of the text, \
         separated by a blank line or a line made of -.
         """
         self.apply_function_to_files(self.__strip_footer)
@@ -147,15 +148,14 @@ class TwentyNewsGroupsDataset(Dataset):
     def remove_document(self, category: str, index_in_category: int):
         """
         Removes from the dataset the document in the given category with the given index inside that category.
+
         :param category: Category of the document.
         :param index_in_category: Index of the document inside that category.
         """
         del self.files_dict[category][index_in_category]
 
     def as_dataframe(self) -> pd.DataFrame:
-        """
-        Returns the files_dict as a pandas DataFrame.
-        """
+        """Returns the files_dict as a pandas DataFrame."""
         i = 0
         dataframe_dict = {}
         for category, files_list in self.files_dict.items():
@@ -185,6 +185,7 @@ class TwentyNewsGroupsDataset(Dataset):
     def get_document_index(self, category: str, doc_name: str):
         """
         Returns the index of the specified document.
+
         :param category: Category of the document.
         :param doc_name: Name of the document.
         :return: Returns the index of the specified document or -1 if the documents isn't in the dataset.
@@ -216,7 +217,7 @@ class TwentyNewsGroupsDataset(Dataset):
 
     def print_some_files(self):
         """
-        Prints some text files from the corpus.
+        Prints some text files from the corpus. \
         This function can be used to see how the preprocessing affects the dataset documents.
         """
         pretty_print('File 1')
@@ -244,7 +245,7 @@ class TwentyNewsGroupsDocument(Document):
 
     def __init__(self, directory_name: str, name: str, content: str = None):
         """
-        :param directory_name: Name of the directory this document is stored in.
+        :param directory_name: Name of the directory this document is stored in. \
         The directory is inside the dataset directory.
         :param name: Name of the document.
         :param content: Content of the document.

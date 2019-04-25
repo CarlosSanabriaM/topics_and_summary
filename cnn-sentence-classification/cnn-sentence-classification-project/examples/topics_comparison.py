@@ -70,8 +70,9 @@ def generate_and_store_models(path, documents, plot_first_name):
 
 def store_plots(models: List[TopicsModel], coherence_values: List[float], tsne=True):
     """
-    Given a list of models and a list of coherence values, stores the plots of the wordclouds
+    Given a list of models and a list of coherence values, stores the plots of the wordclouds \
     and the tsne html interactive plot in the dir_path of the model with max coherence value.
+
     :param tsne: If true, calculates tsne and stores plot.
     """
     pretty_print('Storing plots')

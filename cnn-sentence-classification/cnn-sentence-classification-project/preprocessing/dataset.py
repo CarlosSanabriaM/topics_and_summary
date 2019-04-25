@@ -23,8 +23,9 @@ def print_words_that_contain_elem(dataset: Dataset, elem: str):
     Prints a table with the following info:
         - Word that contains the given element.
         - Number of occurrences of the word in the whole dataset
+
     :param dataset: Dataset.
-    :param elem: Elem contained in the printed words.
+    :param elem: Elem contained in the printed words. \
     Will be used to create a regular expression, containing only that elem.
     """
     elem_re = re.compile(elem)
@@ -67,6 +68,7 @@ def print_docs_that_contain_word(dataset: TwentyNewsGroupsDataset, word: str, nu
         - Number of occurrences of the word in that document
         - Document name in the dataset
         - Preview of the document content
+
     :param dataset: Dataset.
     :param word: Word contained in the printed documents.
     :param num_chars_preview: Number of characters to show in the preview column.
@@ -104,6 +106,9 @@ def print_docs_that_contain_word(dataset: TwentyNewsGroupsDataset, word: str, nu
 
 # TODO: Change to admit dataset: Dataset
 def print_empty_docs(dataset: TwentyNewsGroupsDataset):
+    """
+    Prints the empty documents in the given dataset.
+    """
     # Create table for better printing
     table = Texttable()
     table.set_cols_width([30, 15, 10, 10, 10])
@@ -137,11 +142,10 @@ def get_docs_that_contain_any_of_the_words(dataset: TwentyNewsGroupsDataset, wor
     """
     Returns a list of tuples with the category and index of the docs containing any of the given words.
     Words can be a simple string, representing only one word.
+
     :param dataset: Dataset.
-    :param words: It can be:
-    - A string representing a single word.
-    - A set of strings representing one or more words.
-    :return: List of tuples, where tuple[0] contains the category of the doc with the any of the given words
+    :param words: It can be a string representing a single word or a set of strings representing one or more words.
+    :return: List of tuples, where tuple[0] contains the category of the doc with the any of the given words \
     and tuple[1] contains the index inside the category of the doc with any of the given words.
     """
 
@@ -169,12 +173,11 @@ def get_docs_that_contain_any_of_the_words(dataset: TwentyNewsGroupsDataset, wor
 # TODO: Change to admit dataset: Dataset
 def remove_docs_that_contain_any_of_the_given_words(dataset: TwentyNewsGroupsDataset, words: Union[str, Set[str]]):
     """
-    Removes from the given dataset the documents that contain one or more of the given words.
+    Removes from the given dataset the documents that contain one or more of the given words. \
     Words can be a simple string, representing only one word.
+
     :param dataset: Dataset where docs will be removed. The dataset is modified.
-    :param words: It can be:
-    - A string representing a single word.
-    - A set of strings representing one or more words.
+    :param words: It can be a string representing a single word or a set of strings representing one or more words.
     """
 
     if (type(words) is not str) and (type(words) is not set):
@@ -200,6 +203,7 @@ def remove_docs_that_contain_any_of_the_given_words(dataset: TwentyNewsGroupsDat
 def remove_docs_that_contain_any_of_the_words_in_file(dataset: TwentyNewsGroupsDataset, file_path=__TRASH_WORDS_PATH):
     """
     Removes from the given dataset the documents that contain one or more of the words in the specified file.
+
     :param dataset: Dataset where docs will be removed. The dataset is modified.
     :param file_path: Path to the file. The file must contain a word in each line.
     """
@@ -213,9 +217,10 @@ def remove_docs_that_contain_any_of_the_words_in_file(dataset: TwentyNewsGroupsD
 def remove_trash_docs_specified_in_file(dataset: TwentyNewsGroupsDataset, file_path=__TRASH_DOCS_PATH, file_sep=' '):
     """
     Removes from the given dataset the documents specified in a file.
+
     :param dataset: Dataset where docs will be removed. The dataset is modified.
-    :param file_path: Path to the file where the trash docs are specified. The file must contain in each line
-    the category and then the name of the file to be removed. Category and name must be separeted by
+    :param file_path: Path to the file where the trash docs are specified. The file must contain in each line \
+    the category and then the name of the file to be removed. Category and name must be separated by \
     the element specified in 'file_sep' parameter.
     :param file_sep: Separator of the category and the name in the file.
     """
@@ -237,6 +242,7 @@ def remove_trash_docs_specified_in_file(dataset: TwentyNewsGroupsDataset, file_p
 def remove_empty_docs(dataset: TwentyNewsGroupsDataset) -> int:
     """
     Removes the empty documents of the given dataset.
+
     :param dataset: Dataset where empty docs will be removed. The dataset is modified.
     :return: The number of documents removed (is the same as the number of empty documents in the dataset).
     """
@@ -261,12 +267,13 @@ def preprocess_dataset(dataset: TwentyNewsGroupsDataset, trash_docs=True, normal
                        trigrams_threshold=175, lemmatize=True, stem=False, trash_words=True, apostrophes=True,
                        chars=True, empty_docs=True) -> Dataset:
     """
-    Creates a copy of the given dataset and returns the copy with the specified preprocessing.
+    Creates a copy of the given dataset and returns the copy with the specified preprocessing. \
     The original dataset is not modified.
-    :param min_bigrams_count: If ngrams is 'bi' or 'tri', this is the minimum number of occurrences
+
+    :param min_bigrams_count: If ngrams is 'bi' or 'tri', this is the minimum number of occurrences \
     of a bigram to be transformed as a bigram.
     :param bigrams_threshold: If ngrams is 'bi' or 'tri', this is the threshold for creating a bigram.
-    :param min_trigrams_count: If ngrams is 'tri', this is the minimum number of occurrences
+    :param min_trigrams_count: If ngrams is 'tri', this is the minimum number of occurrences \
     of a trigram to be transformed as a trigram.
     :param trigrams_threshold: If ngrams is 'tri', this is the threshold for creating a trigram.
     :param dataset: Dataset to copy and apply preprocessing.
@@ -278,7 +285,7 @@ def preprocess_dataset(dataset: TwentyNewsGroupsDataset, trash_docs=True, normal
     :param stopwords: Remove stopwords. By default is True.
     :param emails: Remove emails. By default is True.
     :param punctuation: Remove punctuation. By default is True.
-    :param ngrams: If 'uni' uses unigrams. If 'bi' create bigrams and returns bigram function.
+    :param ngrams: If 'uni' uses unigrams. If 'bi' create bigrams and returns bigram function. \
     If 'tri' creates trigrams and returns trigram function. By default is 'uni'.
     :param lemmatize: Lemmatize words. By default is True.
     :param stem: Stemm words. By default is False.
@@ -287,7 +294,8 @@ def preprocess_dataset(dataset: TwentyNewsGroupsDataset, trash_docs=True, normal
     :param chars: Remove single chars. By default is True.
     :param empty_docs: Remove empty docs. By default is True.
     :return: The dataset with the preprocessing applied.
-    Note that lemmatize and stem shouldn't be both True.
+
+    Note that lemmatize and stem shouldn't be both True, because only one of them will be applied.
     """
     pretty_print('Preprocessing the dataset')  # TODO: Print the options selected: lowercase, contractions, ...
     dataset_copy = deepcopy(dataset)

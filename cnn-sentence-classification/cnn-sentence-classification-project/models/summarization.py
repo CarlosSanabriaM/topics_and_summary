@@ -17,6 +17,7 @@ class SummarizationModel(metaclass=abc.ABCMeta):
     def get_k_best_sentences_of_text(self, text: str, num_best_sentences=5) -> List[str]:
         """
         Get the k best sentences of the given text.
+
         :param text: Text where summary sentences will be obtained.
         :param num_best_sentences: Number of summary sentences to be returned.
         :return: List[str] where each str is a sentence.
@@ -36,7 +37,8 @@ class TextRank(SummarizationModel):
     def __init__(self, embedding_model='glove', glove_embedding_dim=100):
         """
         Creates a TextRank object that uses the specified embedding model to create the sentence vectors.
-        :param embedding_model: Embedding model used to create the sentence vectors.
+
+        :param embedding_model: Embedding model used to create the sentence vectors. \
         Possible values are: 'glove' or 'word2vec'.
         :param glove_embedding_dim: Dimension of the embedding word vectors.
         """
@@ -49,10 +51,11 @@ class TextRank(SummarizationModel):
     def get_k_best_sentences_of_text(self, text: str, num_best_sentences=5) -> List[str]:
         """
         Get the k best sentences of the given text. This method performs an Extractive Summary of the given text.
+
         :param text: Text where sentences will be extracted.
         :param num_best_sentences: Number of sentences of the text to be returned.
-        :return: List[str] where each str is a sentence.
-        The list is in descending order by the importance of the sentences.
+        :return: List[str] where each str is a sentence. \
+        The list is in descending order by the importance of the sentences. \
         It can raise a PowerIterationFailedConvergence exception if the algorithm doesn't converge.
         """
 

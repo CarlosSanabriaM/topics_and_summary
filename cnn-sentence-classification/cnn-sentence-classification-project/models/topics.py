@@ -17,9 +17,10 @@ from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project
 def prepare_corpus(documents) -> Tuple[gensim.corpora.Dictionary, List[List[Tuple[int, int]]]]:
     """
     Given a list of documents, returns a term dictionary (dictionary) and a document-term matrix (corpus).
+
     :param documents: List of documents. Each document is a list of words, where each word is a string.
-    :return: 2 things: Term's dictionary (it's attribute token2id is a dict mapping words to numeric identifiers)
-    and Document-term matrix (a list, where each element is a list of tuples. Each tuple contains the index of a word
+    :return: 2 things: Term's dictionary (it's attribute token2id is a dict mapping words to numeric identifiers) \
+    and Document-term matrix (a list, where each element is a list of tuples. Each tuple contains the index of a word \
     and the number of times that word appears in that document).
     """
     # Creating the term dictionary of our corpus, where every unique term is assigned an index.
@@ -32,11 +33,12 @@ def prepare_corpus(documents) -> Tuple[gensim.corpora.Dictionary, List[List[Tupl
 
 def get_corpus(dictionary, documents) -> List[List[Tuple[int, int]]]:
     """
-    Returns a corpus/document-term matrix, that consists on a list, where each element is a list of tuples.
-    Each list of tuples represents a document, and each tuple contains the index of a word in that document
+    Returns a corpus/document-term matrix, that consists on a list, where each element is a list of tuples. \
+    Each list of tuples represents a document, and each tuple contains the index of a word in that document \
     and the number of times that word appears in that document.
+
     :param dictionary: gensim.corpora.Dictionary object.
-    :param documents: List of lists of strings. Each one of the nested lists represents a document, and the
+    :param documents: List of lists of strings. Each one of the nested lists represents a document, and the \
     strings the words in that document.
     :return: Returns a corpus/document-term matrix, that consists on a list, where each element is a list of tuples.
     """
@@ -57,7 +59,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :param corpus: Document-term matrix. If is None, it is created using the dataset documents.
         :param num_topics: Number of topics.
         :param model: Pre-created model. If is None, a model is created.
-        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method
+        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method \
         get_dominant_topic_of_each_doc_as_df().
         :param kwargs: Additional arguments.
         """
@@ -84,15 +86,17 @@ class TopicsModel(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def _create_model(self, num_topics: int, **kwargs):
         """
-        Factory Method design pattern. The subclasses override this method,
+        Factory Method design pattern. The subclasses override this method, \
         creating and returning the specific model that the subclasses represent.
+
         :param num_topics: Number of topics of the model.
         """
 
     def compute_coherence_value(self, coherence='c_v') -> float:
         """
         Calculates, stores and returns the coherence value of the topics model.
-        :param coherence: String that represents the type of coherence to calculate.
+
+        :param coherence: String that represents the type of coherence to calculate. \
         Valid values are: ‘c_v’, ‘c_uci’ and ‘c_npmi’.
         :return: The coherence value of the topics model.
         """
@@ -106,9 +110,10 @@ class TopicsModel(metaclass=abc.ABCMeta):
     def save(self, model_name: str, path=__SAVE_PATH, add_metadata_to_base_name=False):
         """
         Saves the model to disk.
+
         :param model_name: Name of the model.
         :param path: Path were the models will be stored.
-        :param add_metadata_to_base_name: If True, the number of topics, the coherence value and the current time
+        :param add_metadata_to_base_name: If True, the number of topics, the coherence value and the current time \
         are added at the end of the model name.
         """
         # Coherence value is calculated even if add_metadata_to_base_name is False,
@@ -134,12 +139,12 @@ class TopicsModel(metaclass=abc.ABCMeta):
     @classmethod
     def load(cls, model_name: str, dataset: Dataset, model_dir_path=__SAVE_PATH, docs_topics_df: pd.DataFrame = None):
         """
-        Loads the model with the given name from the specified path, and
-        returns a TopicsModel instance.
+        Loads the model with the given name from the specified path, and returns a TopicsModel instance.
+
         :param model_name: Model name.
         :param dataset: Dataset.
         :param model_dir_path: Path to the directory where the model is in.
-        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method
+        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method \
         get_dominant_topic_of_each_doc_as_df().
         :return: Instance of a TopicsModel object.
         """
@@ -151,8 +156,9 @@ class TopicsModel(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def _load_gensim_model(cls, path: str):
         """
-        Factory Method design pattern. The subclasses override this method,
+        Factory Method design pattern. The subclasses override this method, \
         loading the gensim model in the specified path and returning it.
+
         :param path: Path of the saved gensim model.
         :return: The gensim model.
         """
@@ -160,8 +166,9 @@ class TopicsModel(metaclass=abc.ABCMeta):
     def print_topics(self, num_keywords=10, gensim_way=True):
         """
         Prints the topics of the topics model.
+
         :param num_keywords: Number of keywords of each topic to be printed.
-        :param gensim_way: If True, the topics are printed in the gensim way.
+        :param gensim_way: If True, the topics are printed in the gensim way. \
         If not, are printed using the __str__ methods of the Topic and Keywords classes.
         """
         if gensim_way:
@@ -174,8 +181,9 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     def get_topics(self, num_keywords=10) -> List['Topic']:
         """
-        Returns a list of the topics and it's keywords (keyword name and keyword probability).
+        Returns a list of the topics and it's keywords (keyword name and keyword probability). \
         Keywords inside a topic are ordered by it's probability inside that topic.
+
         :param num_keywords: Number of keywords of each topic.
         :return: List of Topics objs.
         """
@@ -185,8 +193,9 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     def get_topic(self, topic: int, num_keywords=10) -> 'Topic':
         """
-        Returns a list of the topic keywords (keyword name and keyword probability).
+        Returns a list of the topic keywords (keyword name and keyword probability). \
         Keywords are ordered by it's probability inside the topic.
+
         :param topic: Topic id.
         :param num_keywords: Number of keywords to retrieve.
         :return: Topic obj.
@@ -197,19 +206,20 @@ class TopicsModel(metaclass=abc.ABCMeta):
                                    ngrams='uni', ngrams_model_func: Callable = None, print_table=True) \
             -> List[Tuple[int, float]]:
         """
-        Predicts the probability of each topic to be related to the given text.
-        The probabilities sum 1. When the probability of a topic is very high,
+        Predicts the probability of each topic to be related to the given text. \
+        The probabilities sum 1. When the probability of a topic is very high, \
         the other topics may not appear in the results.
+
         :param text: Text.
         :param num_best_topics: Number of topics to return. If is None, returns all the topics that the model returns.
         :param preprocess: If true, applies preprocessing to the given text using preprocessing.text.preprocess_text().
-        :param ngrams: If 'uni', uses unigrams. If 'bi', create bigrams. If 'tri', creates trigrams.
+        :param ngrams: If 'uni', uses unigrams. If 'bi', create bigrams. If 'tri', creates trigrams. \
         By default is 'uni'. If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
-        :param ngrams_model_func: Function that receives a list of words and returns a list of words with
-        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function
-        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions
-        in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
-        :param print_table: If True, this method also prints a table with the topics indices,
+        :param ngrams_model_func: Function that receives a list of words and returns a list of words with \
+        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \
+        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() \
+        functions in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
+        :param print_table: If True, this method also prints a table with the topics indices, \
         their probabilities, and their keywords.
         :return: Topic probability vector.
         """
@@ -244,25 +254,27 @@ class TopicsModel(metaclass=abc.ABCMeta):
     def get_related_docs_as_df(self, text: str, num_docs=5, preprocess=True, ngrams='uni',
                                ngrams_model_func: Callable = None, remove_duplicates=True) -> pd.DataFrame:
         """
-        Given a text, this method returns a df with the index and the content of the most similar documents
+        Given a text, this method returns a df with the index and the content of the most similar documents \
         in the corpus. The similar/related documents are obtained as follows:
-        1. Obtain the topics more related with the given text.
-        2. Obtain the documents more related with the topics obtained in step 1.
-        The returned df contains the documents indices, it's content, and the probability of that document
-        being related with the given text (with the topics and the documents we have).
-        That probability is obtained as follows: Probability of the text being related with the topic * Probability
+            1. Obtain the topics more related with the given text.
+            2. Obtain the documents more related with the topics obtained in step 1.
+
+        The returned df contains the documents indices, it's content, and the probability of that document \
+        being related with the given text (with the topics and the documents we have). \
+        That probability is obtained as follows: Probability of the text being related with the topic * Probability \
         that the document influence the topic.
+
         :param text: String.
         :param num_docs: Number of related documents to retrieve.
         :param preprocess: If True, apply preprocessing to the text.
-        :param ngrams: If 'uni', uses unigrams. If 'bi', create bigrams. If 'tri', creates trigrams.
+        :param ngrams: If 'uni', uses unigrams. If 'bi', create bigrams. If 'tri', creates trigrams. \
         By default is 'uni'. If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
-        :param ngrams_model_func: Function that receives a list of words and returns a list of words with
-        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function
-        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions
-        in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
-        :param remove_duplicates: If True, duplicate documents are not present in the returned DataFrame.
-        Even so, num_docs documents are returned, obtained from below of the removed documents (the documents are
+        :param ngrams_model_func: Function that receives a list of words and returns a list of words with \
+        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \
+        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() \
+        functions in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
+        :param remove_duplicates: If True, duplicate documents are not present in the returned DataFrame. \
+        Even so, num_docs documents are returned, obtained from below of the removed documents (the documents are \
         ordered descending).
         :return: The pandas DataFrame.
         """
@@ -316,9 +328,10 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     def get_dominant_topic_of_each_doc_as_df(self) -> pd.DataFrame:
         """
-        Returns a pandas DataFrame with the dominant topic of each document.
-        The df has the following columns: Doc index, Dominant topic index, Topic prob,Topic keywords, Doc text.
+        Returns a pandas DataFrame with the dominant topic of each document. \
+        The df has the following columns: Doc index, Dominant topic index, Topic prob,Topic keywords, Doc text. \
         This method can take to much time to execute if the dataset is big.
+
         :return: pandas DataFrame.
         """
         if self.docs_topics_df is not None:
@@ -349,14 +362,15 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     def get_k_most_repr_docs_per_topic_as_df(self, k=1, remove_duplicates=True) -> pd.DataFrame:
         """
-        Returns a DataFrame where the topics are grouped in ascending order by their indices, and inside each
-        topic group there are k rows, where each row contains the topic and one of the most representative documents
+        Returns a DataFrame where the topics are grouped in ascending order by their indices, and inside each \
+        topic group there are k rows, where each row contains the topic and one of the most representative documents \
         of that topic, in descending order.
+
         :param k: Number of the most representative documents per topic you want.
-        :param remove_duplicates: If True, duplicate documents are not present in the same topic in the returned
-        DataFrame. Even so, k documents per topic are returned, obtained from below of the removed documents
+        :param remove_duplicates: If True, duplicate documents are not present in the same topic in the returned \
+        DataFrame. Even so, k documents per topic are returned, obtained from below of the removed documents \
         (the documents are ordered descending).
-        :return: A pandas DataFrame with the following columns: Topic index, Doc index, Topic prob, Topic keywords and
+        :return: A pandas DataFrame with the following columns: Topic index, Doc index, Topic prob, Topic keywords and \
         Doc text.
         """
         if self.docs_topics_df is None:
@@ -418,13 +432,14 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     def get_k_most_repr_docs_of_topic_as_df(self, topic: int, k=1, remove_duplicates=True) -> pd.DataFrame:
         """
-        Returns a DataFrame with the k most representative documents of the given topic.
-        The DataFrame has k rows, where each row contains the document index, the document-topic probability and
+        Returns a DataFrame with the k most representative documents of the given topic. \
+        The DataFrame has k rows, where each row contains the document index, the document-topic probability and \
         the document text, in descending order.
+
         :param topic: Index of the topic.
         :param k: Number of the most representative documents of the topic you want.
-        :param remove_duplicates: If True, duplicate documents are not present in the returned DataFrame.
-        Even so, k documents are returned, obtained from below of the removed documents (the documents are
+        :param remove_duplicates: If True, duplicate documents are not present in the returned DataFrame. \
+        Even so, k documents are returned, obtained from below of the removed documents (the documents are \
         ordered descending).
         :return: A pandas DataFrame with the following columns: Doc index, Topic prob and Doc text.
         """
@@ -441,9 +456,10 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     def get_topic_distribution_as_df(self) -> pd.DataFrame:
         """
-        Returns a DataFrame where each row contains a topic, the number of documents of that topic (the topic
+        Returns a DataFrame where each row contains a topic, the number of documents of that topic (the topic \
         is the dominant topic of those documents), and the percentage of documents of that topic.
-        :return: A pandas DataFrame with the following columns: Dominant topic index, Num docs, Percentage docs and
+
+        :return: A pandas DataFrame with the following columns: Dominant topic index, Num docs, Percentage docs and \
         Topic keywords.
         """
         if self.docs_topics_df is None:
@@ -471,7 +487,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     def get_doc_topic_prob_matrix(self) -> np.ndarray:
         """
-        :return: Returns a numpy matrix where the rows are documents and columns are topics.
+        :return: Returns a numpy matrix where the rows are documents and columns are topics. \
         Each cell represents the probability of the document in that row being related with the topic in that column.
         """
         num_docs = len(self.documents)
@@ -598,6 +614,7 @@ class LdaMalletModel(TopicsModel):
                  model_path=__MALLET_SAVED_MODELS_PATH, **kwargs):
         """
         Encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use.
+
         :param dataset: Dataset.
         :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the dataset documents.
         :param corpus: Document-term matrix. If is None, it is created using the dataset documents.
@@ -607,7 +624,7 @@ class LdaMalletModel(TopicsModel):
         :param model_name: Name of the folder where all mallet files will be saved. That folder will be created
         inside model_path directory. This param is obligatory.
         :param model_path: Path of the directory where the mallet directory will be created.
-        :param kwargs: Additional keyword arguments that want to be used in the gensim.models.wrappers.LdaMallet
+        :param kwargs: Additional keyword arguments that want to be used in the gensim.models.wrappers.LdaMallet \
         __init__ method.
         """
         if model_name is None:
@@ -621,7 +638,8 @@ class LdaMalletModel(TopicsModel):
     def _create_model(self, **kwargs):
         """
         Creates the LdaMallet model and returns it.
-        :param kwargs: Keyword arguments that want to be used in the gensim.models.wrappers.LdaMallet.
+
+        :param kwargs: Keyword arguments that want to be used in the gensim.models.wrappers.LdaMallet. \
         mallet_path argument is obligatory.
         :return: The gensim.models.wrappers.LdaMallet model created.
         """
@@ -649,6 +667,7 @@ class LdaMalletModel(TopicsModel):
     def _load_gensim_model(cls, path: str, mallet_path: str):
         """
         Loads the gensim.models.wrappers.LdaMallet in the specified path and returns it.
+
         :param path: Path of the saved gensim.models.wrappers.LdaMallet.
         :return: The gensim.models.wrappers.LdaMallet model.
         """
@@ -681,13 +700,13 @@ class LdaMalletModel(TopicsModel):
              model_dir_path=__MALLET_SAVED_MODELS_PATH, mallet_path=__MALLET_SOURCE_CODE_PATH,
              docs_topics_df: pd.DataFrame = None):
         """
-        Loads the model with the given name from the specified path, and
-        returns a LdaMalletModel instance.
+        Loads the model with the given name from the specified path, and returns a LdaMalletModel instance.
+
         :param model_name: Model name.
         :param dataset: Dataset used to create the model previously.
         :param model_dir_path: Path to the directory where the model is in.
         :param mallet_path: Path to the mallet source code.
-        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method
+        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method \
         get_dominant_topic_of_each_doc_as_df().
         :return: Instance of a LdaMalletModel object.
         """
@@ -711,6 +730,7 @@ class LdaGensimModel(TopicsModel):
                  model=None, random_state=RANDOM_STATE, **kwargs):
         """
         Encapsulates the functionality of gensim.models.LdaModel, making it easier to use.
+
         :param dataset: Dataset.
         :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the dataset documents.
         :param corpus: Document-term matrix. If is None, it is created using the dataset documents.
@@ -724,7 +744,8 @@ class LdaGensimModel(TopicsModel):
     def _create_model(self, **kwargs):
         """
         Creates the Lda model and returns it.
-        :param kwargs: Keyword arguments that want to be used in the gensim.models.LdaModel.
+
+        :param kwargs: Keyword arguments that want to be used in the gensim.models.LdaModel. \
         random_state argument is obligatory.
         :return: The gensim.models.LdaModel model created.
         """
@@ -745,6 +766,7 @@ class LdaGensimModel(TopicsModel):
     def _load_gensim_model(cls, path: str):
         """
         Loads the gensim.models.LdaModel in the specified path and returns it.
+
         :param path: Path of the saved gensim.models.LdaModel.
         :return: The gensim.models.LdaModel.
         """
@@ -760,6 +782,7 @@ class LsaGensimModel(TopicsModel):
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20, model=None, **kwargs):
         """
         Encapsulates the functionality of gensim.models.LsiModel, making it easier to use.
+
         :param dataset: Dataset.
         :param dictionary: gensim.corpora.Dictionary object. If is None, it is created using the dataset documents.
         :param corpus: Document-term matrix. If is None, it is created using the dataset documents.
@@ -772,6 +795,7 @@ class LsaGensimModel(TopicsModel):
     def _create_model(self, **kwargs):
         """
         Creates the Lda model and returns it.
+
         :param kwargs: Keyword arguments that want to be used in the gensim.models.LdaModel.
         :return: The gensim.models.LsiModel model created.
         """
@@ -792,6 +816,7 @@ class LsaGensimModel(TopicsModel):
     def _load_gensim_model(cls, path: str):
         """
         Loads the gensim.models.LsiModel in the specified path and returns it.
+
         :param path: Path of the saved gensim.models.LsiModel.
         :return: The gensim.models.LsiModel.
         """
@@ -816,17 +841,18 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
                                                    title="Topic's model coherence comparison", save_plot=False,
                                                    save_plot_path=None, **kwargs):
         """
-        Creates, stores and returns topics models and it's coherence values.
+        Creates, stores and returns topics models and it's coherence values. \
         Can be used to determine an optimum number of topics.
+
         :param start: Number of topics to start looking for the optimum.
         :param stop: Maximum number of topics to be tried.
         :param step: Number of topics to be incremented while looking for the optimum.
-        :param coherence: String that represents the type of coherence to calculate.
+        :param coherence: String that represents the type of coherence to calculate. \
         Valid values are: ‘c_v’, ‘c_uci’ and ‘c_npmi’.
         :param print_and_plot: If true, prints and plots the results.
         :param title: Title of the result's plot. Ignored if print_and_plot is False.
         :param save_plot: If is true and print_and_plot is True, save the plot to disk.
-        :param save_plot_path: If save_plot is True and print_and_plot is True, this is the path where
+        :param save_plot_path: If save_plot is True and print_and_plot is True, this is the path where \
         the plot will be saved.
         :param kwargs: Other keyword parameters for creating the models.
         :return: List of the created models and their corresponding coherence values.
@@ -855,6 +881,7 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
     def _create_model(self, num_topics: int, **kwargs):
         """
         Creates a topics model.
+
         :param num_topics: Number of topics of the model.
         :return: The topics model created.
         """
@@ -864,11 +891,12 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
                                         save_plot=False, save_plot_path: str = None):
         """
         Prints and plots coherence values of the specified models.
+
         :param models_list: List of models. If is None, self.models_list is used.
         :param coherence_values: List of coherence values. If is None, self.coherence_values is used.
         :param title: Title of the plot.
         :param save_plot: If is True, save the plot to disk.
-        :param save_plot_path: If save_plot is True, this is the path where the plot will be saved.
+        :param save_plot_path: If save_plot is True, this is the path where the plot will be saved. \
         Must end in '.png' or '.pdf'.
         """
         if models_list is None:
@@ -897,13 +925,13 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
 
     def save(self, base_name: str, path=_SAVE_MODELS_PATH, index: int = None):
         """
-        If index parameter is None, saves all the models to disk.
+        If index parameter is None, saves all the models to disk. \
         If is a number, saves only the model with that index.
-        :param base_name: Base name of the models. After it, the current time, the number of topics, and
+
+        :param base_name: Base name of the models. After it, the current time, the number of topics, and \
         the coherence value are added.
         :param path: Path were the models will be stored.
         :param index: Index of the model to be saved. If is none, saves all models.
-        and the coherence value of the models is added.
         """
         if index is not None:
             self.models_list[index].save(base_name, path)
@@ -925,19 +953,20 @@ class LdaMalletModelsList(TopicsModelsList):
                                                    title="Topic's model coherence comparison", save_plot=False,
                                                    save_plot_path=None, models_base_name='mallet_model', **kwargs):
         """
-        Creates, stores and returns topics models and it's coherence values.
+        Creates, stores and returns topics models and it's coherence values. \
         Can be used to determine an optimum number of topics.
+
         :param start: Number of topics to start looking for the optimum.
         :param stop: Maximum number of topics to be tried.
         :param step: Number of topics to be incremented while looking for the optimum.
-        :param coherence: String that represents the type of coherence to calculate.
+        :param coherence: String that represents the type of coherence to calculate. \
         Valid values are: ‘c_v’, ‘c_uci’ and ‘c_npmi’.
         :param print_and_plot: If true, prints and plots the results.
         :param title: Title of the result's plot. Ignored if print_and_plot is False.
         :param save_plot: If is true and print_and_plot is True, save the plot to disk.
-        :param save_plot_path: If save_plot is True and print_and_plot is True, this is the path where
+        :param save_plot_path: If save_plot is True and print_and_plot is True, this is the path where \
         the plot will be saved.
-        :param models_base_name: Base name for the Mallet models. This param + num_topics of each model
+        :param models_base_name: Base name for the Mallet models. This param + num_topics of each model \
         is passed to the LdaMalletModel __init__ method, because is needed for storing the files of the model.
         :param kwargs: Other keyword parameters for creating the models.
         :return: List of the created models and their corresponding coherence values.
@@ -966,10 +995,10 @@ class LdaMalletModelsList(TopicsModelsList):
     # noinspection PyMethodOverriding
     def save(self, index: int = None):
         """
-        If index parameter is None, saves all the models to disk.
+        If index parameter is None, saves all the models to disk. \
         If is a number, saves only the model with that index.
+
         :param index: Index of the model to be saved. If is none, saves all models.
-        and the coherence value of the models is added.
         """
         if index is not None:
             self.models_list[index].save()

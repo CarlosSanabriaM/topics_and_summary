@@ -21,6 +21,7 @@ __NORMALIZE_WORDS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'normalize_w
 def to_lowercase(text: str) -> str:
     """
     Returns the given text with all characters in lowercase.
+
     :param text: The text to be converted to lowercase. (String)
     :return: The given text with all characters in lowercase. (String)
     """
@@ -31,9 +32,10 @@ def to_lowercase(text: str) -> str:
 def remove_stopwords(text: str, basic_stopwords=__BASIC_STOPWORDS, additional_stopwords=True) -> str:
     """
     Returns the given text with the stopwords removed.
+
     :param text: The text to remove stopwords. (String)
     :param basic_stopwords: Set of basic stopwords to be removed.
-    :param additional_stopwords: Remove additional stopwords (stored in the file __ADDITIONAL_STOPWORDS_PATH).
+    :param additional_stopwords: Remove additional stopwords (stored in the file __ADDITIONAL_STOPWORDS_PATH). \
     By default is true.
     :return: The given text with all the stopwords removed. (String)
     """
@@ -49,18 +51,14 @@ def remove_stopwords(text: str, basic_stopwords=__BASIC_STOPWORDS, additional_st
 
 
 def remove_emails(text: str, emails=__EMAILS_RE) -> str:
-    """
-    Returns the given text with the emails removed.
-    :param text:
-    :param emails:
-    :return:
-    """
+    """Returns the given text with the emails removed."""
     return emails.sub('', text)
 
 
 def substitute_punctuation(text: str, punctuation=__PUNCTUATION_RE, substitute_by=' ') -> str:
     """
     Substitutes the punctuation of the given text by the specified string.
+
     :param text: The text where you want to substitute the punctuation.
     :param punctuation: Regex of the punctuation elements you want to substitute.
     :param substitute_by: The string yo want to use to substitute the punctuation.
@@ -72,6 +70,7 @@ def substitute_punctuation(text: str, punctuation=__PUNCTUATION_RE, substitute_b
 def stem_words(text: str, stemmer=PorterStemmer()) -> str:
     """
     Given a string, it applies the specified Stemmer to each word of the string.
+
     :param text: The text to be stemmed. (String)
     :param stemmer: The stemmer to be applied. The default one is the Porter Stemmer.
     :return: The text stemmed. (String)
@@ -82,6 +81,7 @@ def stem_words(text: str, stemmer=PorterStemmer()) -> str:
 def lemmatize_words(text: str, lemmatizer=WordNetLemmatizer()) -> str:
     """
     Given a string, it applies the specified lemmatizer to each word of the string.
+
     :param text: The text to be lemmatized. (String)
     :param lemmatizer: The lemmatizer to be applied. The default one is the WordNet Lemmatizer.
     :return: The text lemmatized. (String)
@@ -91,8 +91,8 @@ def lemmatize_words(text: str, lemmatizer=WordNetLemmatizer()) -> str:
 
 def get_first_k_words(text: str, num_words: int) -> str:
     """
-    Returns the given text with only the first k words.
-    if k >= len(text), returns the entire text.
+    Returns the given text with only the first k words. If k >= len(text), returns the entire text.
+
     :param text: The text to be limited in the number of words (String).
     :param num_words: The value of k (int). Should be >= 0.
     :return: The given text with only the first k words.
@@ -106,9 +106,10 @@ def get_first_k_words(text: str, num_words: int) -> str:
 
 def substitute_word(text: str, word: str, substitute_by: str) -> str:
     """
-    Substitutes in the given text the specified word by the substitute_by word.
-    It doesn't substitutes part of words. For example, substitute_word('you about u', 'u', '*')
-    returns 'you about *' and NOT 'yo* abo*t *'.
+    Substitutes in the given text the specified word by the substitute_by word. \
+    It doesn't substitutes part of words. For example, substitute_word('you about u', 'u', '-') \
+    returns 'you about -' and NOT 'yo- abo-t -'.
+
     :param text: Text where you want to substitute the word.
     :param word: Word to be substituted.
     :param substitute_by: Word that substitutes the word to be substituted.
@@ -120,10 +121,11 @@ def substitute_word(text: str, word: str, substitute_by: str) -> str:
 def substitute_words_with_dict(text: str, substitutions_dict: Union[str, dict]) -> str:
     """
     Substitutes in the given text the elements specified in the substitutions_dict.
+
     :param text: Text where you want to substitute words.
-    :param substitutions_dict: It can be a dict or a str (which corresponds to the path
-    to a file containing the dict in json format). The keys of the dict are the words to
-    be replaced and the values are the corresponding word that substitutes the word to be replaced.
+    :param substitutions_dict: It can be a dict or a str (which corresponds to the path \
+    to a file containing the dict in json format). The keys of the dict are the words to \
+    be replaced and the values are the corresponding word that substitutes the word to be replaced. \
     If it's a str, the path should be relative to this file.
     :return: The text with the words replaced.
     """
@@ -148,13 +150,14 @@ def substitute_words_with_dict(text: str, substitutions_dict: Union[str, dict]) 
 
 def expand_contractions(text: str, expand_contractions_dict: dict = None) -> str:
     """
-    Expands the contractions (for example: "don't") in the documents of the dataset.
-    For example, if expand_contractions_dict has the following pair: "don't": "do not"
+    Expands the contractions (for example: "don't") in the documents of the dataset. \
+    For example, if expand_contractions_dict has the following pair: "don't": "do not" \
     all the appearances in the dataset of the word "don't" will be replaces by "do not".
+
     :param text: Text where you want to expand the contractions.
-    :param expand_contractions_dict: A dict where the keys are the words to be replaced
-    and the values the corresponding word that substitutes the word to be replaced.
-    If no value is passed, a dict is loaded from the file specified in __EXPAND_CONTRACTIONS_DICT_PATH.
+    :param expand_contractions_dict: A dict where the keys are the words to be replaced \
+    and the values the corresponding word that substitutes the word to be replaced. \
+    If no value is passed, a dict is loaded from the file specified in __EXPAND_CONTRACTIONS_DICT_PATH. \
     The dict should be in lowercase.
     :return: The text with the contractions expanded.
     """
@@ -167,10 +170,11 @@ def expand_contractions(text: str, expand_contractions_dict: dict = None) -> str
 def substitute_vulgar_words(text: str, vulgar_words_dict: dict = None) -> str:
     """
     Substitutes the vulgar words for their normal version. For example: "u" --> "you".
+
     :param text: Text where you want to substitute the vulgar words.
-    :param vulgar_words_dict: A dict where the keys are the words to be replaced
-    and the values the corresponding word that substitutes the word to be replaced.
-    If no value is passed, a dict is loaded from the file specified in __VULGAR_WORDS_DICT_PATH.
+    :param vulgar_words_dict: A dict where the keys are the words to be replaced \
+    and the values the corresponding word that substitutes the word to be replaced. \
+    If no value is passed, a dict is loaded from the file specified in __VULGAR_WORDS_DICT_PATH. \
     The dict should be in lowercase.
     :return: The text with the vulgar words substituted.
     """
@@ -182,15 +186,16 @@ def substitute_vulgar_words(text: str, vulgar_words_dict: dict = None) -> str:
 
 def normalize_words(text: str, normalize_words_dict: dict = None) -> str:
     """
-    Normalization/canonicalization is a process for converting data that has more than one possible
-    representation into a "standard", "normal", or canonical form.
-    A single normalized form is chosen for words with multiple forms like USA and US or uh-huh and uhhuh.
+    Normalization/canonicalization is a process for converting data that has more than one possible \
+    representation into a "standard", "normal", or canonical form. \
+    A single normalized form is chosen for words with multiple forms like USA and US or uh-huh and uhhuh. \
     This function substitutes the words specified in the given dict with the value specified in that dict.
+
     :param text: Text where you want to substitute some words.
-    :param normalize_words_dict: A dict where the keys are the words to be replaced
-    and the values the corresponding word that substitutes the word to be replaced.
-    If no value is passed, a dict is loaded from the file specified in __NORMALIZE_WORDS_DICT_PATH.
-    The dict can have uppercase letter.
+    :param normalize_words_dict: A dict where the keys are the words to be replaced \
+    and the values the corresponding word that substitutes the word to be replaced. \
+    If no value is passed, a dict is loaded from the file specified in __NORMALIZE_WORDS_DICT_PATH. \
+    The dict can have uppercase letter. \
     This function should be used before any other preprocessing, for example, convert words to lowercase.
     :return: The text with the words substituted.
     """
@@ -203,6 +208,7 @@ def normalize_words(text: str, normalize_words_dict: dict = None) -> str:
 def remove_single_chars(text: str) -> str:
     """
     Returns the given text with the words that are simple chars (have length 1) removed.
+
     :param text: The text to remove single chars. (String)
     :return: The given text with all the single chars removed. (String)
     """
@@ -213,6 +219,7 @@ def remove_single_chars(text: str) -> str:
 def remove_apostrophes(text: str) -> str:
     """
     Returns the given text with the apostrophes removed.
+
     :param text: The text to remove apostrophes. (String)
     :return: The given text with all the apostrophes removed. (String)
     """
@@ -224,8 +231,9 @@ def preprocess_text(text: str, normalize=True, lowercase=True, contractions=True
                     stopwords=True, emails=True, punctuation=True, ngrams='uni', ngrams_model_func: Callable = None,
                     lemmatize=True, stem=False, apostrophes=True, chars=True) -> str:
     """
-    Receives a str containing a text and returns a list of words after applying the specified preprocessing.
+    Receives a str containing a text and returns a list of words after applying the specified preprocessing. \
     The original dataset is not modified.
+
     :type text: str
     :param text: Text to be preprocessed.
     :param normalize: Normalize words. By default is True.
@@ -235,18 +243,19 @@ def preprocess_text(text: str, normalize=True, lowercase=True, contractions=True
     :param stopwords: Remove stopwords. By default is True.
     :param emails: Remove emails. By default is True.
     :param punctuation: Remove punctuation. By default is True.
-    :param ngrams: If 'uni' uses unigrams. If 'bi' create bigrams. If 'tri' creates trigrams. By default is 'uni'.
+    :param ngrams: If 'uni' uses unigrams. If 'bi' create bigrams. If 'tri' creates trigrams. By default is 'uni'. \
     If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
-    :param ngrams_model_func: Function that receives a list of words and returns a list of words with
-    possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function
-    is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions in
+    :param ngrams_model_func: Function that receives a list of words and returns a list of words with \
+    possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \
+    is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions in \
     the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
     :param lemmatize: Lemmatize words. By default is True.
     :param stem: Stemm words. By default is False.
     :param apostrophes: Remove apostrophes.
     :param chars: Remove single chars. By default is True.
     :return: List of str.
-    Note that lemmatize and stem shouldn't be both True.
+
+    Note that lemmatize and stem shouldn't be both True, because only one of them will be applied.
     """
 
     if normalize:
