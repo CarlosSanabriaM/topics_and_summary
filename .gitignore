@@ -12,17 +12,17 @@ __pycache__/
 ### Mac files ###
 .DS_Store
 
-cnn-sentence-classification/Keras example.ipynb
-cnn-sentence-classification/cnn-sentence-classification-project/saved-elements/
-cnn-sentence-classification/cnn-sentence-classification-project/tests/saved-elements/
-glove/
-mallet-2.0.8/
-text-preprocessing/20_newsgroups/
-word2vec/
-
 ### SonarQube ###
 .scannerwork
 
 ### Documentation files ###
-.scannerwork
-cnn-sentence-classification/cnn-sentence-classification-project/docs/build/
+topics-and-extractive-summary-project/docs/build/
+
+### Project files ###
+topics-and-extractive-summary-project/saved-elements/
+topics-and-extractive-summary-project/tests/saved-elements/
+
+### Other files used in the project ###
+embeddings/
+datasets/20_newsgroups/
+mallet-2.0.8/
