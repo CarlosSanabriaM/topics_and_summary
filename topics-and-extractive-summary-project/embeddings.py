@@ -1,6 +1,5 @@
 import abc
 
-import keras
 import numpy as np
 from gensim.models import KeyedVectors
 
@@ -73,15 +72,6 @@ class Word2VecModel(EmbeddingsModel):
         if self.w2v_model.vocab.get(word) is None:
             return self.w2v_model.vocab.get('UNK').index
         return self.w2v_model.vocab.get(word).index
-
-    def get_keras_embedding(self, train_embeddings=False) -> keras.layers.Embedding:
-        """
-        Returns a keras embedding layer using the Word2Vec model.
-
-        :param train_embeddings: If True, the embedding layer weights are updated during training.
-        :return: The keras embedding layer using the Word2Vec model.
-        """
-        return self.w2v_model.get_keras_embedding(train_embeddings=train_embeddings)
 
     def get_vectors_dim(self) -> int:
         return self.vectors_dim

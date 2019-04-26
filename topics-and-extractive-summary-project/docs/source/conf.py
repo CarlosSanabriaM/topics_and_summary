@@ -19,12 +19,12 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Topics and Extractive Summary'
+project = 'Topics and Summary'
 copyright = '2019, Carlos Sanabria Miranda'
 author = 'Carlos Sanabria Miranda'
 
 # The short X.Y version
-version = '0.0.1'
+version = '0.1'
 # The full version, including alpha/beta/rc tags
 release = ''
 
@@ -106,7 +106,7 @@ html_sidebars = {'**': ['globaltoc.html', 'relations.html', 'searchbox.html']}
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'TopicsandExtractiveSummarydoc'
+htmlhelp_basename = 'TopicsandSummarydoc'
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -132,7 +132,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'TopicsandExtractiveSummary.tex', 'Topics and Extractive Summary Documentation',
+    (master_doc, 'TopicsandSummary.tex', 'Topics and Summary Documentation',
      'Carlos Sanabria Miranda', 'manual'),
 ]
 
@@ -141,7 +141,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'topicsandextractivesummary', 'Topics and Extractive Summary Documentation',
+    (master_doc, 'topicsandsummary', 'Topics and Summary Documentation',
      [author], 1)
 ]
 
@@ -151,8 +151,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'TopicsandExtractiveSummary', 'Topics and Extractive Summary Documentation',
-     author, 'TopicsandExtractiveSummary', 'One line description of project.',
+    (master_doc, 'TopicsandSummary', 'Topics and Summary Documentation',
+     author, 'TopicsandSummary', 'One line description of project.',
      'Miscellaneous'),
 ]
 
