@@ -6,9 +6,7 @@ topics-and-extractive-summary-project
 
    datasets
    embeddings
-   examples
    models
    preprocessing
-   tests
    utils
    visualizations

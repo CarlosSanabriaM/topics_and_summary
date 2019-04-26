@@ -11,7 +11,7 @@ topics_and_extractive_summary is a library that identifies topics in a collectio
 of text documents and classifies them inside that topics. It also generates summaries
 of text documents. This is done using NLP techniques.
 
-See the :ref:`introduction` for more detail about the objectives of the library.
+See the :ref:`introduction` for more detail about the objectives and functionalities of the library.
 
 .. toctree::
    :maxdepth: 2
