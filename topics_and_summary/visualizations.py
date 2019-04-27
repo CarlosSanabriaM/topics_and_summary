@@ -11,9 +11,9 @@ from sklearn.manifold import TSNE
 from tqdm import tqdm
 from wordcloud import WordCloud, STOPWORDS
 
-from models.topics import Topic
-from models.topics import TopicsModel
-from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
+from topics_and_summary.models.topics import Topic
+from topics_and_summary.models.topics import TopicsModel
+from topics_and_summary.utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
 
 
 def plot_distribution_of_doc_word_counts(documents: List[List[str]]):

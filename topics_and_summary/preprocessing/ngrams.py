@@ -2,7 +2,7 @@ from typing import Tuple, Callable
 
 import gensim
 
-from datasets.common import Dataset
+from topics_and_summary.datasets.common import Dataset
 
 
 def create_bigram_model(dataset: Dataset, min_count=50, threshold=75) -> gensim.models.phrases.Phraser:

@@ -1,10 +1,10 @@
 import unittest
 
-from datasets.twenty_news_groups import TwentyNewsGroupsDataset
-from preprocessing.dataset import preprocess_dataset
-from preprocessing.text import preprocess_text
-from tests.paths import TESTS_BASE_PATH
-from utils import load_obj_from_disk, join_paths, load_func_from_disk
+from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
+from topics_and_summary.preprocessing.dataset import preprocess_dataset
+from topics_and_summary.preprocessing.text import preprocess_text
+from topics_and_summary.tests.paths import TESTS_BASE_PATH
+from topics_and_summary.utils import load_obj_from_disk, join_paths, load_func_from_disk
 
 
 class TestPreprocessing(unittest.TestCase):

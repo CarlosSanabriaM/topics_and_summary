@@ -1,8 +1,8 @@
 import unittest
 
-from datasets.twenty_news_groups import TwentyNewsGroupsDataset, TwentyNewsGroupsDocument
-from tests.paths import TESTS_BASE_PATH
-from utils import load_obj_from_disk, join_paths
+from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset, TwentyNewsGroupsDocument
+from topics_and_summary.tests.paths import TESTS_BASE_PATH
+from topics_and_summary.utils import load_obj_from_disk, join_paths
 
 
 class TestTwentyNewsGroupsDataset(unittest.TestCase):

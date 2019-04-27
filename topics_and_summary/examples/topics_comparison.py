@@ -1,10 +1,11 @@
 from typing import List
 
-from datasets.twenty_news_groups import TwentyNewsGroupsDataset
-from models.topics import LdaModelsList, LsaModelsList, LdaMalletModelsList, TopicsModel
-from preprocessing.dataset import preprocess_dataset
-from utils import join_paths, pretty_print, get_abspath_from_project_root, save_obj_to_disk, save_func_to_disk
-from visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
+from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
+from topics_and_summary.models.topics import LdaModelsList, LsaModelsList, LdaMalletModelsList, TopicsModel
+from topics_and_summary.preprocessing.dataset import preprocess_dataset
+from topics_and_summary.utils import join_paths, pretty_print, get_abspath_from_project_root, save_obj_to_disk, \
+    save_func_to_disk
+from topics_and_summary.visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
 
 
 def generate_and_store_models(path, documents, plot_first_name):

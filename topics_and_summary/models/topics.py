@@ -9,9 +9,9 @@ import pandas as pd
 from texttable import Texttable
 from tqdm import tqdm
 
-from datasets.common import Dataset
-from preprocessing.text import preprocess_text
-from utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
+from topics_and_summary.datasets.common import Dataset
+from topics_and_summary.preprocessing.text import preprocess_text
+from topics_and_summary.utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
 
 
 def prepare_corpus(documents) -> Tuple[gensim.corpora.Dictionary, List[List[Tuple[int, int]]]]:

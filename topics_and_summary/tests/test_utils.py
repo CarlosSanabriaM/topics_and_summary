@@ -2,8 +2,8 @@ import os
 import platform
 import unittest
 
-from utils import get_abspath_from_project_root, join_paths, save_obj_to_disk, load_obj_from_disk, save_func_to_disk, \
-    load_func_from_disk
+from topics_and_summary.utils import get_abspath_from_project_root, join_paths, save_obj_to_disk, load_obj_from_disk, \
+    save_func_to_disk, load_func_from_disk
 
 
 class TestUtils(unittest.TestCase):

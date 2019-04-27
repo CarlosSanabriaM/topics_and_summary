@@ -1,5 +1,5 @@
-from models.topics import LdaMalletModel
-from utils import save_obj_to_disk, load_obj_from_disk, get_abspath_from_project_root
+from topics_and_summary.models.topics import LdaMalletModel
+from topics_and_summary.utils import save_obj_to_disk, load_obj_from_disk, get_abspath_from_project_root
 
 if __name__ == '__main__':
     # Uncomment one of this 2 lines:

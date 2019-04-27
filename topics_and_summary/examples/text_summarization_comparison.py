@@ -1,5 +1,5 @@
-from models.summarization import TextRank
-from utils import pretty_print
+from topics_and_summary.models.summarization import TextRank
+from topics_and_summary.utils import pretty_print
 
 
 def print_sentences(sentences):

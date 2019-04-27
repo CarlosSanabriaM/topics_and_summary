@@ -1,8 +1,8 @@
 import unittest
 
-from models.summarization import TextRank
-from tests.paths import SAVED_OBJECTS_PATH
-from utils import load_obj_from_disk
+from topics_and_summary.models.summarization import TextRank
+from topics_and_summary.tests.paths import SAVED_OBJECTS_PATH
+from topics_and_summary.utils import load_obj_from_disk
 
 
 class TestSummarizationModel(unittest.TestCase):

@@ -3,7 +3,7 @@ from typing import List, Callable
 
 import pandas as pd
 
-from utils import join_paths
+from topics_and_summary.utils import join_paths
 
 
 def get_file_content(file_path: str, encoding: str = None) -> str:

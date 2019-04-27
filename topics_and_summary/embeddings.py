@@ -3,7 +3,7 @@ import abc
 import numpy as np
 from gensim.models import KeyedVectors
 
-from utils import get_abspath_from_project_root, join_paths
+from topics_and_summary.utils import get_abspath_from_project_root, join_paths
 
 
 class EmbeddingsModel(metaclass=abc.ABCMeta):

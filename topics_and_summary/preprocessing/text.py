@@ -6,7 +6,7 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
-from utils import join_paths, get_abspath_from_project_root
+from topics_and_summary.utils import join_paths, get_abspath_from_project_root
 
 __BASIC_STOPWORDS = set(stopwords.words('english'))
 __EMAILS_RE = re.compile(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)")

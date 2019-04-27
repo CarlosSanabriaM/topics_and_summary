@@ -1,9 +1,9 @@
 import unittest
 from shutil import rmtree
 
-from models.topics import LdaGensimModel, LdaMalletModel, LsaGensimModel
-from tests.paths import SAVED_OBJECTS_PATH, SAVED_TOPICS_MODELS_PATH, SAVED_FUNCS_PATH
-from utils import join_paths, load_obj_from_disk, load_func_from_disk
+from topics_and_summary.models.topics import LdaGensimModel, LdaMalletModel, LsaGensimModel
+from topics_and_summary.tests.paths import SAVED_OBJECTS_PATH, SAVED_TOPICS_MODELS_PATH, SAVED_FUNCS_PATH
+from topics_and_summary.utils import join_paths, load_obj_from_disk, load_func_from_disk
 
 
 class TestTopicsModel(unittest.TestCase):

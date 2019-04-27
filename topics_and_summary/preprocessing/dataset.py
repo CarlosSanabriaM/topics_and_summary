@@ -4,14 +4,15 @@ from typing import Union, Set, Tuple, List
 
 from texttable import Texttable
 
-from datasets.common import Dataset
-from datasets.twenty_news_groups import TwentyNewsGroupsDataset
-from preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, make_trigrams_and_get_trigram_model_func
-from preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, remove_stopwords, \
+from topics_and_summary.datasets.common import Dataset
+from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
+from topics_and_summary.preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, \
+    make_trigrams_and_get_trigram_model_func
+from topics_and_summary.preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, \
+    remove_stopwords, \
     substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, remove_single_chars, \
     remove_apostrophes
-from utils import join_paths, get_abspath_from_project_root
-from utils import pretty_print
+from topics_and_summary.utils import join_paths, get_abspath_from_project_root, pretty_print
 
 __PREPROCESSING_FILES_DIR = get_abspath_from_project_root('preprocessing-files')
 __TRASH_WORDS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'trash_words.txt')

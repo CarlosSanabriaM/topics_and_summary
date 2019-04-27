@@ -6,8 +6,8 @@ import numpy as np
 from nltk import sent_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
 
-from embeddings import Glove, Word2VecModel
-from preprocessing.text import preprocess_text
+from topics_and_summary.embeddings import Glove, Word2VecModel
+from topics_and_summary.preprocessing.text import preprocess_text
 
 
 class SummarizationModel(metaclass=abc.ABCMeta):

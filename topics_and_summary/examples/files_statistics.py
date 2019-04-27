@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from datasets.twenty_news_groups import TwentyNewsGroupsDataset
-from preprocessing.dataset import preprocess_dataset
-from utils import pretty_print
+from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
+from topics_and_summary.preprocessing.dataset import preprocess_dataset
+from topics_and_summary.utils import pretty_print
 
 if __name__ == '__main__':
     dataset = TwentyNewsGroupsDataset()

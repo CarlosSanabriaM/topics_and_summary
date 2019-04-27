@@ -6,8 +6,8 @@ from typing import List, Callable
 
 import pandas as pd
 
-from datasets.common import get_file_content, Document, Dataset
-from utils import pretty_print, get_abspath_from_project_root, join_paths
+from topics_and_summary.datasets.common import get_file_content, Document, Dataset
+from topics_and_summary.utils import pretty_print, get_abspath_from_project_root, join_paths
 
 
 class TwentyNewsGroupsDataset(Dataset):
