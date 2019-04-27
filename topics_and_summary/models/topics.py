@@ -858,7 +858,6 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         :return: List of the created models and their corresponding coherence values.
         """
         first_index = len(self.models_list)
-        current_index = first_index
         coherence_values = []
 
         for num_topics in tqdm(range(start, stop + 1, step)):
@@ -868,7 +867,6 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
             coherence_values.append(model.compute_coherence_value(coherence))
 
             self.models_list.append(model)
-            current_index += 1
 
         if print_and_plot:
             self.print_and_plot_coherence_values(self.models_list[first_index:],
@@ -972,7 +970,6 @@ class LdaMalletModelsList(TopicsModelsList):
         :return: List of the created models and their corresponding coherence values.
         """
         first_index = len(self.models_list)
-        current_index = first_index
         coherence_values = []
 
         for num_topics in tqdm(range(start, stop + 1, step)):
@@ -983,7 +980,6 @@ class LdaMalletModelsList(TopicsModelsList):
             coherence_values.append(model.compute_coherence_value(coherence))
 
             self.models_list.append(model)
-            current_index += 1
 
         if print_and_plot:
             self.print_and_plot_coherence_values(self.models_list[first_index:],

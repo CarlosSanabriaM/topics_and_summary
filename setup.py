@@ -1,9 +1,14 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup(name='topics_and_summary',
       version='0.1',
       description='Package for identifying the topics present in a collection '
                   'of text documents and create summaries of texts',
+      long_description=long_description,
+      long_description_content_type="text/markdown",
       keywords="topics summarization text NLP lda lsa textrank",
 
       url='madbd1000.accenture.com:8081/carlos.sanabria/topic_and_extractivesummary',
@@ -31,6 +36,6 @@ setup(name='topics_and_summary',
             'scikit_learn==0.20.3',
             'typing==3.6.6'
       ],
-      packages=find_packages(),
+      packages=find_packages(exclude=('tests', 'docs')),
       include_package_data=True,
       zip_safe=False)
