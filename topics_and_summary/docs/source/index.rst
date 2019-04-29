@@ -1,5 +1,5 @@
 Welcome to Topics and Summary's documentation!
-=========================================================
+==============================================
 
 **Date**: |today| **Version**: |version|
 
@@ -24,4 +24,5 @@ See the :ref:`introduction` for more detail about the objectives and functionali
 
    api-reference
 
+   development/installation
    development/todo-list
