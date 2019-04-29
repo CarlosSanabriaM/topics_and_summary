@@ -9,7 +9,7 @@ Dependencies
 
 The **required packages** are listed in the requirements.txt file, which content is showed below:
 
-.. include:: ../../../requirements.txt
+.. include:: ../../../../requirements.txt
    :literal:
 
 They can be installed using `pip <https://pypi.org/project/pip/>`__ or
@@ -22,4 +22,4 @@ but conda is prefered.
 
 
 
-to generate the package pip install /path/to/topics_and_summary 
+to generate the package pip install /path/to/topics_and_summary
