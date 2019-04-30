@@ -21,7 +21,7 @@ def get_file_content(file_path: str, encoding: str = None) -> str:
 class Dataset(metaclass=abc.ABCMeta):
     """Class that represents a dataset."""
 
-    def __init__(self, dataset_path, encoding):
+    def __init__(self, dataset_path: str, encoding: str):
         """
         :param dataset_path: Path to the dataset.
         :param encoding: Encoding that will be used to load the docs from disk with the open() built-in function.
@@ -76,9 +76,7 @@ class Dataset(metaclass=abc.ABCMeta):
             return self.as_documents_obj_list() == other.as_documents_obj_list()
         return False
 
-    # TODO: Create a method remove_document()
-
-
+    
 class Document(metaclass=abc.ABCMeta):
     """
     Class that represents a dataset document.

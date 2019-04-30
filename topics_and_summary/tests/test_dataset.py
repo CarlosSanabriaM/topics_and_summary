@@ -35,11 +35,6 @@ are the cause of a bad situation of another party."""
 
         self.assertEqual(expected_original_doc_content, original_doc_content)
 
-    def test_as_documents_obj_list_method(self):
-        expected_as_documents_obj_list = load_obj_from_disk('as_documents_obj_list',
-                                                            join_paths(TESTS_BASE_PATH, 'saved-elements/objects'))
-        self.assertEqual(expected_as_documents_obj_list, self.dataset.as_documents_obj_list())
-
     def test_as_documents_content_list_method(self):
         expected_as_documents_content_list = \
             load_obj_from_disk('as_documents_content_list', join_paths(TESTS_BASE_PATH, 'saved-elements/objects'))
