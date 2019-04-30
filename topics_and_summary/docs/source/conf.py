@@ -15,7 +15,9 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../..'))
+# LIBRARY_ROOT_PATH have to specify the relative path from this .py file to the library root folder
+LIBRARY_ROOT_PATH = '../..'
+sys.path.insert(0, os.path.abspath(LIBRARY_ROOT_PATH))
 
 # -- Project information -----------------------------------------------------
 

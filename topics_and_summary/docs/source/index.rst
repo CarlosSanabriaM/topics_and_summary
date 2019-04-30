@@ -14,15 +14,10 @@ of text documents. This is done using NLP techniques.
 See the :ref:`introduction` for more detail about the objectives and functionalities of the library.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Documentation contents:
+    :maxdepth: 2
+    :caption: Documentation contents:
 
-   introduction
-
-   usage/installation
-   usage/quickstart
-
-   api-reference
-
-   development/installation
-   development/todo-list
+    introduction
+    usage
+    api-reference
+    development
