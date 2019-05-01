@@ -11,10 +11,10 @@ class TwentyNewsGroupsDataset(StructuredDataset):
     This class can apply a first specific preprocessing on the dataset files.
     """
 
-    __DATASET_PATH = get_abspath_from_project_root('../datasets/20_newsgroups')
+    _DATASET_PATH = get_abspath_from_project_root('../datasets/20_newsgroups')
     __DATASET_ENCODING = 'latin1'
 
-    def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=__DATASET_PATH):
+    def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=_DATASET_PATH):
         """
         :param remove_header: If true, it removes the header of all files.
         :param remove_footer: If true, it removes the footer of all files.
