@@ -76,6 +76,10 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
+# Specifies how the api documentation elements are ordered
+# Possible values: 'alphabetical', 'groupwise' (by member type) or 'bysource'
+autodoc_member_order = 'bysource'
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
