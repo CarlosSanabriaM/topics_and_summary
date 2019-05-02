@@ -40,7 +40,7 @@ def plot_distribution_of_doc_word_counts(documents: List[List[str]]):
     plt.show()
 
 
-def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir_save_path=None, dpi=350,
+def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir_save_path: str = None, dpi=350,
                               show_plot=True):
     """
     Plots the specified topic and it's keywords as a word-cloud.
@@ -58,7 +58,7 @@ def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir
 
 # noinspection PyTypeChecker
 def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False, all_horizontal=True,
-                               save=False, dir_save_path=None, dpi=350, show_plot=True):
+                               save=False, dir_save_path: str = None, dpi=350, show_plot=True):
     """
     Plots the specified topics and it's keywords as word-clouds.
 
@@ -162,7 +162,7 @@ _TSNE_SAVE_PATH = get_abspath_from_project_root('saved-elements/topics/tsne')
 
 def tsne_clustering_chart(model: TopicsModel, angle=.99, doc_threshold=0,
                           plot_keywords=True, num_keywords=5, keywords_color_is_black=True,
-                          save_path=_TSNE_SAVE_PATH, plot_name=None, show_plot=True):
+                          save_path: str = None, plot_name: str = None, show_plot=True):
     """
     Use t-SNE technique for dimensionality reduction.
 
@@ -177,6 +177,9 @@ def tsne_clustering_chart(model: TopicsModel, angle=.99, doc_threshold=0,
     :param plot_name: Name of the plot to be saved.
     :param show_plot: If true, opens a browser and shows the html with the plot.
     """
+    if save_path is None:
+        save_path = _TSNE_SAVE_PATH
+
     # Get doc topic prob matrix
     doc_topic_prob_matrix = model.get_doc_topic_prob_matrix()
 

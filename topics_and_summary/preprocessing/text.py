@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Union, Callable
+from typing import Union, Callable, Set
 
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -29,7 +29,7 @@ def to_lowercase(text: str) -> str:
     return text
 
 
-def remove_stopwords(text: str, basic_stopwords=_BASIC_STOPWORDS, additional_stopwords=True) -> str:
+def remove_stopwords(text: str, basic_stopwords: Set[str] = None, additional_stopwords=True) -> str:
     """
     Returns the given text with the stopwords removed.
 
@@ -39,6 +39,9 @@ def remove_stopwords(text: str, basic_stopwords=_BASIC_STOPWORDS, additional_sto
     By default is true.
     :return: The given text with all the stopwords removed. (String)
     """
+    if basic_stopwords is None:
+        basic_stopwords = _BASIC_STOPWORDS
+
     _stopwords = basic_stopwords
 
     if additional_stopwords:

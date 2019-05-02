@@ -1,7 +1,7 @@
 import re
 
-from topics_and_summary.datasets.structured_dataset import StructuredDataset, StructuredDocument
 from topics_and_summary.datasets.common import Document
+from topics_and_summary.datasets.structured_dataset import StructuredDataset, StructuredDocument
 from topics_and_summary.utils import pretty_print, get_abspath_from_project_root
 
 
@@ -14,13 +14,16 @@ class TwentyNewsGroupsDataset(StructuredDataset):
     _DATASET_PATH = get_abspath_from_project_root('../datasets/20_newsgroups')
     _DATASET_ENCODING = 'latin1'
 
-    def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=_DATASET_PATH):
+    def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=None):
         """
         :param remove_header: If true, it removes the header of all files.
         :param remove_footer: If true, it removes the footer of all files.
         :param remove_quotes: If true, it removes the quotes of all files.
         :param dataset_path: Path to the dataset.
         """
+        if dataset_path is None:
+            dataset_path = self._DATASET_PATH
+
         super().__init__(dataset_path, self._DATASET_ENCODING)
 
         # Store this values, because are needed in get_original_doc_content_from_disk(), which is override in this class

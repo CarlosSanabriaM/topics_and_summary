@@ -107,7 +107,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return self.coherence_value
 
-    def save(self, model_name: str, path=_SAVE_PATH, add_metadata_to_base_name=False):
+    def save(self, model_name: str, path: str = None, add_metadata_to_base_name=False):
         """
         Saves the model to disk.
 
@@ -116,6 +116,9 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :param add_metadata_to_base_name: If True, the number of topics, the coherence value and the current time \
         are added at the end of the model name.
         """
+        if path is None:
+            path = self._SAVE_PATH
+
         # Coherence value is calculated even if add_metadata_to_base_name is False,
         # because a file with it's value is created and stored inside the model folder.
         if self.coherence_value is None:
@@ -137,7 +140,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
             f.write(str(self.coherence_value))
 
     @classmethod
-    def load(cls, model_name: str, dataset: Dataset, model_dir_path=_SAVE_PATH, docs_topics_df: pd.DataFrame = None):
+    def load(cls, model_name: str, dataset: Dataset, model_dir_path: str = None, docs_topics_df: pd.DataFrame = None):
         """
         Loads the model with the given name from the specified path, and returns a TopicsModel instance.
 
@@ -148,6 +151,9 @@ class TopicsModel(metaclass=abc.ABCMeta):
         get_dominant_topic_of_each_doc_as_df().
         :return: Instance of a TopicsModel object.
         """
+        if model_dir_path is None:
+            model_dir_path = cls._SAVE_PATH
+
         model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name))
         return cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
                    docs_topics_df=docs_topics_df)
@@ -610,8 +616,7 @@ class LdaMalletModel(TopicsModel):
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20, model=None,
-                 mallet_path=_MALLET_SOURCE_CODE_PATH, model_name: str = None,
-                 model_path=_MALLET_SAVED_MODELS_PATH, **kwargs):
+                 mallet_path: str = None, model_name: str = None, model_path: str = None, **kwargs):
         """
         Encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use.
 
@@ -629,6 +634,12 @@ class LdaMalletModel(TopicsModel):
         """
         if model_name is None:
             raise ValueError('model_name parameter is obligatory')
+
+        if mallet_path is None:
+            mallet_path = self._MALLET_SOURCE_CODE_PATH
+
+        if model_path is None:
+            model_path = self._MALLET_SAVED_MODELS_PATH
 
         self.model_name = model_name
 
@@ -697,8 +708,7 @@ class LdaMalletModel(TopicsModel):
 
     @classmethod
     def load(cls, model_name: str, dataset: Dataset,
-             model_dir_path=_MALLET_SAVED_MODELS_PATH, mallet_path=_MALLET_SOURCE_CODE_PATH,
-             docs_topics_df: pd.DataFrame = None):
+             model_dir_path: str = None, mallet_path: str = None, docs_topics_df: pd.DataFrame = None):
         """
         Loads the model with the given name from the specified path, and returns a LdaMalletModel instance.
 
@@ -710,6 +720,12 @@ class LdaMalletModel(TopicsModel):
         get_dominant_topic_of_each_doc_as_df().
         :return: Instance of a LdaMalletModel object.
         """
+        if model_dir_path is None:
+            model_dir_path = cls._MALLET_SAVED_MODELS_PATH
+
+        if mallet_path is None:
+            mallet_path = cls._MALLET_SOURCE_CODE_PATH
+
         model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name), mallet_path)
         return cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
                    docs_topics_df=docs_topics_df)
@@ -754,12 +770,17 @@ class LdaGensimModel(TopicsModel):
                                       num_topics=self.num_topics,
                                       **kwargs)  # random_state is passed here
 
-    def save(self, model_name: str, path=_LDA_SAVED_MODELS_PATH, add_metadata_to_base_name=False):
+    def save(self, model_name: str, path: str = None, add_metadata_to_base_name=False):
+        if path is None:
+            path = self._LDA_SAVED_MODELS_PATH
+
         super(LdaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
 
     @classmethod
-    def load(cls, model_name: str, dataset: Dataset, model_dir_path=_LDA_SAVED_MODELS_PATH,
-             docs_topics_df: pd.DataFrame = None):
+    def load(cls, model_name: str, dataset: Dataset, model_dir_path: str = None, docs_topics_df: pd.DataFrame = None):
+        if model_dir_path is None:
+            model_dir_path = cls._LDA_SAVED_MODELS_PATH
+
         return super(LdaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
     @classmethod
@@ -804,13 +825,18 @@ class LsaGensimModel(TopicsModel):
                                       num_topics=self.num_topics,
                                       **kwargs)
 
-    @classmethod
-    def load(cls, model_name: str, dataset: Dataset, model_dir_path=_LSA_SAVED_MODELS_PATH,
-             docs_topics_df: pd.DataFrame = None):
-        return super(LsaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
+    def save(self, model_name: str, path: str = None, add_metadata_to_base_name=False):
+        if path is None:
+            path = self._LSA_SAVED_MODELS_PATH
 
-    def save(self, model_name: str, path=_LSA_SAVED_MODELS_PATH, add_metadata_to_base_name=False):
         super(LsaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
+
+    @classmethod
+    def load(cls, model_name: str, dataset: Dataset, model_dir_path: str = None, docs_topics_df: pd.DataFrame = None):
+        if model_dir_path is None:
+            model_dir_path = cls._LSA_SAVED_MODELS_PATH
+
+        return super(LsaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
     @classmethod
     def _load_gensim_model(cls, path: str):
@@ -921,7 +947,7 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
 
         plt.show()
 
-    def save(self, base_name: str, path=_SAVE_MODELS_PATH, index: int = None):
+    def save(self, base_name: str, path: str = None, index: int = None):
         """
         If index parameter is None, saves all the models to disk. \
         If is a number, saves only the model with that index.
@@ -931,6 +957,9 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
         :param path: Path were the models will be stored.
         :param index: Index of the model to be saved. If is none, saves all models.
         """
+        if path is None:
+            path = self._SAVE_MODELS_PATH
+
         if index is not None:
             self.models_list[index].save(base_name, path)
         else:
@@ -949,7 +978,8 @@ class LdaMalletModelsList(TopicsModelsList):
 
     def create_models_and_compute_coherence_values(self, start=2, stop=20, step=1, coherence='c_v', print_and_plot=True,
                                                    title="Topic's model coherence comparison", save_plot=False,
-                                                   save_plot_path=None, models_base_name='mallet_model', **kwargs):
+                                                   save_plot_path: str = None, models_base_name='mallet_model',
+                                                   **kwargs):
         """
         Creates, stores and returns topics models and it's coherence values. \
         Can be used to determine an optimum number of topics.

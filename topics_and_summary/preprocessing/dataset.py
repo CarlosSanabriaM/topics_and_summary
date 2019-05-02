@@ -5,13 +5,12 @@ from typing import Union, Set, Tuple, List
 from texttable import Texttable
 
 from topics_and_summary.datasets.common import Dataset
-from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
+from topics_and_summary.datasets.twenty_news_groups import StructuredDataset
 from topics_and_summary.preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, \
     make_trigrams_and_get_trigram_model_func
 from topics_and_summary.preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, \
-    remove_stopwords, \
-    substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, remove_single_chars, \
-    remove_apostrophes
+    remove_stopwords, substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, \
+    remove_single_chars, remove_apostrophes
 from topics_and_summary.utils import join_paths, get_abspath_from_project_root, pretty_print
 
 _PREPROCESSING_FILES_DIR = get_abspath_from_project_root('preprocessing-files')
@@ -60,7 +59,7 @@ def print_words_that_contain_elem(dataset: Dataset, elem: str):
 
 
 # TODO: Change to admit dataset: Dataset
-def print_docs_that_contain_word(dataset: TwentyNewsGroupsDataset, word: str, num_chars_preview=70):
+def print_docs_that_contain_word(dataset: StructuredDataset, word: str, num_chars_preview=70):
     """
     Prints a table with the following properties of all documents in the dataset that contain the given word:
         - Category name
@@ -106,7 +105,7 @@ def print_docs_that_contain_word(dataset: TwentyNewsGroupsDataset, word: str, nu
 
 
 # TODO: Change to admit dataset: Dataset
-def print_empty_docs(dataset: TwentyNewsGroupsDataset):
+def print_empty_docs(dataset: StructuredDataset):
     """
     Prints the empty documents in the given dataset.
     """
@@ -138,7 +137,7 @@ def print_empty_docs(dataset: TwentyNewsGroupsDataset):
 
 
 # TODO: Change to admit dataset: Dataset
-def get_docs_that_contain_any_of_the_words(dataset: TwentyNewsGroupsDataset, words: Union[str, Set[str]]) \
+def get_docs_that_contain_any_of_the_words(dataset: StructuredDataset, words: Union[str, Set[str]]) \
         -> List[Tuple[str, int]]:
     """
     Returns a list of tuples with the category and index of the docs containing any of the given words.
@@ -172,7 +171,7 @@ def get_docs_that_contain_any_of_the_words(dataset: TwentyNewsGroupsDataset, wor
 
 
 # TODO: Change to admit dataset: Dataset
-def remove_docs_that_contain_any_of_the_given_words(dataset: TwentyNewsGroupsDataset, words: Union[str, Set[str]]):
+def remove_docs_that_contain_any_of_the_given_words(dataset: StructuredDataset, words: Union[str, Set[str]]):
     """
     Removes from the given dataset the documents that contain one or more of the given words. \
     Words can be a simple string, representing only one word.
@@ -201,13 +200,16 @@ def remove_docs_that_contain_any_of_the_given_words(dataset: TwentyNewsGroupsDat
 
 
 # TODO: Change to admit dataset: Dataset
-def remove_docs_that_contain_any_of_the_words_in_file(dataset: TwentyNewsGroupsDataset, file_path=_TRASH_WORDS_PATH):
+def remove_docs_that_contain_any_of_the_words_in_file(dataset: StructuredDataset, file_path: str = None):
     """
     Removes from the given dataset the documents that contain one or more of the words in the specified file.
 
     :param dataset: Dataset where docs will be removed. The dataset is modified.
     :param file_path: Path to the file. The file must contain a word in each line.
     """
+    if file_path is None:
+        file_path = _TRASH_WORDS_PATH
+
     with open(file_path) as f:
         words = set(line.strip() for line in f)
 
@@ -215,7 +217,7 @@ def remove_docs_that_contain_any_of_the_words_in_file(dataset: TwentyNewsGroupsD
 
 
 # TODO: Change to admit dataset: Dataset
-def remove_trash_docs_specified_in_file(dataset: TwentyNewsGroupsDataset, file_path=_TRASH_DOCS_PATH, file_sep=' '):
+def remove_trash_docs_specified_in_file(dataset: StructuredDataset, file_path: str = None, file_sep=' '):
     """
     Removes from the given dataset the documents specified in a file.
 
@@ -225,6 +227,9 @@ def remove_trash_docs_specified_in_file(dataset: TwentyNewsGroupsDataset, file_p
     the element specified in 'file_sep' parameter.
     :param file_sep: Separator of the category and the name in the file.
     """
+    if file_path is None:
+        file_path = _TRASH_DOCS_PATH
+
     with open(file_path) as f:
         docs_list = [line.strip().split(file_sep) for line in f]
 
@@ -240,7 +245,7 @@ def remove_trash_docs_specified_in_file(dataset: TwentyNewsGroupsDataset, file_p
 
 
 # TODO: Change to admit dataset: Dataset
-def remove_empty_docs(dataset: TwentyNewsGroupsDataset) -> int:
+def remove_empty_docs(dataset: StructuredDataset) -> int:
     """
     Removes the empty documents of the given dataset.
 
@@ -262,7 +267,7 @@ def remove_empty_docs(dataset: TwentyNewsGroupsDataset) -> int:
 
 
 # TODO: Change to admit dataset: Dataset
-def preprocess_dataset(dataset: TwentyNewsGroupsDataset, trash_docs=True, normalize=True, lowercase=True,
+def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=True, lowercase=True,
                        contractions=True, vulgar_words=True, stopwords=True, emails=True, punctuation=True,
                        ngrams='uni', min_bigrams_count=50, bigrams_threshold=75, min_trigrams_count=100,
                        trigrams_threshold=175, lemmatize=True, stem=False, trash_words=True, apostrophes=True,

@@ -27,7 +27,7 @@ class SummarizationModel(metaclass=abc.ABCMeta):
 class TextRank(SummarizationModel):
     """Summarization class using the TextRank algorithm"""
 
-    MAX_NUM_ITERATIONS = 500
+    _MAX_NUM_ITERATIONS = 500
     """
     Max number of iterations in the power method eigenvalue solver. If the algorithm fails to converge to the
     specified tolerance within the specified number of iterations of the power iteration method, the
@@ -101,7 +101,7 @@ class TextRank(SummarizationModel):
         nx_graph = nx.from_numpy_array(similarity_matrix)
 
         # 6. Apply TextRank to the graph
-        sentence_scores = nx.pagerank(nx_graph, max_iter=self.MAX_NUM_ITERATIONS)
+        sentence_scores = nx.pagerank(nx_graph, max_iter=self._MAX_NUM_ITERATIONS)
 
         # 7. Order sentences by the Page Rank score
         sorted_sentences = sorted(((sentence_scores[i], sent) for i, sent in enumerate(text_sentences)), reverse=True)

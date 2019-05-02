@@ -36,7 +36,7 @@ class Word2VecModel(EmbeddingsModel):
     _MODEL_PATH = get_abspath_from_project_root('../embeddings/word2vec/GoogleNews-vectors-negative{}.bin.gz'
                                                 .format(_WORD2VEC_VECTORS_DIM))
 
-    def __init__(self, model_path=_MODEL_PATH, vectors_dim=_WORD2VEC_VECTORS_DIM):
+    def __init__(self, model_path: str = None, vectors_dim=_WORD2VEC_VECTORS_DIM):
         """
         Constructs a Word2Vec model using the gensim library.
 
@@ -44,6 +44,9 @@ class Word2VecModel(EmbeddingsModel):
         :param vectors_dim: Dimension of the vectors of the word2vec model. \
         Default is the 100 billion words model pretrained on Google News.
         """
+        if model_path is None:
+            model_path = self._MODEL_PATH
+
         self.vectors_dim = vectors_dim
         self.w2v_model = KeyedVectors.load_word2vec_format(model_path, binary=True)
 
@@ -83,7 +86,7 @@ class Glove(EmbeddingsModel):
     _GLOVE_DIR = get_abspath_from_project_root('../embeddings/glove/glove.6B')
     _GLOVE_VECTORS_DIM = 100
 
-    def __init__(self, vectors_dim=_GLOVE_VECTORS_DIM, glove_dir=_GLOVE_DIR):
+    def __init__(self, vectors_dim=_GLOVE_VECTORS_DIM, glove_dir: str = None):
         """
         Reads a glove file where contains in each row, in the first position the word, \
         and in the rest of the line the elements of the word vector.
@@ -92,6 +95,9 @@ class Glove(EmbeddingsModel):
         text files with the structure mentioned above.
         :param vectors_dim: Size of the word vector. Possible values are: 50, 100, 200, 300.
         """
+        if glove_dir is None:
+            glove_dir = self._GLOVE_DIR
+
         self.vectors_dim = vectors_dim
         # A dict where keys are words and values are their corresponding word vectors
         self.embeddings = {}
