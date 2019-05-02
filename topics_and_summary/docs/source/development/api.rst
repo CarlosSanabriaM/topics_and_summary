@@ -7,6 +7,7 @@ This page explains:
 
 * The `code style`_ used in the library
 * The `main concepts`_ of the topics extraction and the summarization models
+* `Other pages consulted`_
 * The most `important external libraries`_ used in the source code
 * The `directory structure and important files`_
 * `Important source code details`_
@@ -113,6 +114,18 @@ Other summarization alternatives
 
 
 
+
+
+Other pages consulted
+---------------------
+
+* `20 newsgroups specific preprocessing <https://github.com/scikit-learn/scikit-learn/blob/f0ab589f/sklearn/datasets/twenty_newsgroups.py#L144>`__
+* `Main TopicsModel functionality (Part I) <https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/>`__
+* `Main TopicsModel functionality (Part II) <https://www.machinelearningplus.com/nlp/topic-modeling-visualization-how-to-present-results-lda-models/#13.-t-SNE-Clustering-Chart>`__
+* `Ngrams <https://medium.com/@manjunathhiremath.mh/identifying-bigrams-trigrams-and-four-grams-using-word2vec-dea346130eb>`__
+* `T-SNE visualization with bokeh library <https://shuaiw.github.io/2016/12/22/topic-modeling-and-tsne-visualzation.html>`__
+* `Wordclouds visualizations <https://www.datacamp.com/community/tutorials/wordcloud-python>`__
+* `Unit testing with Python <https://realpython.com/python-testing/#automated-vs-manual-testing>`__
 
 
 Important external libraries
