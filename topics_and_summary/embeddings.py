@@ -32,11 +32,11 @@ class EmbeddingsModel(metaclass=abc.ABCMeta):
 class Word2VecModel(EmbeddingsModel):
     """Word2Vec word embedding model."""
 
-    __WORD2VEC_VECTORS_DIM = 300
-    __MODEL_PATH = get_abspath_from_project_root('../embeddings/word2vec/GoogleNews-vectors-negative{}.bin.gz'
-                                                 .format(__WORD2VEC_VECTORS_DIM))
+    _WORD2VEC_VECTORS_DIM = 300
+    _MODEL_PATH = get_abspath_from_project_root('../embeddings/word2vec/GoogleNews-vectors-negative{}.bin.gz'
+                                                .format(_WORD2VEC_VECTORS_DIM))
 
-    def __init__(self, model_path=__MODEL_PATH, vectors_dim=__WORD2VEC_VECTORS_DIM):
+    def __init__(self, model_path=_MODEL_PATH, vectors_dim=_WORD2VEC_VECTORS_DIM):
         """
         Constructs a Word2Vec model using the gensim library.
 
@@ -80,10 +80,10 @@ class Word2VecModel(EmbeddingsModel):
 class Glove(EmbeddingsModel):
     """Glove word embedding model."""
 
-    __GLOVE_DIR = get_abspath_from_project_root('../embeddings/glove/glove.6B')
-    __GLOVE_VECTORS_DIM = 100
+    _GLOVE_DIR = get_abspath_from_project_root('../embeddings/glove/glove.6B')
+    _GLOVE_VECTORS_DIM = 100
 
-    def __init__(self, vectors_dim=__GLOVE_VECTORS_DIM, glove_dir=__GLOVE_DIR):
+    def __init__(self, vectors_dim=_GLOVE_VECTORS_DIM, glove_dir=_GLOVE_DIR):
         """
         Reads a glove file where contains in each row, in the first position the word, \
         and in the rest of the line the elements of the word vector.

@@ -48,7 +48,7 @@ def get_corpus(dictionary, documents) -> List[List[Tuple[int, int]]]:
 class TopicsModel(metaclass=abc.ABCMeta):
     """Base class that represents a topics model."""
 
-    __SAVE_PATH = get_abspath_from_project_root('saved-elements/topics/')  # Path where the models will be saved
+    _SAVE_PATH = get_abspath_from_project_root('saved-elements/topics/')  # Path where the models will be saved
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20,
@@ -107,7 +107,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return self.coherence_value
 
-    def save(self, model_name: str, path=__SAVE_PATH, add_metadata_to_base_name=False):
+    def save(self, model_name: str, path=_SAVE_PATH, add_metadata_to_base_name=False):
         """
         Saves the model to disk.
 
@@ -137,7 +137,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
             f.write(str(self.coherence_value))
 
     @classmethod
-    def load(cls, model_name: str, dataset: Dataset, model_dir_path=__SAVE_PATH, docs_topics_df: pd.DataFrame = None):
+    def load(cls, model_name: str, dataset: Dataset, model_dir_path=_SAVE_PATH, docs_topics_df: pd.DataFrame = None):
         """
         Loads the model with the given name from the specified path, and returns a TopicsModel instance.
 
@@ -605,13 +605,13 @@ class Keyword:
 class LdaMalletModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use."""
 
-    __MALLET_SOURCE_CODE_PATH = get_abspath_from_project_root('../mallet-2.0.8/bin/mallet')
-    __MALLET_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lda_mallet')
+    _MALLET_SOURCE_CODE_PATH = get_abspath_from_project_root('../mallet-2.0.8/bin/mallet')
+    _MALLET_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lda_mallet')
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20, model=None,
-                 mallet_path=__MALLET_SOURCE_CODE_PATH, model_name: str = None,
-                 model_path=__MALLET_SAVED_MODELS_PATH, **kwargs):
+                 mallet_path=_MALLET_SOURCE_CODE_PATH, model_name: str = None,
+                 model_path=_MALLET_SAVED_MODELS_PATH, **kwargs):
         """
         Encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use.
 
@@ -697,7 +697,7 @@ class LdaMalletModel(TopicsModel):
 
     @classmethod
     def load(cls, model_name: str, dataset: Dataset,
-             model_dir_path=__MALLET_SAVED_MODELS_PATH, mallet_path=__MALLET_SOURCE_CODE_PATH,
+             model_dir_path=_MALLET_SAVED_MODELS_PATH, mallet_path=_MALLET_SOURCE_CODE_PATH,
              docs_topics_df: pd.DataFrame = None):
         """
         Loads the model with the given name from the specified path, and returns a LdaMalletModel instance.
@@ -723,7 +723,7 @@ class LdaMalletModel(TopicsModel):
 class LdaGensimModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LdaModel, making it easier to use."""
 
-    __LDA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lda/')
+    _LDA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lda/')
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20,
@@ -754,11 +754,11 @@ class LdaGensimModel(TopicsModel):
                                       num_topics=self.num_topics,
                                       **kwargs)  # random_state is passed here
 
-    def save(self, model_name: str, path=__LDA_SAVED_MODELS_PATH, add_metadata_to_base_name=False):
+    def save(self, model_name: str, path=_LDA_SAVED_MODELS_PATH, add_metadata_to_base_name=False):
         super(LdaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
 
     @classmethod
-    def load(cls, model_name: str, dataset: Dataset, model_dir_path=__LDA_SAVED_MODELS_PATH,
+    def load(cls, model_name: str, dataset: Dataset, model_dir_path=_LDA_SAVED_MODELS_PATH,
              docs_topics_df: pd.DataFrame = None):
         return super(LdaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
@@ -776,7 +776,7 @@ class LdaGensimModel(TopicsModel):
 class LsaGensimModel(TopicsModel):
     """Class that encapsulates the functionality of gensim.models.LsiModel, making it easier to use."""
 
-    __LSA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lsa/')
+    _LSA_SAVED_MODELS_PATH = get_abspath_from_project_root('saved-elements/topics/lsa/')
 
     def __init__(self, dataset: Dataset, dictionary: gensim.corpora.Dictionary = None,
                  corpus: List[List[Tuple[int, int]]] = None, num_topics=20, model=None, **kwargs):
@@ -805,11 +805,11 @@ class LsaGensimModel(TopicsModel):
                                       **kwargs)
 
     @classmethod
-    def load(cls, model_name: str, dataset: Dataset, model_dir_path=__LSA_SAVED_MODELS_PATH,
+    def load(cls, model_name: str, dataset: Dataset, model_dir_path=_LSA_SAVED_MODELS_PATH,
              docs_topics_df: pd.DataFrame = None):
         return super(LsaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
-    def save(self, model_name: str, path=__LSA_SAVED_MODELS_PATH, add_metadata_to_base_name=False):
+    def save(self, model_name: str, path=_LSA_SAVED_MODELS_PATH, add_metadata_to_base_name=False):
         super(LsaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
 
     @classmethod

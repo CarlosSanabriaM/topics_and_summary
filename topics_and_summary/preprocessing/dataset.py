@@ -14,9 +14,9 @@ from topics_and_summary.preprocessing.text import to_lowercase, expand_contracti
     remove_apostrophes
 from topics_and_summary.utils import join_paths, get_abspath_from_project_root, pretty_print
 
-__PREPROCESSING_FILES_DIR = get_abspath_from_project_root('preprocessing-files')
-__TRASH_WORDS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'trash_words.txt')
-__TRASH_DOCS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'trash_docs.txt')
+_PREPROCESSING_FILES_DIR = get_abspath_from_project_root('preprocessing-files')
+_TRASH_WORDS_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'trash_words.txt')
+_TRASH_DOCS_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'trash_docs.txt')
 
 
 def print_words_that_contain_elem(dataset: Dataset, elem: str):
@@ -201,7 +201,7 @@ def remove_docs_that_contain_any_of_the_given_words(dataset: TwentyNewsGroupsDat
 
 
 # TODO: Change to admit dataset: Dataset
-def remove_docs_that_contain_any_of_the_words_in_file(dataset: TwentyNewsGroupsDataset, file_path=__TRASH_WORDS_PATH):
+def remove_docs_that_contain_any_of_the_words_in_file(dataset: TwentyNewsGroupsDataset, file_path=_TRASH_WORDS_PATH):
     """
     Removes from the given dataset the documents that contain one or more of the words in the specified file.
 
@@ -215,7 +215,7 @@ def remove_docs_that_contain_any_of_the_words_in_file(dataset: TwentyNewsGroupsD
 
 
 # TODO: Change to admit dataset: Dataset
-def remove_trash_docs_specified_in_file(dataset: TwentyNewsGroupsDataset, file_path=__TRASH_DOCS_PATH, file_sep=' '):
+def remove_trash_docs_specified_in_file(dataset: TwentyNewsGroupsDataset, file_path=_TRASH_DOCS_PATH, file_sep=' '):
     """
     Removes from the given dataset the documents specified in a file.
 

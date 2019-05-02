@@ -29,6 +29,42 @@ The code style must follow the :pep:`8` style guide and the **tab size** must be
 Main concepts
 -------------
 
+Topics
+^^^^^^
+The topics are obtained using either LSA or LDA algorithms. To obtain the full functionality, LDA must be used, because
+LSA doesn't give probability values to the words inside a topics (in LSA the value of a word inside a topic can be negative!),
+and most of the functionality is based on probabilities.
+
+On the other hand, LDA shows way better results than LSA, at least in practice. Also, LSA throws an exception when triying
+to plot the wordclouds of it's topics, probably because some words have negative values, as explained above.
+
+The only reason why LSA is kept in this library is because it was the first algorithm tried, and it can be used
+to compare it's results against LDA.
+
+
+Below are some links to papers and posts about both algorithms:
+
+LSA
+"""
+**Papers:**
+
+* ads
+* as
+
+**Posts:**
+
+* ads
+* as
+
+LDA
+"""
+asd
+
+
+
+Summary
+^^^^^^^
+sdff
 
 
 Extending the library

@@ -8,14 +8,14 @@ from nltk.stem import WordNetLemmatizer
 
 from topics_and_summary.utils import join_paths, get_abspath_from_project_root
 
-__BASIC_STOPWORDS = set(stopwords.words('english'))
-__EMAILS_RE = re.compile(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)")
-__PUNCTUATION_RE = re.compile('[—ºª#$€%&*+-_.·,;:<=>@/¡!¿?^¨`´\"(){|}~[\\]]')
-__PREPROCESSING_FILES_DIR = get_abspath_from_project_root('preprocessing-files')
-__ADDITIONAL_STOPWORDS_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'stopwords.txt')
-__EXPAND_CONTRACTIONS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'expand_contractions_dict.txt')
-__VULGAR_WORDS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'vulgar_words_dict.txt')
-__NORMALIZE_WORDS_DICT_PATH = join_paths(__PREPROCESSING_FILES_DIR, 'normalize_words_dict.txt')
+_BASIC_STOPWORDS = set(stopwords.words('english'))
+_EMAILS_RE = re.compile(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)")
+_PUNCTUATION_RE = re.compile('[—ºª#$€%&*+-_.·,;:<=>@/¡!¿?^¨`´\"(){|}~[\\]]')
+_PREPROCESSING_FILES_DIR = get_abspath_from_project_root('preprocessing-files')
+_ADDITIONAL_STOPWORDS_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'stopwords.txt')
+_EXPAND_CONTRACTIONS_DICT_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'expand_contractions_dict.txt')
+_VULGAR_WORDS_DICT_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'vulgar_words_dict.txt')
+_NORMALIZE_WORDS_DICT_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'normalize_words_dict.txt')
 
 
 def to_lowercase(text: str) -> str:
@@ -29,20 +29,20 @@ def to_lowercase(text: str) -> str:
     return text
 
 
-def remove_stopwords(text: str, basic_stopwords=__BASIC_STOPWORDS, additional_stopwords=True) -> str:
+def remove_stopwords(text: str, basic_stopwords=_BASIC_STOPWORDS, additional_stopwords=True) -> str:
     """
     Returns the given text with the stopwords removed.
 
     :param text: The text to remove stopwords. (String)
     :param basic_stopwords: Set of basic stopwords to be removed.
-    :param additional_stopwords: Remove additional stopwords (stored in the file __ADDITIONAL_STOPWORDS_PATH). \
+    :param additional_stopwords: Remove additional stopwords (stored in the file _ADDITIONAL_STOPWORDS_PATH). \
     By default is true.
     :return: The given text with all the stopwords removed. (String)
     """
     _stopwords = basic_stopwords
 
     if additional_stopwords:
-        with open(__ADDITIONAL_STOPWORDS_PATH) as f:
+        with open(_ADDITIONAL_STOPWORDS_PATH) as f:
             additional_stopwords = set(line.strip() for line in f)
         _stopwords = _stopwords.union(additional_stopwords)
 
@@ -50,12 +50,12 @@ def remove_stopwords(text: str, basic_stopwords=__BASIC_STOPWORDS, additional_st
                     if word not in _stopwords)
 
 
-def remove_emails(text: str, emails=__EMAILS_RE) -> str:
+def remove_emails(text: str, emails=_EMAILS_RE) -> str:
     """Returns the given text with the emails removed."""
     return emails.sub('', text)
 
 
-def substitute_punctuation(text: str, punctuation=__PUNCTUATION_RE, substitute_by=' ') -> str:
+def substitute_punctuation(text: str, punctuation=_PUNCTUATION_RE, substitute_by=' ') -> str:
     """
     Substitutes the punctuation of the given text by the specified string.
 
@@ -157,12 +157,12 @@ def expand_contractions(text: str, expand_contractions_dict: dict = None) -> str
     :param text: Text where you want to expand the contractions.
     :param expand_contractions_dict: A dict where the keys are the words to be replaced \
     and the values the corresponding word that substitutes the word to be replaced. \
-    If no value is passed, a dict is loaded from the file specified in __EXPAND_CONTRACTIONS_DICT_PATH. \
+    If no value is passed, a dict is loaded from the file specified in _EXPAND_CONTRACTIONS_DICT_PATH. \
     The dict should be in lowercase.
     :return: The text with the contractions expanded.
     """
     if expand_contractions_dict is None:
-        return substitute_words_with_dict(text, __EXPAND_CONTRACTIONS_DICT_PATH)
+        return substitute_words_with_dict(text, _EXPAND_CONTRACTIONS_DICT_PATH)
 
     return substitute_words_with_dict(text, expand_contractions_dict)
 
@@ -174,12 +174,12 @@ def substitute_vulgar_words(text: str, vulgar_words_dict: dict = None) -> str:
     :param text: Text where you want to substitute the vulgar words.
     :param vulgar_words_dict: A dict where the keys are the words to be replaced \
     and the values the corresponding word that substitutes the word to be replaced. \
-    If no value is passed, a dict is loaded from the file specified in __VULGAR_WORDS_DICT_PATH. \
+    If no value is passed, a dict is loaded from the file specified in _VULGAR_WORDS_DICT_PATH. \
     The dict should be in lowercase.
     :return: The text with the vulgar words substituted.
     """
     if vulgar_words_dict is None:
-        return substitute_words_with_dict(text, __VULGAR_WORDS_DICT_PATH)
+        return substitute_words_with_dict(text, _VULGAR_WORDS_DICT_PATH)
 
     return substitute_words_with_dict(text, vulgar_words_dict)
 
@@ -194,13 +194,13 @@ def normalize_words(text: str, normalize_words_dict: dict = None) -> str:
     :param text: Text where you want to substitute some words.
     :param normalize_words_dict: A dict where the keys are the words to be replaced \
     and the values the corresponding word that substitutes the word to be replaced. \
-    If no value is passed, a dict is loaded from the file specified in __NORMALIZE_WORDS_DICT_PATH. \
+    If no value is passed, a dict is loaded from the file specified in _NORMALIZE_WORDS_DICT_PATH. \
     The dict can have uppercase letter. \
     This function should be used before any other preprocessing, for example, convert words to lowercase.
     :return: The text with the words substituted.
     """
     if normalize_words_dict is None:
-        return substitute_words_with_dict(text, __NORMALIZE_WORDS_DICT_PATH)
+        return substitute_words_with_dict(text, _NORMALIZE_WORDS_DICT_PATH)
 
     return substitute_words_with_dict(text, normalize_words_dict)
 

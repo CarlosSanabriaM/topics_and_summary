@@ -157,12 +157,12 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
         plt.clf()
 
 
-__TSNE_SAVE_PATH = get_abspath_from_project_root('saved-elements/topics/tsne')
+_TSNE_SAVE_PATH = get_abspath_from_project_root('saved-elements/topics/tsne')
 
 
 def tsne_clustering_chart(model: TopicsModel, angle=.99, doc_threshold=0,
                           plot_keywords=True, num_keywords=5, keywords_color_is_black=True,
-                          save_path=__TSNE_SAVE_PATH, plot_name=None, show_plot=True):
+                          save_path=_TSNE_SAVE_PATH, plot_name=None, show_plot=True):
     """
     Use t-SNE technique for dimensionality reduction.
 

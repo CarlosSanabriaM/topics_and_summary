@@ -12,7 +12,7 @@ class TwentyNewsGroupsDataset(StructuredDataset):
     """
 
     _DATASET_PATH = get_abspath_from_project_root('../datasets/20_newsgroups')
-    __DATASET_ENCODING = 'latin1'
+    _DATASET_ENCODING = 'latin1'
 
     def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=_DATASET_PATH):
         """
@@ -21,7 +21,7 @@ class TwentyNewsGroupsDataset(StructuredDataset):
         :param remove_quotes: If true, it removes the quotes of all files.
         :param dataset_path: Path to the dataset.
         """
-        super().__init__(dataset_path, self.__DATASET_ENCODING)
+        super().__init__(dataset_path, self._DATASET_ENCODING)
 
         # Store this values, because are needed in get_original_doc_content_from_disk(), which is override in this class
         self.remove_header = remove_header
