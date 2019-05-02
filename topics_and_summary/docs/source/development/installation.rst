@@ -11,6 +11,9 @@ The installation steps are very similar as the ones described in the :ref:`usage
 * The requested **dependencies**
 * The **way the library is installed** with pip
 
+
+.. _development-installation-dependencies:
+
 Dependencies
 ------------
 

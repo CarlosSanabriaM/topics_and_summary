@@ -130,7 +130,7 @@ This section explains how to install other elements that may be required for cer
 Install mallet source code
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Mallet source code is **required for using the LdaMalletModel**. It can be downloaded from the
+Mallet source code is **required to use the LdaMalletModel**. It can be downloaded from the
 `mallet download page <http://mallet.cs.umass.edu/download.php>`__.
 
 `This is a direct link for downloading the mallet 2.0.8 version in .tar.gz format. <http://mallet.cs.umass.edu/dist/mallet-2.0.8.tar.gz>`__
@@ -138,7 +138,7 @@ Mallet source code is **required for using the LdaMalletModel**. It can be downl
 Install word embeddings
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-**One** of the following word embeddings **is required for using the TextRank** algorithm for text summarization.
+**At least one** of the following word embeddings **is required to use the TextRank** algorithm for text summarization.
 
 Install Word2Vec
 """"""""""""""""
