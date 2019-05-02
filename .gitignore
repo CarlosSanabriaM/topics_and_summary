@@ -23,9 +23,7 @@ topics_and_summary/saved-elements/
 topics_and_summary/tests/saved-elements/
 
 ### Other files used in the project ###
-embeddings/
 datasets/20_newsgroups/
-mallet-2.0.8/
 
 ## Files for packaging ##
 topics_and_summary.egg-info
