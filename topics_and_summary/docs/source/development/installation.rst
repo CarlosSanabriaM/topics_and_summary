@@ -24,14 +24,15 @@ Basically, there are 2 additional packages required:
 * **sphinx:** For generating the **documentation**.
 * **pipreqs:** For generating the **requirements.txt** and **development-requirements.txt** files.
 
-The way this dependencies are installed is the same as described in the :ref:`usage-installation` page, but **changing
-the requirements.txt file by development-requirements.txt.**
+The way this dependencies are installed is the same as the one described in the :ref:`usage-installation-dependencies`
+section of the Usage Installation page, but **changing the requirements.txt file by development-requirements.txt.**
 
 Install the library
 -------------------
 
-The way of installing the library is also similar as the one described in the :ref:`usage-installation` page, but
-in this case, the *-e* option of the *pip install* command is used. This option is described in the
+The way of installing the library is also similar as the one described in the :ref:`usage-installation-library`
+section of the Usage Installation page, but in this case, the *-e* option of the *pip install* command is used.
+This option is described in the
 `Python Packaging User Guide <https://packaging.python.org/tutorials/installing-packages/#installing-from-a-local-src-tree>`__.
 
 Basically, after installing the package this way, **all changes made in the source code will be reflected in the installed library.**
@@ -44,6 +45,13 @@ so this way of installing it allows to keep the same content in the source code 
 ::
 
     pip install -e <path-to-project-root-folder>
+
+Install other elements
+----------------------
+
+The installation steps are the same as the ones described in the :ref:`usage-installation-other-elements`
+section of the Usage Installation page.
+
 
 .. rubric:: Footnotes
 

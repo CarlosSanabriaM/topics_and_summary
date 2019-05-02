@@ -13,6 +13,9 @@ and install it is to download the source code and follow this steps:
 1. Install the `dependencies`_ needed for using the library
 2. `Install the library`_
 
+
+.. _usage-installation-dependencies:
+
 Dependencies
 ------------
 
@@ -93,6 +96,8 @@ In an existing conda enviroment
     # (base) should appear at the beginning of the prompt, instead of (<enviroment-name>)
 
 
+.. _usage-installation-library:
+
 Install the library
 -------------------
 ::
@@ -112,3 +117,58 @@ To check if everything was installed correctly, execute the following commands:
 .. warning:: After installing the library this way, **changes** in the source code **won't be reflected** in the library
     or the api documentation (even if generate-modules-doc.sh is executed, .rst files under the /api folder won't change).
     The :ref:`development-installation` page explains how to install the library in a way that this changes get reflected.
+
+.. _usage-installation-other-elements:
+
+Install other elements
+----------------------
+
+This section explains how to install other elements that may be required for certain funcionality:
+
+.. _usage-installation-mallet-source-code:
+
+Install mallet source code
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Mallet source code is **required for using the LdaMalletModel**. It can be downloaded from the
+`mallet download page <http://mallet.cs.umass.edu/download.php>`__.
+
+`This is a direct link for downloading the mallet 2.0.8 version in .tar.gz format. <http://mallet.cs.umass.edu/dist/mallet-2.0.8.tar.gz>`__
+
+Install word embeddings
+^^^^^^^^^^^^^^^^^^^^^^^
+
+**One** of the following word embeddings **is required for using the TextRank** algorithm for text summarization.
+
+Install Word2Vec
+""""""""""""""""
+
+Word2Vec pretrained vectors can be downloaded from the `Google Code Archive Word2Vec page <https://code.google.com/archive/p/word2vec/>`__.
+
+`This is a direct link for downloading the 300-dimensional word vectors pretrained on Google News dataset in .bin.gz format.
+<https://drive.google.com/uc?export=download&confirm=MN4d&id=0B7XkCwpI5KDYNlNUTTlSS21pQmM>`__
+
+.. warning:: After clicking the above link, the download will start, and the size of the .bin.gz file is **1.65GB**.
+
+
+Install GloVe
+"""""""""""""
+
+GloVe pretrained vectors can be downloaded from the `Stanford NLP GloVe page <https://nlp.stanford.edu/projects/glove/>`__.
+
+`This is a direct link for downloading the 50, 100, 200 and 300-dimensional word vectors pretrained on Wikipedia in .zip format.
+<http://nlp.stanford.edu/data/glove.6B.zip>`__
+
+.. warning:: After clicking the above link, the download will start, and the size of the .zip file is **862MB**.
+
+Install 20 NewsGroups dataset
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The 20 newsgroups dataset can be used to try the functionality of this library. It can be downloaded from the
+`UCI Donald Bren School of Information & Computer Sciences 20 newsgroups page
+<https://archive.ics.uci.edu/ml/machine-learning-databases/20newsgroups-mld/>`__.
+
+`This is a direct link for downloading the 20 newsgroups dataset in .tar.gz format.
+<https://archive.ics.uci.edu/ml/machine-learning-databases/20newsgroups-mld/20_newsgroups.tar.gz>`__
+
+.. warning:: After clicking the above link, the download will start, and the size of the .tar.gz file is **17.3MB**.
