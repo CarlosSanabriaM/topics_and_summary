@@ -1,8 +1,12 @@
 from typing import Tuple, Callable
+from warnings import filterwarnings
 
 import gensim
 
 from topics_and_summary.datasets.common import Dataset
+
+# Ignore Phraser warnings
+filterwarnings("ignore")
 
 
 def create_bigram_model(dataset: Dataset, min_count=50, threshold=75) -> gensim.models.phrases.Phraser:

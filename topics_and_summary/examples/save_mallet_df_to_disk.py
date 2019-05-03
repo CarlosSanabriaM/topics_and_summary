@@ -1,9 +1,10 @@
+from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.models.topics import LdaMalletModel
 from topics_and_summary.utils import save_obj_to_disk, load_obj_from_disk, get_abspath_from_project_root
 
 if __name__ == '__main__':
     # Uncomment one of this 2 lines:
-    trigrams_dataset = load_obj_from_disk('trigrams_dataset')  # Dataset already preprocessed and stored on disk
+    trigrams_dataset = TwentyNewsGroupsDataset.load('trigrams_dataset')  # Dataset already preprocessed
     # trigrams_dataset = preprocess_dataset(TwentyNewsGroupsDataset(), ngrams='tri')  # Dataset is preprocessed now
 
     documents = trigrams_dataset.as_documents_content_list()

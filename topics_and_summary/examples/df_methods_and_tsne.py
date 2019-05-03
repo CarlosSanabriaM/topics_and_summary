@@ -80,4 +80,4 @@ if __name__ == '__main__':
     related_docs_text2_df = model.get_related_docs_as_df(text2, num_docs=3)
     related_docs_text3_df = model.get_related_docs_as_df(text3, num_docs=3)
 
-    df = model.get_related_docs_as_df(text, num_docs=7, ngrams='tri', ngrams_model_func=trigrams_func)
+    # df = model.get_related_docs_as_df(text1, num_docs=7, ngrams='tri', ngrams_model_func=trigrams_func)

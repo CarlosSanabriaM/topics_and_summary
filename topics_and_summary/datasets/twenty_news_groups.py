@@ -2,7 +2,7 @@ import re
 
 from topics_and_summary.datasets.common import Document
 from topics_and_summary.datasets.structured_dataset import StructuredDataset, StructuredDocument
-from topics_and_summary.utils import pretty_print, get_abspath_from_project_root
+from topics_and_summary.utils import pretty_print, get_abspath_from_project_root, load_obj_from_disk
 
 
 class TwentyNewsGroupsDataset(StructuredDataset):
@@ -119,17 +119,14 @@ class TwentyNewsGroupsDataset(StructuredDataset):
 
         return content
 
-    def print_some_files(self):
+    def print_some_files(self, n=3):
         """
         Prints some text files from the corpus. \
         This function can be used to see how the preprocessing affects the dataset documents.
         """
         pretty_print('File 1')
-        print(self.files_dict['sci.med'][1].content)
-        pretty_print('File 2')
-        print(self.files_dict['sci.electronics'][0].content)
-        pretty_print('File 3')
-        print(self.files_dict['rec.autos'][16].content)
+        doc1_index_inside_category = self.get_document_index('comp.sys.ibm.pc.hardware', '60133')
+        print(self.files_dict['comp.sys.ibm.pc.hardware'][doc1_index_inside_category].content)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
@@ -139,6 +136,20 @@ class TwentyNewsGroupsDataset(StructuredDataset):
                    self.remove_quotes == other.remove_quotes
         return False
 
+    @classmethod
+    def load(cls, name: str, folder_path: str = None) -> 'TwentyNewsGroupsDataset':
+        """
+        Loads a saved dataset from disk. This function must be used to load datasets,
+        instead of utils.the load_obj_from_disk() function, because this function updates
+        the current value of the dataset path.
+
+        :param name: Name of the dataset.
+        :param folder_path: Path of the folder where the dataset is stored on disk.
+        :return: The object loaded from disk.
+        """
+        dataset = load_obj_from_disk(name, folder_path)
+        dataset.dataset_path = cls._DATASET_PATH
+        return dataset
 
 class TwentyNewsGroupsDocument(StructuredDocument):
     """

@@ -11,10 +11,7 @@ class TestTopicsModel(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.dataset = load_obj_from_disk('trigrams_dataset', SAVED_OBJECTS_PATH)
-        # Update the path of the dataset loaded from disk. Pickle have stored the path of the dataset files
-        # in the moment the dataset was saved, but now this path may have changed
-        cls.dataset.dataset_path = TwentyNewsGroupsDataset._DATASET_PATH
+        cls.dataset = TwentyNewsGroupsDataset.load('trigrams_dataset', SAVED_OBJECTS_PATH)
 
     # noinspection PyTypeChecker
     def test_save_and_load_lda_gensim_model_on_disk(self):
