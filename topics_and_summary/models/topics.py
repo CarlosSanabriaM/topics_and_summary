@@ -169,21 +169,21 @@ class TopicsModel(metaclass=abc.ABCMeta):
         :return: The gensim model.
         """
 
-    def print_topics(self, num_keywords=10, gensim_way=True):
+    def print_topics(self, num_keywords=10, pretty_format=False):
         """
         Prints the topics of the topics model.
 
         :param num_keywords: Number of keywords of each topic to be printed.
-        :param gensim_way: If True, the topics are printed in the gensim way. \
-        If not, are printed using the __str__ methods of the Topic and Keywords classes.
+        :param pretty_format: If False, topics are printed in the gensim way. \
+        If True, are printed using the __str__ methods of the Topic and Keywords classes.
         """
-        if gensim_way:
+        if pretty_format:
+            print(*self.get_topics(num_keywords), sep='\n')
+        else:
             # Sequence with (topic_id, [(word, value), ... ]).
             topics_sequence = self.model.print_topics(num_topics=self.num_topics, num_words=num_keywords)
             for topic in topics_sequence:
                 print('Topic ' + str(topic[0]) + ': ' + topic[1])
-        else:
-            print(*self.get_topics(num_keywords), sep='\n')
 
     def get_topics(self, num_keywords=10) -> List['Topic']:
         """

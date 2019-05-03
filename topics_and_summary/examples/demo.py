@@ -23,7 +23,7 @@ def execute():
         pretty_print("One of the files of the preprocessed dataset")
         dataset.print_some_files(n=1, print_file_num=False)
     else:  # n option
-        # Load 20 newsgroups dataset, applying the specific preprocessing (specified in the default parameters)
+        # Load 20 newsgroups dataset, applying the specific preprocessing
         dataset = TwentyNewsGroupsDataset()
 
         # Prints some files
@@ -37,21 +37,23 @@ def execute():
         dataset.print_some_files(n=1, print_file_num=False)
     # endregion
 
-    # region 2. Generate LdaGensimModel or user_input LdaMalletModel
+    # region 2. Generate LdaGensimModel or load LdaMalletModel
     pretty_print('2. Generate or load a TopicsModel')
 
     user_input = input('Load previously generated LdaMalletModel (quick and better model) or '
                        'generate LdaGensimModel in the moment (slow and worst model)? (M/g): ')
     if user_input.lower() != 'g':  # M option
-        model_dir_path = get_abspath_from_project_source_root('saved-elements/topics/best-model/trigrams/lda-mallet')
+        model_dir_path = get_abspath_from_project_source_root('saved-elements/topics/'
+                                                              'best-model/trigrams/lda-mallet')
         docs_topics_df = load_obj_from_disk('mallet_17topics_docs_topics_df')
-        model = LdaMalletModel.load('model17', dataset, model_dir_path, docs_topics_df=docs_topics_df)
+        model = LdaMalletModel.load('model17', dataset, model_dir_path,
+                                    docs_topics_df=docs_topics_df)
     else:  # g option
         model = LdaGensimModel(dataset, num_topics=17)
     # endregion
 
-    # region 2. Show topics
-    pretty_print('2. Show the topics of the chosen model')
+    # region 3. Show topics
+    pretty_print('3. Show the topics of the chosen model')
 
     user_input = input('In which format (text, images, both)? (t/i/B):')
 
@@ -65,14 +67,14 @@ def execute():
 
     if text_format:
         pretty_print('Text format')
-        model.print_topics()
+        model.print_topics(pretty_format=True)
     if images_format:
         pretty_print('Images')
         plot_word_clouds_of_topics(model.get_topics(num_keywords=15), dpi=80)
     # endregion
 
-    # region 3. Most repr docs of one topic
-    pretty_print('3. Show the k most representative documents of the topic 16')
+    # region 4. Most repr docs of one topic
+    pretty_print('4. Show the k most representative documents of the topic 16')
 
     k = input('k value (default is 2):')
     try:
@@ -80,33 +82,35 @@ def execute():
     except ValueError:
         k = 2
 
-    two_most_repr_docs_topic16_df = model.get_k_most_repr_docs_of_topic_as_df(16, k=k)
+    two_most_repr_docs_topic16_df = model.get_k_most_repr_docs_of_topic_as_df(topic=16, k=k)
     for i in range(k):
         pretty_print('Document {0}'.format(i + 1))
         print('Probability: {0}'.format(two_most_repr_docs_topic16_df['Topic prob'][i]))
         pretty_print('Original document content')
         print(two_most_repr_docs_topic16_df['Original doc text'][i])
-
     # endregion
 
-    # region 4. Given a text, predict the topics probability
-    pretty_print('4. Given a text, predict the topics probability')
+    # region 5. Given a text, predict the topics probability
+    pretty_print('5. Given a text, predict the topics probability')
 
     input('Press any key')
 
-    text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not
-    directly describe Jesus' baptism. Most modern theologians view the baptism of Jesus by John the Baptist as a
-    historical event to which a high degree of certainty can be assigned.[1][2][3][4][5] Along with the crucifixion
-    of Jesus, most biblical scholars view it as one of the two historically certain facts about him, and often use it
-    as the starting point for the study of the historical Jesus.[6]
-    The baptism is one of the five major milestones in the gospel narrative of the life of Jesus, the others being
-    the Transfiguration, Crucifixion, Resurrection, and Ascension.[7][8] Most Christian denominations view the baptism
-    of Jesus as an important event and a basis for the Christian rite of baptism (see also Acts 19:1–7).
-    In Eastern Christianity, Jesus' baptism is commemorated on 6 January (the Julian calendar date of which corresponds
-    to 19 January on the Gregorian calendar), the feast of Epiphany.[9] In the Roman Catholic Church, the Anglican
-    Communion, the Lutheran Churches and some other Western denominations, it is recalled on a day within the following
-    week, the feast of the baptism of the Lord. In Roman Catholicism, the baptism of Jesus is one of the Luminous
-    Mysteries sometimes added to the Rosary. It is a Trinitarian feast in the Eastern Orthodox Churches."""
+    text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. 
+John's gospel does not directly describe Jesus' baptism. Most modern theologians view the 
+baptism of Jesus by John the Baptist as a historical event to which a high degree of 
+certainty can be assigned.[1][2][3][4][5] Along with the crucifixion of Jesus, most biblical 
+scholars view it as one of the two historically certain facts about him, and often use it
+as the starting point for the study of the historical Jesus.[6] 
+The baptism is one of the five major milestones in the gospel narrative of the life of Jesus, 
+the others being the Transfiguration, Crucifixion, Resurrection, and Ascension.[7][8] 
+Most Christian denominations view the baptism of Jesus as an important event and a basis for 
+the Christian rite of baptism (see also Acts 19:1–7). In Eastern Christianity, Jesus' baptism 
+is commemorated on 6 January (the Julian calendar date of which corresponds to 19 January on 
+the Gregorian calendar), the feast of Epiphany.[9] In the Roman Catholic Church, the Anglican
+Communion, the Lutheran Churches and some other Western denominations, it is recalled on a day 
+within the following week, the feast of the baptism of the Lord. In Roman Catholicism, 
+the baptism of Jesus is one of the Luminous Mysteries sometimes added to the Rosary.
+It is a Trinitarian feast in the Eastern Orthodox Churches."""
 
     pretty_print('Text')
     print(text)
@@ -115,8 +119,8 @@ def execute():
     model.predict_topic_prob_on_text(text, ngrams='tri', ngrams_model_func=trigrams_func)
     # endregion
 
-    # region 5. Given a text, get k most related documents
-    pretty_print('5. Given a text, get k most related documents')
+    # region 6. Given a text, get k most related documents
+    pretty_print('6. Given a text, get k most related documents')
 
     k = input('k value (default is 2):')
     try:
@@ -127,7 +131,9 @@ def execute():
     pretty_print('Text')
     print(text)
 
-    related_docs_df = model.get_related_docs_as_df(text, num_docs=k, ngrams='tri', ngrams_model_func=trigrams_func)
+    related_docs_df = \
+        model.get_related_docs_as_df(text, num_docs=k, ngrams='tri',
+                                     ngrams_model_func=trigrams_func)
     for i in range(k):
         pretty_print('Document {0}'.format(i + 1))
         print('Probability: {0}'.format(related_docs_df['Doc prob'][i]))
@@ -135,8 +141,8 @@ def execute():
         print(related_docs_df['Original doc text'][i])
     # endregion
 
-    # region 6. Summarize a given text
-    pretty_print('6. Summarize a given text (get k best sentences)')
+    # region 7. Summarize a given text
+    pretty_print('7. Summarize a given text (get k best sentences)')
 
     k = input('k value (default is 2):')
     try:
@@ -154,7 +160,6 @@ def execute():
         if i > 0:
             print()
         print('Sentence {0}: {1}'.format(i + 1, sent))
-
     # endregion
 
 
