@@ -1,8 +1,9 @@
 import re
+import textwrap
 
 from topics_and_summary.datasets.common import Document
 from topics_and_summary.datasets.structured_dataset import StructuredDataset, StructuredDocument
-from topics_and_summary.utils import pretty_print, get_abspath_from_project_root, load_obj_from_disk
+from topics_and_summary.utils import pretty_print, get_abspath_from_project_source_root, load_obj_from_disk
 
 
 class TwentyNewsGroupsDataset(StructuredDataset):
@@ -11,7 +12,7 @@ class TwentyNewsGroupsDataset(StructuredDataset):
     This class can apply a first specific preprocessing on the dataset files.
     """
 
-    _DATASET_PATH = get_abspath_from_project_root('../datasets/20_newsgroups')
+    _DATASET_PATH = get_abspath_from_project_source_root('../datasets/20_newsgroups')
     _DATASET_ENCODING = 'latin1'
 
     def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=None):
@@ -119,14 +120,29 @@ class TwentyNewsGroupsDataset(StructuredDataset):
 
         return content
 
-    def print_some_files(self, n=3):
+    def print_some_files(self, n=3, print_file_num=True):
         """
         Prints some text files from the corpus. \
         This function can be used to see how the preprocessing affects the dataset documents.
         """
-        pretty_print('File 1')
-        doc1_index_inside_category = self.get_document_index('comp.sys.ibm.pc.hardware', '60133')
-        print(self.files_dict['comp.sys.ibm.pc.hardware'][doc1_index_inside_category].content)
+        category_and_name_list = [
+            ('comp.sys.ibm.pc.hardware', '60133'),
+            ('sci.space', '59848'),
+            ('rec.sport.hockey', '52609')
+        ]
+
+        if n > len(category_and_name_list):
+            n = len(category_and_name_list)
+
+        for i in range(n):
+            if print_file_num:
+                pretty_print('File {0}'.format(i+1))
+
+            doc_index_inside_category = self.get_document_index(*category_and_name_list[i])
+            print(textwrap.fill(
+                self.files_dict[category_and_name_list[i][0]][doc_index_inside_category].content,
+                width=80
+            ))
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
@@ -150,6 +166,7 @@ class TwentyNewsGroupsDataset(StructuredDataset):
         dataset = load_obj_from_disk(name, folder_path)
         dataset.dataset_path = cls._DATASET_PATH
         return dataset
+
 
 class TwentyNewsGroupsDocument(StructuredDocument):
     """

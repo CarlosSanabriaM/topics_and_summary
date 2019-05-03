@@ -6,8 +6,8 @@ from typing import Callable
 import dill
 
 RANDOM_STATE = 100
-# This python module (utils.py) must be in the root folder of the project. If not, the following PATH won't be OK.
-PROJECT_ROOT_PATH = path.dirname(path.abspath(__file__))
+# This python module (utils.py) must be in the root folder of the python package project.
+PROJECT_SOURCE_ROOT_PATH = path.dirname(path.abspath(__file__))
 
 
 def pretty_print(text: str):
@@ -25,8 +25,14 @@ def join_paths(path1: str, *paths: str) -> str:
     return path.join(path1, *paths)
 
 
-def get_abspath_from_project_root(_path: str) -> str:
-    return path.abspath(join_paths(PROJECT_ROOT_PATH, _path))
+def get_abspath_from_project_source_root(_path: str) -> str:
+    """
+    Returns the absolute path of the relative path passed as a parameter.
+
+    :param _path: Path relative from the project source root (folder that contains an __init__.py file \
+    and the rest of the Python packages and modules).
+    """
+    return path.abspath(join_paths(PROJECT_SOURCE_ROOT_PATH, _path))
 
 
 def now_as_str() -> str:
@@ -43,7 +49,7 @@ def save_obj_to_disk(obj: object, name: str, folder_path: str = None):
     :param folder_path: Path of the folder where the object will be stored on disk.
     """
     if folder_path is None:
-        obj_path = get_abspath_from_project_root('saved-elements/objects/{}.pickle'.format(name))
+        obj_path = get_abspath_from_project_source_root('saved-elements/objects/{}.pickle'.format(name))
     else:
         obj_path = join_paths(folder_path, '{}.pickle'.format(name))
 
@@ -60,7 +66,7 @@ def load_obj_from_disk(name: str, folder_path: str = None) -> object:
     :return: The object loaded from disk.
     """
     if folder_path is None:
-        obj_path = get_abspath_from_project_root('saved-elements/objects/{}.pickle'.format(name))
+        obj_path = get_abspath_from_project_source_root('saved-elements/objects/{}.pickle'.format(name))
     else:
         obj_path = join_paths(folder_path, '{}.pickle'.format(name))
 
@@ -77,7 +83,7 @@ def save_func_to_disk(func: Callable, name: str, folder_path: str = None):
     :param folder_path: Path of the folder where the function will be stored on disk.
     """
     if folder_path is None:
-        func_path = get_abspath_from_project_root('saved-elements/funcs/{}.dill'.format(name))
+        func_path = get_abspath_from_project_source_root('saved-elements/funcs/{}.dill'.format(name))
     else:
         func_path = join_paths(folder_path, '{}.dill'.format(name))
 
@@ -94,7 +100,7 @@ def load_func_from_disk(name: str, folder_path: str = None) -> Callable:
     :return: The function loaded from disk.
     """
     if folder_path is None:
-        func_path = get_abspath_from_project_root('saved-elements/funcs/{}.dill'.format(name))
+        func_path = get_abspath_from_project_source_root('saved-elements/funcs/{}.dill'.format(name))
     else:
         func_path = join_paths(folder_path, '{}.dill'.format(name))
 

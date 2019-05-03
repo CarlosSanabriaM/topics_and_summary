@@ -3,7 +3,7 @@ from typing import List
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.models.topics import LdaModelsList, LsaModelsList, LdaMalletModelsList, TopicsModel
 from topics_and_summary.preprocessing.dataset import preprocess_dataset
-from topics_and_summary.utils import join_paths, pretty_print, get_abspath_from_project_root, save_obj_to_disk, \
+from topics_and_summary.utils import join_paths, pretty_print, get_abspath_from_project_source_root, save_obj_to_disk, \
     save_func_to_disk
 from topics_and_summary.visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
 
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     # Topics info for the models
     MIN_TOPICS = 10
     MAX_TOPICS = 20
-    BASE_PATH = get_abspath_from_project_root('saved-elements/topics/comparison')
+    BASE_PATH = get_abspath_from_project_source_root('saved-elements/topics/comparison')
 
     # %%
     # Unigrams

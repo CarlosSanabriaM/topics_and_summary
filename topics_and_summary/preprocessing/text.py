@@ -6,12 +6,12 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
-from topics_and_summary.utils import join_paths, get_abspath_from_project_root
+from topics_and_summary.utils import join_paths, get_abspath_from_project_source_root
 
 _BASIC_STOPWORDS = set(stopwords.words('english'))
 _EMAILS_RE = re.compile(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)")
 _PUNCTUATION_RE = re.compile('[—ºª#$€%&*+-_.·,;:<=>@/¡!¿?^¨`´\"(){|}~[\\]]')
-_PREPROCESSING_FILES_DIR = get_abspath_from_project_root('preprocessing-files')
+_PREPROCESSING_FILES_DIR = get_abspath_from_project_source_root('preprocessing-files')
 _ADDITIONAL_STOPWORDS_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'stopwords.txt')
 _EXPAND_CONTRACTIONS_DICT_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'expand_contractions_dict.txt')
 _VULGAR_WORDS_DICT_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'vulgar_words_dict.txt')

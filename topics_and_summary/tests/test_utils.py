@@ -2,12 +2,12 @@ import os
 import platform
 import unittest
 
-from topics_and_summary.utils import get_abspath_from_project_root, join_paths, save_obj_to_disk, load_obj_from_disk, \
+from topics_and_summary.utils import get_abspath_from_project_source_root, join_paths, save_obj_to_disk, load_obj_from_disk, \
     save_func_to_disk, load_func_from_disk
 
 
 class TestUtils(unittest.TestCase):
-    TESTS_BASE_PATH = get_abspath_from_project_root('tests')
+    TESTS_BASE_PATH = get_abspath_from_project_source_root('tests')
 
     def test_join_paths(self):
         path = join_paths('Users/name/', 'Desktop', 'class/', 'files')

@@ -3,7 +3,7 @@ import abc
 import numpy as np
 from gensim.models import KeyedVectors
 
-from topics_and_summary.utils import get_abspath_from_project_root, join_paths
+from topics_and_summary.utils import get_abspath_from_project_source_root, join_paths
 
 
 class EmbeddingsModel(metaclass=abc.ABCMeta):
@@ -33,8 +33,8 @@ class Word2VecModel(EmbeddingsModel):
     """Word2Vec word embedding model."""
 
     _WORD2VEC_VECTORS_DIM = 300
-    _MODEL_PATH = get_abspath_from_project_root('../embeddings/word2vec/GoogleNews-vectors-negative{}.bin.gz'
-                                                .format(_WORD2VEC_VECTORS_DIM))
+    _MODEL_PATH = get_abspath_from_project_source_root('../embeddings/word2vec/GoogleNews-vectors-negative{}.bin.gz'
+                                                       .format(_WORD2VEC_VECTORS_DIM))
 
     def __init__(self, model_path: str = None, vectors_dim=_WORD2VEC_VECTORS_DIM):
         """
@@ -83,7 +83,7 @@ class Word2VecModel(EmbeddingsModel):
 class Glove(EmbeddingsModel):
     """Glove word embedding model."""
 
-    _GLOVE_DIR = get_abspath_from_project_root('../embeddings/glove/glove.6B')
+    _GLOVE_DIR = get_abspath_from_project_source_root('../embeddings/glove/glove.6B')
     _GLOVE_VECTORS_DIM = 100
 
     def __init__(self, vectors_dim=_GLOVE_VECTORS_DIM, glove_dir: str = None):

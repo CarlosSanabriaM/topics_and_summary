@@ -13,7 +13,7 @@ from wordcloud import WordCloud, STOPWORDS
 
 from topics_and_summary.models.topics import Topic
 from topics_and_summary.models.topics import TopicsModel
-from topics_and_summary.utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_root
+from topics_and_summary.utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_source_root
 
 
 def plot_distribution_of_doc_word_counts(documents: List[List[str]]):
@@ -157,7 +157,7 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
         plt.clf()
 
 
-_TSNE_SAVE_PATH = get_abspath_from_project_root('saved-elements/topics/tsne')
+_TSNE_SAVE_PATH = get_abspath_from_project_source_root('saved-elements/topics/tsne')
 
 
 def tsne_clustering_chart(model: TopicsModel, angle=.99, doc_threshold=0,
