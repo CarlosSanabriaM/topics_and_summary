@@ -58,7 +58,6 @@ def print_words_that_contain_elem(dataset: Dataset, elem: str):
     print(" Num words with the elem " + elem + ":", num_words_contain_elem)
 
 
-# TODO: Change to admit dataset: Dataset
 def print_docs_that_contain_word(dataset: StructuredDataset, word: str, num_chars_preview=70):
     """
     Prints a table with the following properties of all documents in the dataset that contain the given word:
@@ -97,14 +96,14 @@ def print_docs_that_contain_word(dataset: StructuredDataset, word: str, num_char
                     [category_name, doc_index_in_category,
                      num_words_in_doc, num_word_occurences_in_doc,
                      doc.name,
-                     doc.content[:num_chars_preview]])  # TODO: Try to preview parts of the text around the word?
+                     # TODO: Instead of showing the first k characters, it would be better to show text around the word
+                     doc.content[:num_chars_preview]])
             doc_index_in_category += 1
 
     print(table.draw())
     print(" Num docs with the word " + word + ":", num_docs_contain_word)
 
 
-# TODO: Change to admit dataset: Dataset
 def print_empty_docs(dataset: StructuredDataset):
     """
     Prints the empty documents in the given dataset.
@@ -136,7 +135,6 @@ def print_empty_docs(dataset: StructuredDataset):
     print(" Num empty docs:", num_empty_docs)
 
 
-# TODO: Change to admit dataset: Dataset
 def get_docs_that_contain_any_of_the_words(dataset: StructuredDataset, words: Union[str, Set[str]]) \
         -> List[Tuple[str, int]]:
     """
@@ -170,7 +168,6 @@ def get_docs_that_contain_any_of_the_words(dataset: StructuredDataset, words: Un
     return list_docs_with_any_of_the_words
 
 
-# TODO: Change to admit dataset: Dataset
 def remove_docs_that_contain_any_of_the_given_words(dataset: StructuredDataset, words: Union[str, Set[str]]):
     """
     Removes from the given dataset the documents that contain one or more of the given words. \
@@ -199,7 +196,6 @@ def remove_docs_that_contain_any_of_the_given_words(dataset: StructuredDataset, 
         dataset.remove_document(category, index_in_category)
 
 
-# TODO: Change to admit dataset: Dataset
 def remove_docs_that_contain_any_of_the_words_in_file(dataset: StructuredDataset, file_path: str = None):
     """
     Removes from the given dataset the documents that contain one or more of the words in the specified file.
@@ -216,7 +212,6 @@ def remove_docs_that_contain_any_of_the_words_in_file(dataset: StructuredDataset
     remove_docs_that_contain_any_of_the_given_words(dataset, words)
 
 
-# TODO: Change to admit dataset: Dataset
 def remove_trash_docs_specified_in_file(dataset: StructuredDataset, file_path: str = None, file_sep=' '):
     """
     Removes from the given dataset the documents specified in a file.
@@ -244,7 +239,6 @@ def remove_trash_docs_specified_in_file(dataset: StructuredDataset, file_path: s
         dataset.remove_document(category, index_in_category)
 
 
-# TODO: Change to admit dataset: Dataset
 def remove_empty_docs(dataset: StructuredDataset) -> int:
     """
     Removes the empty documents of the given dataset.
@@ -266,7 +260,6 @@ def remove_empty_docs(dataset: StructuredDataset) -> int:
     return num_empty_docs
 
 
-# TODO: Change to admit dataset: Dataset
 def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=True, lowercase=True,
                        contractions=True, vulgar_words=True, stopwords=True, emails=True, punctuation=True,
                        ngrams='uni', min_bigrams_count=50, bigrams_threshold=75, min_trigrams_count=100,
@@ -309,8 +302,8 @@ def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=Tr
     if trash_docs:
         remove_trash_docs_specified_in_file(dataset_copy)
     if normalize:
-        # TODO: Problem: Here we can have 'USA,' and 'USA' doesn't detect that.
-        # TODO: Problem: It only can transform words. You can't transform 'United States' to 'USA'
+        # TODO: Problem: Here we can have 'USA,' and the 'USA' in the .txt file doesn't match that.
+        # TODO: Problem: It only can transform words, so it can't transform 'United States' to 'USA', i.e.
         dataset_copy.apply_function_to_files(normalize_words)
     if lowercase:
         dataset_copy.apply_function_to_files(to_lowercase)

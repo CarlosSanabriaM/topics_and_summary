@@ -262,7 +262,7 @@ def preprocess_text(text: str, normalize=True, lowercase=True, contractions=True
     """
 
     if normalize:
-        # TODO: Problem: Here we can have 'USA,' and 'USA' doesn't detect that.
+        # TODO: Problem: Here we can have 'USA,' and the 'USA' in the .txt file doesn't match that.
         text = normalize_words(text)
     if lowercase:
         text = to_lowercase(text)

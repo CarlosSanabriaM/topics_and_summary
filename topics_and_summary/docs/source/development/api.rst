@@ -105,6 +105,8 @@ TextRank
 
 * `Text Rank in Python <https://www.analyticsvidhya.com/blog/2018/11/introduction-text-summarization-textrank-python/>`__
 
+.. _other_summarization_alternatives:
+
 Other summarization alternatives
 """"""""""""""""""""""""""""""""
 
@@ -225,6 +227,8 @@ get_k_best_sentences_of_text()
 The **get_k_best_sentences_of_text()** method of the models.summarization.TextRank class **sometimes can't converge** with
 specific texts, throwing an PowerIterationFailedConvergence exception.
 
+.. _20_newsgroups_specific_preprocessing:
+
 TwentyNewsGroupsDataset specific preprocessing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The **TwentyNewsGroupsDataset** class applies **specific preprocessing** to it's files, before the general preprocessing is applied.
@@ -245,21 +249,41 @@ Adding new datasets
 ^^^^^^^^^^^^^^^^^^^
 The steps to add a new dataset are the following:
 
-1. Create a new folder with the dataset files inside the **datasets folder**.
-2. Create a python module with the following content:
+1. Create a new folder with the dataset files inside the **datasets folder** (or in another place, but then, the path
+   to the dataset must point to that place).
+2. The second step depends on the characteristics of the dataset:
 
-   a. A <dataset-name>Dataset class
-   b. A <dataset-name>Document class
+   a. If the dataset is **divided in folders**, and **no specific preprocessing** of the dataset is required
+      (see :ref:`20_newsgroups_specific_preprocessing` for an example of when specific preprocessing is needed),
+      an object of the StructuredDataset class can be created, specifying the path of the dataset and the encoding.
 
-Structured Dataset
-""""""""""""""""""
+      .. note:: In the above case, all the times that an instance of that dataset needs to be created, the dataset path and
+         the encoding have to be specified to the StructuredDataset __init__ method. If the dataset isn't going to be used
+         too much times, this can be a good solution, because it doesn't need to create an extra Python module for a dataset
+         that is going to be used only a few times.
+         But if the dataset is going to be used a lot, then maybe is a better option to create a python module as explained
+         in the :ref:`structured-dataset-subclass` section.
+
+   b. If the dataset is **divided in folders**, and **specific preprocessing** of the dataset is required,
+      see the :ref:`structured-dataset-subclass` section.
+   c. If the dataset is **not divided in folders** see the :ref:`unstructured-dataset` section.
+
+.. _structured-dataset-subclass:
+
+Structured Dataset subclass
+"""""""""""""""""""""""""""
 
 If the dataset is divided in folders (like the 20 newsgroups dataset):
 
-* The <dataset-name>Dataset class must inherit from the StructuredDataset class
-* The <dataset-name>Document class must inherit from the StructuredDocument class
+Create a python module with the following content:
+
+   a. A <dataset-name>Dataset class: must inherit from the StructuredDataset class
+   b. A <dataset-name>Document class: must inherit from the StructuredDocument class
 
 .. note:: The twenty_news_groups.py module can be used as an example.
+
+
+.. _unstructured-dataset:
 
 Unstructured Dataset
 """"""""""""""""""""
@@ -282,3 +306,9 @@ with the following modules:
   adapting all the functions that receive a StructuredDataset to use an UnstructuredDataset.
 
 .. note:: This is because current preprocessing only can be used with StructuredDataset.
+
+Recommended IDE
+^^^^^^^^^^^^^^^
+
+The recommended IDE is `Pycharm <https://www.jetbrains.com/pycharm/>`__. The folder to be selected as a project must be
+the project root folder (topics_and_summary, not topics_and_summary/topics_and_summary).
