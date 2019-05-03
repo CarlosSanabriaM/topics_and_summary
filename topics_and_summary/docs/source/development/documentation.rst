@@ -78,6 +78,24 @@ To change the theme, the following variable in the **conf.py** file have to be c
 Posible values are described in the `sphinx-theme page <https://sphinx-themes.org>`__.
 
 
+Warnings
+^^^^^^^^
+
+After using the generate-api-doc.sh to update the API documentation, sphinx
+can give warnings if some of the .rst files are not included in any toctree.
+
+Currently, the topics_and_summary.rst file is not included in any toctree,
+because with the modules.rst is considered enough to show the packages and
+modules of the library.
+
+For that reason, sphinx gives the following warning:
+
+.. code-block:: none
+
+   api/topics_and_summary.rst: WARNING: document isn't included in any toctree
+
+This warning can be ignored, because this file isn't included intentionally.
+
 .. rubric:: Footnotes
 
 .. [#f1] The documentation can't be generated directly using the content of the modules in the source code, because
