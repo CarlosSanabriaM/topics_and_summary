@@ -4,11 +4,12 @@ from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDatas
 from topics_and_summary.preprocessing.dataset import preprocess_dataset
 from topics_and_summary.utils import pretty_print, load_obj_from_disk, load_func_from_disk, \
     get_abspath_from_project_source_root
-from topics_and_summary.visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
+from topics_and_summary.visualizations import plot_word_clouds_of_topics
 
-if __name__ == '__main__':
+
+def execute():
     """
-    This file contains a demo of the topics functionality.
+    Demo of the library functionality.
     """
 
     # region 1. Load dataset and preprocessing
@@ -53,17 +54,21 @@ if __name__ == '__main__':
     pretty_print('2. Show the topics of the chosen model')
 
     user_input = input('In which format (text, images, both)? (t/i/B):')
+
+    text_format = images_format = False
     if user_input.lower() != 't' and user_input.lower() != 'i':  # B option
-        pretty_print('Text format')
-        model.print_topics()
-        pretty_print('Images')
-        plot_word_clouds_of_topics(model.get_topics(num_keywords=20))
+        text_format = images_format = True
     elif user_input.lower() == 't':
+        text_format = True
+    elif user_input.lower() == 'i':
+        images_format = True
+
+    if text_format:
         pretty_print('Text format')
         model.print_topics()
-    elif user_input.lower() == 'i':
+    if images_format:
         pretty_print('Images')
-        plot_word_clouds_of_topics(model.get_topics(num_keywords=20))
+        plot_word_clouds_of_topics(model.get_topics(num_keywords=15), dpi=80)
     # endregion
 
     # region 3. Most repr docs of one topic
@@ -90,18 +95,18 @@ if __name__ == '__main__':
     input('Press any key')
 
     text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not
-directly describe Jesus' baptism. Most modern theologians view the baptism of Jesus by John the Baptist as a
-historical event to which a high degree of certainty can be assigned.[1][2][3][4][5] Along with the crucifixion
-of Jesus, most biblical scholars view it as one of the two historically certain facts about him, and often use it
-as the starting point for the study of the historical Jesus.[6]
-The baptism is one of the five major milestones in the gospel narrative of the life of Jesus, the others being
-the Transfiguration, Crucifixion, Resurrection, and Ascension.[7][8] Most Christian denominations view the baptism
-of Jesus as an important event and a basis for the Christian rite of baptism (see also Acts 19:1–7).
-In Eastern Christianity, Jesus' baptism is commemorated on 6 January (the Julian calendar date of which corresponds
-to 19 January on the Gregorian calendar), the feast of Epiphany.[9] In the Roman Catholic Church, the Anglican
-Communion, the Lutheran Churches and some other Western denominations, it is recalled on a day within the following
-week, the feast of the baptism of the Lord. In Roman Catholicism, the baptism of Jesus is one of the Luminous
-Mysteries sometimes added to the Rosary. It is a Trinitarian feast in the Eastern Orthodox Churches."""
+    directly describe Jesus' baptism. Most modern theologians view the baptism of Jesus by John the Baptist as a
+    historical event to which a high degree of certainty can be assigned.[1][2][3][4][5] Along with the crucifixion
+    of Jesus, most biblical scholars view it as one of the two historically certain facts about him, and often use it
+    as the starting point for the study of the historical Jesus.[6]
+    The baptism is one of the five major milestones in the gospel narrative of the life of Jesus, the others being
+    the Transfiguration, Crucifixion, Resurrection, and Ascension.[7][8] Most Christian denominations view the baptism
+    of Jesus as an important event and a basis for the Christian rite of baptism (see also Acts 19:1–7).
+    In Eastern Christianity, Jesus' baptism is commemorated on 6 January (the Julian calendar date of which corresponds
+    to 19 January on the Gregorian calendar), the feast of Epiphany.[9] In the Roman Catholic Church, the Anglican
+    Communion, the Lutheran Churches and some other Western denominations, it is recalled on a day within the following
+    week, the feast of the baptism of the Lord. In Roman Catholicism, the baptism of Jesus is one of the Luminous
+    Mysteries sometimes added to the Rosary. It is a Trinitarian feast in the Eastern Orthodox Churches."""
 
     pretty_print('Text')
     print(text)
@@ -146,6 +151,12 @@ Mysteries sometimes added to the Rosary. It is a Trinitarian feast in the Easter
     tr = TextRank()
     summary = tr.get_k_best_sentences_of_text(text, k)
     for i, sent in enumerate(summary):
+        if i > 0:
+            print()
         print('Sentence {0}: {1}'.format(i + 1, sent))
 
     # endregion
+
+
+if __name__ == '__main__':
+    execute()

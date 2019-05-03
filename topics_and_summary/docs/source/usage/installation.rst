@@ -16,6 +16,10 @@ and install it is to download the source code and follow this steps:
 
 .. _usage-installation-dependencies:
 
+
+
+
+
 Dependencies
 ------------
 
@@ -98,8 +102,15 @@ In an existing conda enviroment
 
 .. _usage-installation-library:
 
+
+
+
+
 Install the library
 -------------------
+
+Execute the following command inside the venv or conda enviroment:
+
 ::
 
     pip install <path-to-project-root-folder>
@@ -120,28 +131,78 @@ To check if everything was installed correctly, execute the following commands:
 
 .. _usage-installation-other-elements:
 
-Install other elements
-----------------------
+
+
+
+
+Donwload NLTK resources
+-----------------------
+
+The following NLTK resources are required by the preprocessing package:
+
+* stopwords
+* wordnet
+
+To install them, follow this steps from the command line, inside the venv or conda enviroment:
+
+::
+
+    python
+    >>> import nltk
+    >>> nltk.download('stopwords')
+    # It should print True
+    >>> nltk.download('wordnet')
+    # It should print True
+    >>> nltk.download('punkt')
+    # It should print True
+
+
+
+
+
+Download other elements
+-----------------------
 
 This section explains how to install other elements that may be required for certain funcionality:
 
-.. _usage-installation-mallet-source-code:
+.. _usage-installation-mallet:
 
-Install mallet source code
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Download mallet
+^^^^^^^^^^^^^^^
 
-Mallet source code is **required to use the LdaMalletModel**. It can be downloaded from the
-`mallet download page <http://mallet.cs.umass.edu/download.php>`__.
+`Mallet <http://mallet.cs.umass.edu>`__ is a Java library for NLP, and is **required to use the LdaMalletModel**.
+
+It's written in Java, so **it requires that Java is installed**.
+
+Download mallet library
+"""""""""""""""""""""""
+
+Mallet source code can be downloaded from the `mallet download page <http://mallet.cs.umass.edu/download.php>`__.
 
 `This is a direct link for downloading the mallet 2.0.8 version in .tar.gz format. <http://mallet.cs.umass.edu/dist/mallet-2.0.8.tar.gz>`__
 
-Install word embeddings
-^^^^^^^^^^^^^^^^^^^^^^^
+Download Java
+"""""""""""""
+
+Mallet requires the Java JDK 1.8.
+
+In ubuntu, it can be installed executing the following command:
+
+::
+
+    sudo apt-get install default-jdk
+
+For instructions on how to install Java JDK 1.8 in other systems see the `Open JDK page <https://openjdk.java.net/install/>`__
+and the `Oracle JDK 1.8 page <https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html>`__.
+
+
+Download word embeddings
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 **At least one** of the following word embeddings **is required to use the TextRank** algorithm for text summarization.
 
-Install Word2Vec
-""""""""""""""""
+Download  Word2Vec
+""""""""""""""""""
 
 Word2Vec pretrained vectors can be downloaded from the `Google Code Archive Word2Vec page <https://code.google.com/archive/p/word2vec/>`__.
 
@@ -151,8 +212,8 @@ Word2Vec pretrained vectors can be downloaded from the `Google Code Archive Word
 .. warning:: After clicking the above link, the download will start, and the size of the .bin.gz file is **1.65GB**.
 
 
-Install GloVe
-"""""""""""""
+Download  GloVe
+"""""""""""""""
 
 GloVe pretrained vectors can be downloaded from the `Stanford NLP GloVe page <https://nlp.stanford.edu/projects/glove/>`__.
 
@@ -161,8 +222,8 @@ GloVe pretrained vectors can be downloaded from the `Stanford NLP GloVe page <ht
 
 .. warning:: After clicking the above link, the download will start, and the size of the .zip file is **862MB**.
 
-Install 20 NewsGroups dataset
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Download  20 NewsGroups dataset
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The 20 newsgroups dataset can be used to try the functionality of this library. It can be downloaded from the
 `UCI Donald Bren School of Information & Computer Sciences 20 newsgroups page
