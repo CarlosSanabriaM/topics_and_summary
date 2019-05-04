@@ -1,6 +1,6 @@
+from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.models.summarization import TextRank
 from topics_and_summary.models.topics import LdaMalletModel, LdaGensimModel
-from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.preprocessing.dataset import preprocess_dataset
 from topics_and_summary.utils import pretty_print, load_obj_from_disk, load_func_from_disk, \
     get_abspath_from_project_source_root
