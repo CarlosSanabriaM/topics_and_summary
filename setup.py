@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='topics_and_summary',
-      version='0.1',
+      version='1.0',
       description='Package for identifying the topics present in a collection '
                   'of text documents and create summaries of texts',
       long_description=long_description,
