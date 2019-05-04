@@ -30,6 +30,9 @@ Basically, there are 2 additional packages required:
 The way this dependencies are installed is the same as the one described in the :ref:`usage-installation-dependencies`
 section of the Usage Installation page, but **changing the requirements.txt file by development-requirements.txt.**
 
+
+.. _development-installation-install-the-library:
+
 Install the library
 -------------------
 
@@ -39,6 +42,7 @@ This option is described in the
 `Python Packaging User Guide <https://packaging.python.org/tutorials/installing-packages/#installing-from-a-local-src-tree>`__.
 
 Basically, after installing the package this way, **all changes made in the source code will be reflected in the installed library.**
+This is because it's a "fake installation". It doesn't copy any files. Rather, it points to the source code folder.
 This allows to have an "always updated" version of the library installed.
 
 The **main objective** of installing the library this way is to allow sphinx to **generate the documentation of the last version** of the source code.

@@ -18,16 +18,30 @@ a. If the library is installed, can be executed as follows:
       >>> from topics_and_summary.examples import demo
       >>> demo.execute()
 
-a. If the library source code is available, it also can be executed as follows:
+   .. warning:: Executing the demo this way sometimes leads to problems due to Python pickle objects stored in
+      the saved-elements folder (that are used in the demo).
+
+      This can happen if the library was installed like this: *pip install <project-root-path>*.
+
+      A possible solution is to install the library this way: *pip install -e <project-root-path>*. This fixes the problem
+      because it doesn't copy any files. Rather, it points to the source code folder. A broader explanation is present in the
+      :ref:`development-installation-install-the-library` section of the Development Installation page.
+
+      Another solution is to execute the demo without installing the library, as explained below.
+
+b. If the library isn't installed, but the source code is available, it can be executed as follows:
 
    ::
 
-      python <project-root-path>/topics_and_summary/examples/demo.py
+      python
+      >>> import sys
+      >>> sys.path.extend(['<project-root-path>'])
+      >>> exec(open("<project-root-path>/topics_and_summary/examples/demo.py").read())
 
 Demo content
 ^^^^^^^^^^^^
 
-This section explains the demo, which is divided in sections.
+This section explains the demo, that is divided in sections.
 
 Section 1
 """""""""
@@ -90,10 +104,10 @@ Section 3
 The topics can be showed in 2 ways:
 
 * **Text format**, where each topic shows it's most important keywords, and the importance of each one inside the topic.
-  This is done with the print_topics(), which has a parameter pretty_format. If is True, topics are printed in a
+  This is done with the print_topics() method, that has a parameter pretty_format. If is True, topics are printed in a
   more structured way. If is false, each topic is printed in one line, as gensim does.
 * **Wordclouds**, which plots the most important keywords of each topic in a matplotlib.pyplot plot. This is done with
-  the plot_word_clouds_of_topics() function of the visualizations module, which receives a List[Topic], that can be
+  the plot_word_clouds_of_topics() function of the visualizations module, that receives a List[Topic], that can be
   obtained with the get_topics() method of the TopicsModel class.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
@@ -137,7 +151,7 @@ Section 5
 
 This is done with the predict_topic_prob_on_text() method of the TopicsModel class.
 This method doesn't need the docs_topics_df. In fact, predict_topic_prob_on_text() is called by
-the get_dominant_topic_of_each_doc_as_df() method, which generates the docs_topics_df.
+the get_dominant_topic_of_each_doc_as_df() method, that generates the docs_topics_df.
 
 This method is the one who communicates directly with the gensim models [#f1]_, calling the gensim model with the
 indexing operation (self.model[text_as_bow]). TopicsModel is a wrapper of the gensim models functionality.
@@ -192,7 +206,7 @@ Section 7
 **Summarizes a text**
 
 This is done with the TextRank class (that uses the TextRank algorithm). This class has only one method:
-get_k_best_sentences_of_text(), which returns the k best sentences of the given text
+get_k_best_sentences_of_text(), that returns the k best sentences of the given text
 (the ones that summarizes it the most). It performs, therefore, an extractive summary.
 
 Internally, the get_k_best_sentences_of_text() method uses word embeddings (either GloVe or Word2Vec).
