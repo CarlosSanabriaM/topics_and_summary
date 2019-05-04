@@ -2,7 +2,7 @@ Development
 ===========
 
 .. toctree::
-    :maxdepth: 4
+    :maxdepth: 2
 
     development/installation
     development/api

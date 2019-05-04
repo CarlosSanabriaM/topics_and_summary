@@ -8,8 +8,8 @@ Welcome to Topics and Summary's documentation!
 `Contact the author <mailto:carlos.sanabria@accenture.com>`__
 
 **topics_and_summary** is a library that identifies topics in a collection
-of text documents and classifies them inside that topics. It also generates summaries
-of text documents. This is done using NLP techniques.
+of text documents and classifies the documents inside that topics.
+It also generates summaries of text documents. This is done using NLP techniques.
 
 See the :ref:`introduction` for more detail about the objectives and functionalities of the library.
 

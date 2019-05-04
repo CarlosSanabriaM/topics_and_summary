@@ -5,8 +5,8 @@ Demo
 ----
 The module **examples.demo.py** contains a **demo of the main functionality** of this library.
 
-How to execute it
-^^^^^^^^^^^^^^^^^
+How to execute the demo
+^^^^^^^^^^^^^^^^^^^^^^^
 
 The demo can be executed in 2 ways:
 

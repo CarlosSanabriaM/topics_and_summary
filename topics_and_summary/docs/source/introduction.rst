@@ -26,7 +26,7 @@ performs the following actions:
 
 * **Identify the relation of each document in the collection with each topic.**
     Each document will have a probability of being related with each topic.
-    New texts can also be used to identify it's relation with the topics.
+    **New texts** can also be used to identify it's relation with the topics.
 
     .. figure:: images/intro/predict-topics.png
       :alt: Example of the probability of a text document being related with some of the topics showed above
@@ -37,7 +37,7 @@ performs the following actions:
 * **Classify each document in the collection inside a topic.**
     After identifying the relation of each document in the collection with
     each topic, the  obtained probability can be used to classify each document
-    inside the topic with highest probability. New texts can also be used to
+    inside the topic with highest probability. **New texts** can also be used to
     classify them in a topic.
 
     .. figure:: images/intro/classification-of-each-doc.png
