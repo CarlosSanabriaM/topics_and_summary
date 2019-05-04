@@ -15,12 +15,15 @@ __pycache__/
 ### SonarQube ###
 .scannerwork
 
-### Documentation files ###
+### Documentation build files ###
 topics_and_summary/docs/build/
 
-### Project files ###
-topics_and_summary/saved-elements/
-topics_and_summary/tests/saved-elements/
+### Project stored objects ###
+# Exclude all the elements stored on disk, except the best-model
+topics_and_summary/saved-elements/topics/*
+!topics_and_summary/saved-elements/topics/best-model
+
+# Elements stored on disk used in the tests are no excluded
 
 ### Other files used in the project ###
 datasets/20_newsgroups/

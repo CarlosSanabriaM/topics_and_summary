@@ -1,0 +1,17 @@
+0 -> Medicine and health
+1 -> People's discussions
+2 -> Christianity
+3 -> Files, images
+4 -> Encryption
+5 -> ???
+6 -> Windows, Hardware
+7 -> Problem with hardware
+8 -> Game (probably baseball)
+9 -> Atheism
+10 -> USA politics
+11 -> Buys and sells of PC's
+12 -> Guns in USA
+13 -> War in Euorope's East
+14 -> Cars
+15 -> Hockey
+16 -> Space, nasa

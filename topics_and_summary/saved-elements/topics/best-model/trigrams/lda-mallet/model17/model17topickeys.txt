@@ -1,0 +1,17 @@
+0	2,94118	study drug disease patient effect medical research health doctor food day year dr treatment information cancer rate child university aid 
+1	2,94118	people point thing make question reason true argument evidence word claim wrong answer agree fact find case good moral statement 
+2	2,94118	god christian jesus church bible word man life faith love christ sin day time paul lord father people john christianity 
+3	2,94118	file program server window image application version graphic ftp pub set line data display sun entry system user widget software 
+4	2,94118	key system message information encryption chip bit phone computer internet copy public de security access algorithm posting standard address privacy 
+5	2,94118	good thing post make lot nice real guess kind pretty remember idea bad heard give put hope thought stuff care 
+6	2,94118	window drive bit disk_operating_system card disk system file mac image color pc driver software scsi mb memory version jpeg program 
+7	2,94118	problem work line power modem set control cable pin drive type current ground end wire switch keyboard signal board case 
+8	2,94118	year game time good run team hit player back play fan lost guy lot average number baseball chance bad win 
+9	2,94118	book religion group science theory world fact subject article atheist state life human people religious question idea discussion law view 
+10	2,94118	president american time people year job usa group tax work program question made plan money decision mr_stephanopoulos government make support 
+11	2,94118	price buy interested offer sale sound sell computer cost e_mail company work email original reply model send printer manual advance 
+12	2,94118	people gun law government fbi fire state weapon case crime child police usa firearm criminal death koresh court batf house 
+13	2,94118	armenian jew people israel war muslim turkish arab israeli jewish government turkey country world greek population russian land nazi university 
+14	2,94118	car time back bike people left told day front started hand put door home engine turn thing heard woman face 
+15	2,94118	game team period goal hockey win la blue season player pit van nhl playoff shot bos series det point mike 
+16	2,94118	space system earth time mission launch nasa satellite water surface center orbit data usa energy moon high shuttle technology planet 
