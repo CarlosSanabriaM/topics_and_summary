@@ -70,7 +70,9 @@ def execute():
         model.print_topics(pretty_format=True)
     if images_format:
         pretty_print('Images')
-        plot_word_clouds_of_topics(model.get_topics(num_keywords=15), dpi=80)
+        print('Images are being saved in the project root folder')
+        plot_word_clouds_of_topics(model.get_topics(num_keywords=15), dpi=80, show_plot=False,
+                          save=True, dir_save_path=get_abspath_from_project_source_root('..'))
     # endregion
 
     # region 4. Most repr docs of one topic

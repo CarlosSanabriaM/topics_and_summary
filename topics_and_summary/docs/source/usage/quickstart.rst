@@ -106,18 +106,18 @@ The topics can be showed in 2 ways:
 * **Text format**, where each topic shows it's most important keywords, and the importance of each one inside the topic.
   This is done with the print_topics() method, that has a parameter pretty_format. If is True, topics are printed in a
   more structured way. If is false, each topic is printed in one line, as gensim does.
-* **Wordclouds**, which plots the most important keywords of each topic in a matplotlib.pyplot plot. This is done with
-  the plot_word_clouds_of_topics() function of the visualizations module, that receives a List[Topic], that can be
-  obtained with the get_topics() method of the TopicsModel class.
+* **Wordclouds**, which saves some .png files with the most important keywords of each topic in the project root folder.
+  This is done with the plot_word_clouds_of_topics() function of the visualizations module, that receives a List[Topic],
+  that can be obtained with the get_topics() method of the TopicsModel class.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-   :emphasize-lines-in-source-code: 70,73 <-- -56+1  = 15,18
+   :emphasize-lines-in-source-code: 70,74,75 <-- -56+1  = 15,19,20
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
     :lineno-start: 56
     :language: python
-    :lines: 56-73
-    :emphasize-lines: 15,18
+    :lines: 56-75
+    :emphasize-lines: 15,19,20
 
 
 
@@ -134,12 +134,12 @@ get_k_most_repr_docs_of_topic_as_df() returns a pandas DataFrame (ordered by doc
 with the k most representative documents of the specified topic.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-   :emphasize-lines-in-source-code: 85,88,90 <-- -77+1  = 9,12,14
+   :emphasize-lines-in-source-code: 87,90,92 <-- -79+1  = 9,12,14
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 77
+    :lineno-start: 79
     :language: python
-    :lines: 77-90
+    :lines: 79-92
     :emphasize-lines: 9,12,14
 
 
@@ -167,12 +167,12 @@ preprocessing.dataset module. The preprocess_dataset() function returned the pre
 which is the one passed here to the ngrams_model_func parameter.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-   :emphasize-lines-in-source-code: 132 <-- -94+1 = 39
+   :emphasize-lines-in-source-code: 134 <-- -94+1 = 39
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 94
+    :lineno-start: 96
     :language: python
-    :lines: 94-132
+    :lines: 96-134
     :emphasize-lines: 39
 
 
@@ -190,12 +190,12 @@ In this example, the *ngrams='tri'* and the *ngrams_model_func=trigrams_func* pa
 for the same reason as the one explained above.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-   :emphasize-lines-in-source-code: 147-149,152,154 <-- -136+1 = 12-14,17,19
+   :emphasize-lines-in-source-code: 149-151,153,156 <-- -138+1 = 12-14,17,19
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 136
+    :lineno-start: 138
     :language: python
-    :lines: 136-154
+    :lines: 138-156
     :emphasize-lines: 12-14,17,19
 
 
@@ -212,13 +212,59 @@ get_k_best_sentences_of_text(), that returns the k best sentences of the given t
 Internally, the get_k_best_sentences_of_text() method uses word embeddings (either GloVe or Word2Vec).
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-   :emphasize-lines-in-source-code: 170,171 <-- -158+1 = 13,14
+   :emphasize-lines-in-source-code: 172,173 <-- -160+1 = 13,14
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 158
+    :lineno-start: 160
     :language: python
-    :lines: 158-175
+    :lines: 160-177
     :emphasize-lines: 13,14
+
+
+
+
+Execute the demo using a docker container
+------------------------------------------
+
+A docker container can be created using the Dockerfile.
+
+.. warning:: The Dockerfile expects that the **20 newsgroups dataset, the embeddings, and the mallet source have been
+   download by the user**, because the docker container mounts the source code and this files as a volume.
+
+   * The topics_and_summary/datasets folder must contain the 20_newsgroups folder with the dataset
+   * The topics_and_summary/embeddings folder must contain the glove and the word2vec folders.
+   * The mallet-2.0.8 folder must contain the mallet source code.
+
+   The :ref:`download-other-elements` section of the Usage Installation page explains how to download this files.
+
+How to run the docker container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Execute the following commands the **first time** you want to execute the demo:
+
+   ::
+
+      cd <project-root-folder>
+
+      # Create the docker image
+      docker build . -t topics_and_summary:latest
+
+      # Run the a docker container using that image
+      docker run -v $PWD:/topics_and_summary -i -t topics_and_summary:latest
+
+After executing this, the demo will execute.
+
+.. warning:: Executing the demo in docker this way will make mallet slower, because it needs to communicate
+   using a text file between the container and the host.
+
+The **next times** you are going to run the demo, execute this command:
+
+::
+
+   docker container ls
+   # Copy the CONTAINER ID
+
+   docker exec -i -t <container-id> python -c "import sys;sys.path.extend(['/topics_and_summary']);exec(open('/topics_and_summary/topics_and_summary/examples/demo.py').read())"
 
 
 

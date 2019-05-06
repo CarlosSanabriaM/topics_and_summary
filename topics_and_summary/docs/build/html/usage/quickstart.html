@@ -183,9 +183,9 @@ and pass it to the load() or __init__ method of the models.</p>
 <li><p><strong>Text format</strong>, where each topic shows it’s most important keywords, and the importance of each one inside the topic.
 This is done with the print_topics() method, that has a parameter pretty_format. If is True, topics are printed in a
 more structured way. If is false, each topic is printed in one line, as gensim does.</p></li>
-<li><p><strong>Wordclouds</strong>, which plots the most important keywords of each topic in a matplotlib.pyplot plot. This is done with
-the plot_word_clouds_of_topics() function of the visualizations module, that receives a List[Topic], that can be
-obtained with the get_topics() method of the TopicsModel class.</p></li>
+<li><p><strong>Wordclouds</strong>, which saves some .png files with the most important keywords of each topic in the project root folder.
+This is done with the plot_word_clouds_of_topics() function of the visualizations module, that receives a List[Topic],
+that can be obtained with the get_topics() method of the TopicsModel class.</p></li>
 </ul>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>56
 57
@@ -204,7 +204,9 @@ obtained with the get_topics() method of the TopicsModel class.</p></li>
 70
 71
 72
-73</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;3. Show the topics of the chosen model&#39;</span><span class="p">)</span>
+73
+74
+75</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;3. Show the topics of the chosen model&#39;</span><span class="p">)</span>
 
     <span class="n">user_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;In which format ([t]ext, [i]mages, [b]oth)? (t/i/B):&#39;</span><span class="p">)</span>
 
@@ -221,7 +223,9 @@ obtained with the get_topics() method of the TopicsModel class.</p></li>
 <span class="hll">        <span class="n">model</span><span class="o">.</span><span class="n">print_topics</span><span class="p">(</span><span class="n">pretty_format</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </span>    <span class="k">if</span> <span class="n">images_format</span><span class="p">:</span>
         <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Images&#39;</span><span class="p">)</span>
-<span class="hll">        <span class="n">plot_word_clouds_of_topics</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_topics</span><span class="p">(</span><span class="n">num_keywords</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Images are being saved in the project root folder&#39;</span><span class="p">)</span>
+<span class="hll">        <span class="n">plot_word_clouds_of_topics</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_topics</span><span class="p">(</span><span class="n">num_keywords</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+</span><span class="hll">                          <span class="n">save</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">dir_save_path</span><span class="o">=</span><span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">))</span>
 </span></pre></div>
 </td></tr></table></div>
 </div>
@@ -233,9 +237,7 @@ This function uses the docs_topics_df. If the get_dominant_topic_of_each_doc_as_
 internally in the TopicsModel instance. The docs_topics_df could also have been loaded from disk.</p>
 <p>get_k_most_repr_docs_of_topic_as_df() returns a pandas DataFrame (ordered by document-topic probability),
 with the k most representative documents of the specified topic.</p>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>77
-78
-79
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>79
 80
 81
 82
@@ -246,7 +248,9 @@ with the k most representative documents of the specified topic.</p>
 87
 88
 89
-90</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;4. Show the k most representative documents of the topic 16&#39;</span><span class="p">)</span>
+90
+91
+92</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;4. Show the k most representative documents of the topic 16&#39;</span><span class="p">)</span>
 
     <span class="n">k</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;k value (default is 2):&#39;</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -279,9 +283,7 @@ using for that the <em>ngrams_model_func</em> passed as a parameter. This option
 generated with a dataset preprocessed generating trigrams, using the preprocess_dataset() function of the
 preprocessing.dataset module. The preprocess_dataset() function returned the preprocessed dataset and a trigrams_func,
 which is the one passed here to the ngrams_model_func parameter.</p>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 94
- 95
- 96
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 96
  97
  98
  99
@@ -317,7 +319,9 @@ which is the one passed here to the ngrams_model_func parameter.</p>
 129
 130
 131
-132</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;5. Given a text, predict the topics probability&#39;</span><span class="p">)</span>
+132
+133
+134</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;5. Given a text, predict the topics probability&#39;</span><span class="p">)</span>
 
     <span class="n">user_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Use a religion [h]ardcoded text or &#39;</span>
                        <span class="s1">&#39;write your [o]wn text? (H/o): &#39;</span><span class="p">)</span>
@@ -367,9 +371,7 @@ This method calls the predict_topic_prob_on_text() and the  get_k_most_repr_docs
 so it needs the docs_topics_df.</p>
 <p>In this example, the <em>ngrams=’tri’</em> and the <em>ngrams_model_func=trigrams_func</em> parameters are passed again,
 for the same reason as the one explained above.</p>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>136
-137
-138
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>138
 139
 140
 141
@@ -385,7 +387,9 @@ for the same reason as the one explained above.</p>
 151
 152
 153
-154</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;6. Given a text, get k most related documents&#39;</span><span class="p">)</span>
+154
+155
+156</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;6. Given a text, get k most related documents&#39;</span><span class="p">)</span>
 
     <span class="n">k</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;k value (default is 2):&#39;</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -414,9 +418,7 @@ for the same reason as the one explained above.</p>
 get_k_best_sentences_of_text(), that returns the k best sentences of the given text
 (the ones that summarizes it the most). It performs, therefore, an extractive summary.</p>
 <p>Internally, the get_k_best_sentences_of_text() method uses word embeddings (either GloVe or Word2Vec).</p>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>158
-159
-160
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>160
 161
 162
 163
@@ -431,7 +433,9 @@ get_k_best_sentences_of_text(), that returns the k best sentences of the given t
 172
 173
 174
-175</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;7. Summarize a given text (get k best sentences)&#39;</span><span class="p">)</span>
+175
+176
+177</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;7. Summarize a given text (get k best sentences)&#39;</span><span class="p">)</span>
 
     <span class="n">k</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;k value (default is 2):&#39;</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -451,6 +455,50 @@ get_k_best_sentences_of_text(), that returns the k best sentences of the given t
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Sentence {0}: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sent</span><span class="p">))</span>
 </pre></div>
 </td></tr></table></div>
+</div>
+</div>
+</div>
+<div class="section" id="execute-the-demo-using-a-docker-container">
+<h2>Execute the demo using a docker container<a class="headerlink" href="#execute-the-demo-using-a-docker-container" title="Permalink to this headline">¶</a></h2>
+<p>A docker container can be created using the Dockerfile.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The Dockerfile expects that the <strong>20 newsgroups dataset, the embeddings, and the mallet source have been
+download by the user</strong>, because the docker container mounts the source code and this files as a volume.</p>
+<ul class="simple">
+<li><p>The topics_and_summary/datasets folder must contain the 20_newsgroups folder with the dataset</p></li>
+<li><p>The topics_and_summary/embeddings folder must contain the glove and the word2vec folders.</p></li>
+<li><p>The mallet-2.0.8 folder must contain the mallet source code.</p></li>
+</ul>
+<p>The <a class="reference internal" href="installation.html#download-other-elements"><span class="std std-ref">Download other elements</span></a> section of the Usage Installation page explains how to download this files.</p>
+</div>
+<div class="section" id="how-to-run-the-docker-container">
+<h3>How to run the docker container<a class="headerlink" href="#how-to-run-the-docker-container" title="Permalink to this headline">¶</a></h3>
+<p>Execute the following commands the <strong>first time</strong> you want to execute the demo:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd &lt;project-root-folder&gt;
+
+# Create the docker image
+docker build . -t topics_and_summary:latest
+
+# Run the a docker container using that image
+docker run -v $PWD:/topics_and_summary -i -t topics_and_summary:latest
+</pre></div>
+</div>
+</div></blockquote>
+<p>After executing this, the demo will execute.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Executing the demo in docker this way will make mallet slower, because it needs to communicate
+using a text file between the container and the host.</p>
+</div>
+<p>The <strong>next times</strong> you are going to run the demo, execute this command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">container</span> <span class="n">ls</span>
+<span class="c1"># Copy the CONTAINER ID</span>
+
+<span class="n">docker</span> <span class="n">exec</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">t</span> <span class="o">&lt;</span><span class="n">container</span><span class="o">-</span><span class="nb">id</span><span class="o">&gt;</span> <span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;import sys;sys.path.extend([&#39;/topics_and_summary&#39;]);exec(open(&#39;/topics_and_summary/topics_and_summary/examples/demo.py&#39;).read())&quot;</span>
+</pre></div>
+</div>
 <p class="rubric">Footnotes</p>
 <dl class="footnote brackets">
 <dt class="label" id="f1"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
@@ -458,7 +506,6 @@ get_k_best_sentences_of_text(), that returns the k best sentences of the given t
 important one, because requests the gensim model to make predictions of the topics probabilities of a given text.</p>
 </dd>
 </dl>
-</div>
 </div>
 </div>
 </div>
