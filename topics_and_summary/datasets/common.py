@@ -54,7 +54,7 @@ class Dataset(metaclass=abc.ABCMeta):
         """Returns the files as a pandas DataFrame."""
 
     @abc.abstractmethod
-    def as_documents_content_list(self, tokenize_words=True):
+    def as_documents_content_list(self, tokenize_words=True) -> List[str]:
         """
         Returns a list of the content of the documents in the dataset.
 

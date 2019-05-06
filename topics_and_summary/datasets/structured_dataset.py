@@ -53,7 +53,6 @@ class StructuredDataset(Dataset):
 
                 self.files_dict[directory].append(self._create_structured_document(directory, file_name, file_content))
 
-    @abc.abstractmethod
     def _create_structured_document(self, directory: str, file_name: str, file_content: str):
         """
         Factory Method design pattern. The subclasses override this method, \
@@ -64,6 +63,7 @@ class StructuredDataset(Dataset):
         :param name: Name of the document.
         :param content: Content of the document.
         """
+        return StructuredDocument(directory, file_name, file_content)
 
     def apply_function_to_files(self, func: Callable):
         """
@@ -95,7 +95,7 @@ class StructuredDataset(Dataset):
 
         return pd.DataFrame.from_dict(dataframe_dict, orient='index', columns=['document', 'class', 'document_name'])
 
-    def as_documents_content_list(self, tokenize_words=True):
+    def as_documents_content_list(self, tokenize_words=True) -> List[str]:
         if tokenize_words:
             return [file.content.split() for files_list in list(self.files_dict.values()) for file in files_list]
         return [file.content for files_list in list(self.files_dict.values()) for file in files_list]
