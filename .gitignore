@@ -16,7 +16,8 @@ __pycache__/
 .scannerwork
 
 ### Documentation build files ###
-topics_and_summary/docs/build/
+#topics_and_summary/docs/build/
+topics_and_summary/docs/build/doctrees
 
 ### Project stored objects ###
 # Exclude all the elements stored on disk, except the best-model

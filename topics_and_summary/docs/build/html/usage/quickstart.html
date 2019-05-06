@@ -1,0 +1,529 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Quickstart &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../api-reference.html" />
+    <link rel="prev" title="Usage Installation" href="installation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../api-reference.html" title="API Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Usage Installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../usage.html" accesskey="U">Usage</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="demo">
+<h2>Demo<a class="headerlink" href="#demo" title="Permalink to this headline">¶</a></h2>
+<p>The module <strong>examples.demo.py</strong> contains a <strong>demo of the main functionality</strong> of this library.</p>
+<div class="section" id="how-to-execute-the-demo">
+<h3>How to execute the demo<a class="headerlink" href="#how-to-execute-the-demo" title="Permalink to this headline">¶</a></h3>
+<p>The demo can be executed in 2 ways:</p>
+<ol class="loweralpha">
+<li><p>If the library is installed, can be executed as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">topics_and_summary.examples</span> <span class="k">import</span> <span class="n">demo</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">demo</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Executing the demo this way sometimes leads to problems due to Python pickle objects stored in
+the saved-elements folder (that are used in the demo).</p>
+<p>This can happen if the library was installed like this: <em>pip install &lt;project-root-path&gt;</em>.</p>
+<p>A possible solution is to install the library this way: <em>pip install -e &lt;project-root-path&gt;</em>. This fixes the problem
+because it doesn’t copy any files. Rather, it points to the source code folder. A broader explanation is present in the
+<a class="reference internal" href="../development/installation.html#development-installation-install-the-library"><span class="std std-ref">Install the library</span></a> section of the Development Installation page.</p>
+<p>Another solution is to execute the demo without installing the library, as explained below.</p>
+</div>
+</li>
+<li><p>If the library isn’t installed, but the source code is available, it can be executed as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sys</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;&lt;project-root-path&gt;&#39;</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">exec</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;&lt;project-root-path&gt;/topics_and_summary/examples/demo.py&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="demo-content">
+<h3>Demo content<a class="headerlink" href="#demo-content" title="Permalink to this headline">¶</a></h3>
+<p>This section explains the demo, that is divided in sections.</p>
+<div class="section" id="section-1">
+<h4>Section 1<a class="headerlink" href="#section-1" title="Permalink to this headline">¶</a></h4>
+<p><strong>Loads the 20 newsgroups dataset and applies preprocessing</strong>, or <strong>loads a preprocessed dataset stored on disk</strong>.</p>
+<p>The trigrams_func is the function obtained after preprocessing the dataset with the ngrams=’tri’ option.
+It needs to be saved, because it will be used later to preprocess the text passed to the model to predict the
+topics probability on that text, or to return the related documents.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;1. Load dataset and preprocessing&#39;</span><span class="p">)</span>
+
+    <span class="n">user_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Load previously preprocessed dataset from [d]isk (quick) or &#39;</span>
+                       <span class="s1">&#39;load dataset and preprocess it in the [m]oment (slow)? (D/m): &#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">user_input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;m&#39;</span><span class="p">:</span>  <span class="c1"># D option</span>
+<span class="hll">        <span class="n">dataset</span> <span class="o">=</span> <span class="n">TwentyNewsGroupsDataset</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;trigrams_dataset&#39;</span><span class="p">)</span>
+</span><span class="hll">        <span class="n">trigrams_func</span> <span class="o">=</span> <span class="n">load_func_from_disk</span><span class="p">(</span><span class="s1">&#39;trigrams_func&#39;</span><span class="p">)</span>
+</span>        <span class="n">pretty_print</span><span class="p">(</span><span class="s2">&quot;One of the files of the preprocessed dataset&quot;</span><span class="p">)</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">print_some_files</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">print_file_num</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># m option</span>
+        <span class="c1"># Load 20 newsgroups dataset, applying the specific preprocessing</span>
+<span class="hll">        <span class="n">dataset</span> <span class="o">=</span> <span class="n">TwentyNewsGroupsDataset</span><span class="p">()</span>
+</span>
+        <span class="c1"># Prints some files</span>
+        <span class="n">pretty_print</span><span class="p">(</span><span class="s2">&quot;One of the files of the dataset after the dataset specific preprocessing&quot;</span><span class="p">)</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">print_some_files</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">print_file_num</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="hll">        <span class="c1"># Applies preprocessing, generating trigrams</span>
+</span>        <span class="c1"># All the parameters except ngrams have their default value</span>
+        <span class="n">dataset</span><span class="p">,</span> <span class="n">trigrams_func</span> <span class="o">=</span> <span class="n">preprocess_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;tri&#39;</span><span class="p">)</span>
+        <span class="n">pretty_print</span><span class="p">(</span><span class="s2">&quot;One of the files of the dataset after the preprocessing&quot;</span><span class="p">)</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">print_some_files</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">print_file_num</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="section-2">
+<h4>Section 2<a class="headerlink" href="#section-2" title="Permalink to this headline">¶</a></h4>
+<p><strong>Generates a LdaGensimModel</strong> or <strong>loads a LdaMalletModel stored on disk</strong>.</p>
+<p>Both classes inherit from the TopicsModel class. The __init__ method of LdaGensimModel, LsaGensimModel and LdaMalletModel
+creates the model. Creating the model in LdaMalletModel takes much more time than the others (up to 10 min).</p>
+<p>LdaGensimModel, LsaGensimModel and LdaMalletModel have the load() method, that loads a previously created model,
+stored on disk using the save() method.</p>
+<p>docs_topics_df is a pandas DataFrame that was created with the method get_dominant_topic_of_each_doc_as_df().
+This is a key method, because it’s used by the others. It generates a pandas DataFrame with the most representative topic
+of each document in the dataset. To achieve this, it has to predict the topics probabilities of each document.
+Each prediction can be done in less than a second with LdaGensimModel and LsaGensimModel, but LdaMalletModel can take more than
+5 seconds to make a prediction, so if the dataset has many documents (as it should have), then get_dominant_topic_of_each_doc_as_df() is
+extremely slow with LdaMalletModel.</p>
+<p>So, for this reason, the docs_topics_df is created once, and then it’s stored on disk. After that, there is no need
+to recalculate the predictions. The only thing that needs to be done is to load in memory the docs_topics_df stored on disk,
+and pass it to the load() or __init__ method of the models.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;2. Generate or load a TopicsModel&#39;</span><span class="p">)</span>
+
+    <span class="n">user_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Load previously generated Lda[M]alletModel (quick and better model) or &#39;</span>
+                       <span class="s1">&#39;generate Lda[G]ensimModel in the moment (slow and worst model)? (M/g): &#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">user_input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;g&#39;</span><span class="p">:</span>  <span class="c1"># M option</span>
+<span class="hll">        <span class="n">model_dir_path</span> <span class="o">=</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;saved-elements/topics/&#39;</span>
+</span><span class="hll">                                                              <span class="s1">&#39;best-model/trigrams/lda-mallet&#39;</span><span class="p">)</span>
+</span><span class="hll">        <span class="n">docs_topics_df</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;mallet_17topics_docs_topics_df&#39;</span><span class="p">)</span>
+</span><span class="hll">        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;model17&#39;</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">,</span>
+</span><span class="hll">                                    <span class="n">docs_topics_df</span><span class="o">=</span><span class="n">docs_topics_df</span><span class="p">)</span>
+</span>    <span class="k">else</span><span class="p">:</span>  <span class="c1"># g option</span>
+<span class="hll">        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaGensimModel</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+</span></pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="section-3">
+<h4>Section 3<a class="headerlink" href="#section-3" title="Permalink to this headline">¶</a></h4>
+<p><strong>Shows the topics</strong> obtained with the model.</p>
+<p>The topics can be showed in 2 ways:</p>
+<ul class="simple">
+<li><p><strong>Text format</strong>, where each topic shows it’s most important keywords, and the importance of each one inside the topic.
+This is done with the print_topics() method, that has a parameter pretty_format. If is True, topics are printed in a
+more structured way. If is false, each topic is printed in one line, as gensim does.</p></li>
+<li><p><strong>Wordclouds</strong>, which plots the most important keywords of each topic in a matplotlib.pyplot plot. This is done with
+the plot_word_clouds_of_topics() function of the visualizations module, that receives a List[Topic], that can be
+obtained with the get_topics() method of the TopicsModel class.</p></li>
+</ul>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;3. Show the topics of the chosen model&#39;</span><span class="p">)</span>
+
+    <span class="n">user_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;In which format ([t]ext, [i]mages, [b]oth)? (t/i/B):&#39;</span><span class="p">)</span>
+
+    <span class="n">text_format</span> <span class="o">=</span> <span class="n">images_format</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="n">user_input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;t&#39;</span> <span class="ow">and</span> <span class="n">user_input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span>  <span class="c1"># B option</span>
+        <span class="n">text_format</span> <span class="o">=</span> <span class="n">images_format</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">elif</span> <span class="n">user_input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>
+        <span class="n">text_format</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">elif</span> <span class="n">user_input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span>
+        <span class="n">images_format</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">if</span> <span class="n">text_format</span><span class="p">:</span>
+        <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Text format&#39;</span><span class="p">)</span>
+<span class="hll">        <span class="n">model</span><span class="o">.</span><span class="n">print_topics</span><span class="p">(</span><span class="n">pretty_format</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span>    <span class="k">if</span> <span class="n">images_format</span><span class="p">:</span>
+        <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Images&#39;</span><span class="p">)</span>
+<span class="hll">        <span class="n">plot_word_clouds_of_topics</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_topics</span><span class="p">(</span><span class="n">num_keywords</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+</span></pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="section-4">
+<h4>Section 4<a class="headerlink" href="#section-4" title="Permalink to this headline">¶</a></h4>
+<p><strong>Shows the k most representative documents of the topic 16.</strong></p>
+<p>This is done with the get_k_most_repr_docs_of_topic_as_df() method of the TopicsModel class.
+This function uses the docs_topics_df. If the get_dominant_topic_of_each_doc_as_df() was called before, it is stored
+internally in the TopicsModel instance. The docs_topics_df could also have been loaded from disk.</p>
+<p>get_k_most_repr_docs_of_topic_as_df() returns a pandas DataFrame (ordered by document-topic probability),
+with the k most representative documents of the specified topic.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;4. Show the k most representative documents of the topic 16&#39;</span><span class="p">)</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;k value (default is 2):&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="hll">    <span class="n">two_most_repr_docs_topic16_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_k_most_repr_docs_of_topic_as_df</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+</span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Document {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+<span class="hll">        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Probability: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">two_most_repr_docs_topic16_df</span><span class="p">[</span><span class="s1">&#39;Topic prob&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]))</span>
+</span>        <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Original document content&#39;</span><span class="p">)</span>
+<span class="hll">        <span class="k">print</span><span class="p">(</span><span class="n">two_most_repr_docs_topic16_df</span><span class="p">[</span><span class="s1">&#39;Original doc text&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+</span></pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="section-5">
+<h4>Section 5<a class="headerlink" href="#section-5" title="Permalink to this headline">¶</a></h4>
+<p><strong>Predicts the topics probabilities of a text.</strong></p>
+<p>This is done with the predict_topic_prob_on_text() method of the TopicsModel class.
+This method doesn’t need the docs_topics_df. In fact, predict_topic_prob_on_text() is called by
+the get_dominant_topic_of_each_doc_as_df() method, that generates the docs_topics_df.</p>
+<p>This method is the one who communicates directly with the gensim models <a class="footnote-reference brackets" href="#f1" id="id1">1</a>, calling the gensim model with the
+indexing operation (self.model[text_as_bow]). TopicsModel is a wrapper of the gensim models functionality.</p>
+<p>This method returns a pandas DataFrame, but it also can print a table with the results.</p>
+<p>In this example, be can see that the <em>ngrams=’tri’</em> and the <em>ngrams_model_func=trigrams_func</em> parameters are passed.
+This is because this method internally preprocess the dataset, calling the preprocess_dataset() function of the
+preprocessing.dataset module. The option <em>ngrams=’tri’</em> tells the method to generate trigrams on the given text,
+using for that the <em>ngrams_model_func</em> passed as a parameter. This options are passed because the topics model was
+generated with a dataset preprocessed generating trigrams, using the preprocess_dataset() function of the
+preprocessing.dataset module. The preprocess_dataset() function returned the preprocessed dataset and a trigrams_func,
+which is the one passed here to the ngrams_model_func parameter.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;5. Given a text, predict the topics probability&#39;</span><span class="p">)</span>
+
+    <span class="n">user_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Use a religion [h]ardcoded text or &#39;</span>
+                       <span class="s1">&#39;write your [o]wn text? (H/o): &#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">user_input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;o&#39;</span><span class="p">:</span>  <span class="c1"># H option</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. </span>
+<span class="s2">John&#39;s gospel does not directly describe Jesus&#39; baptism. Most modern theologians view the </span>
+<span class="s2">baptism of Jesus by John the Baptist as a historical event to which a high degree of </span>
+<span class="s2">certainty can be assigned.[1][2][3][4][5] Along with the crucifixion of Jesus, most biblical </span>
+<span class="s2">scholars view it as one of the two historically certain facts about him, and often use it</span>
+<span class="s2">as the starting point for the study of the historical Jesus.[6] </span>
+<span class="s2">The baptism is one of the five major milestones in the gospel narrative of the life of Jesus, </span>
+<span class="s2">the others being the Transfiguration, Crucifixion, Resurrection, and Ascension.[7][8] </span>
+<span class="s2">Most Christian denominations view the baptism of Jesus as an important event and a basis for </span>
+<span class="s2">the Christian rite of baptism (see also Acts 19:1–7). In Eastern Christianity, Jesus&#39; baptism </span>
+<span class="s2">is commemorated on 6 January (the Julian calendar date of which corresponds to 19 January on </span>
+<span class="s2">the Gregorian calendar), the feast of Epiphany.[9] In the Roman Catholic Church, the Anglican</span>
+<span class="s2">Communion, the Lutheran Churches and some other Western denominations, it is recalled on a day </span>
+<span class="s2">within the following week, the feast of the baptism of the Lord. In Roman Catholicism, </span>
+<span class="s2">the baptism of Jesus is one of the Luminous Mysteries sometimes added to the Rosary.</span>
+<span class="s2">It is a Trinitarian feast in the Eastern Orthodox Churches.&quot;&quot;&quot;</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># o option</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Write your text (when finish, press Enter two times):&#39;</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Text&#39;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Text-topics probability&#39;</span><span class="p">)</span>
+<span class="hll">    <span class="n">model</span><span class="o">.</span><span class="n">predict_topic_prob_on_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;tri&#39;</span><span class="p">,</span> <span class="n">ngrams_model_func</span><span class="o">=</span><span class="n">trigrams_func</span><span class="p">)</span>
+</span></pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="section-6">
+<h4>Section 6<a class="headerlink" href="#section-6" title="Permalink to this headline">¶</a></h4>
+<p><strong>Shows the k most related documents to a text</strong></p>
+<p>This is done with the get_related_docs_as_df() method of the TopicsModel class.
+This method calls the predict_topic_prob_on_text() and the  get_k_most_repr_docs_per_topic_as_df() methods,
+so it needs the docs_topics_df.</p>
+<p>In this example, the <em>ngrams=’tri’</em> and the <em>ngrams_model_func=trigrams_func</em> parameters are passed again,
+for the same reason as the one explained above.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;6. Given a text, get k most related documents&#39;</span><span class="p">)</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;k value (default is 2):&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Text&#39;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="hll">    <span class="n">related_docs_df</span> <span class="o">=</span> \
+</span><span class="hll">        <span class="n">model</span><span class="o">.</span><span class="n">get_related_docs_as_df</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">num_docs</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;tri&#39;</span><span class="p">,</span>
+</span><span class="hll">                                     <span class="n">ngrams_model_func</span><span class="o">=</span><span class="n">trigrams_func</span><span class="p">)</span>
+</span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Document {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+<span class="hll">        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Probability: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">related_docs_df</span><span class="p">[</span><span class="s1">&#39;Doc prob&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]))</span>
+</span>        <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Original document content&#39;</span><span class="p">)</span>
+<span class="hll">        <span class="k">print</span><span class="p">(</span><span class="n">related_docs_df</span><span class="p">[</span><span class="s1">&#39;Original doc text&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+</span></pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="section-7">
+<h4>Section 7<a class="headerlink" href="#section-7" title="Permalink to this headline">¶</a></h4>
+<p><strong>Summarizes a text</strong></p>
+<p>This is done with the TextRank class (that uses the TextRank algorithm). This class has only one method:
+get_k_best_sentences_of_text(), that returns the k best sentences of the given text
+(the ones that summarizes it the most). It performs, therefore, an extractive summary.</p>
+<p>Internally, the get_k_best_sentences_of_text() method uses word embeddings (either GloVe or Word2Vec).</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;7. Summarize a given text (get k best sentences)&#39;</span><span class="p">)</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;k value (default is 2):&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Text&#39;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Summary&#39;</span><span class="p">)</span>
+<span class="hll">    <span class="n">tr</span> <span class="o">=</span> <span class="n">TextRank</span><span class="p">()</span>
+</span><span class="hll">    <span class="n">summary</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_k_best_sentences_of_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+</span>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">summary</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Sentence {0}: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sent</span><span class="p">))</span>
+</pre></div>
+</td></tr></table></div>
+<p class="rubric">Footnotes</p>
+<dl class="footnote brackets">
+<dt class="label" id="f1"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Other methods also communicate directly with the gensim models, but this specific communication is the most
+important one, because requests the gensim model to make predictions of the topics probabilities of a given text.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../usage.html">Usage</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Usage Installation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Quickstart</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Usage Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../api-reference.html"
+                        title="next chapter">API Reference</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../api-reference.html" title="API Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Usage Installation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../usage.html" >Usage</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

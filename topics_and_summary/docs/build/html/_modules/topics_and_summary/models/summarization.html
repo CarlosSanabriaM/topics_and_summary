@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>topics_and_summary.models.summarization &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for topics_and_summary.models.summarization</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">nltk</span> <span class="k">import</span> <span class="n">sent_tokenize</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">cosine_similarity</span>
+
+<span class="kn">from</span> <span class="nn">topics_and_summary.embeddings</span> <span class="k">import</span> <span class="n">Glove</span><span class="p">,</span> <span class="n">Word2VecModel</span>
+<span class="kn">from</span> <span class="nn">topics_and_summary.preprocessing.text</span> <span class="k">import</span> <span class="n">preprocess_text</span>
+
+
+<div class="viewcode-block" id="SummarizationModel"><a class="viewcode-back" href="../../../api/topics_and_summary.models.summarization.html#topics_and_summary.models.summarization.SummarizationModel">[docs]</a><span class="k">class</span> <span class="nc">SummarizationModel</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interface that represents a summarization model.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SummarizationModel.get_k_best_sentences_of_text"><a class="viewcode-back" href="../../../api/topics_and_summary.models.summarization.html#topics_and_summary.models.summarization.SummarizationModel.get_k_best_sentences_of_text">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_k_best_sentences_of_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_best_sentences</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the k best sentences of the given text.</span>
+
+<span class="sd">        :param text: Text where summary sentences will be obtained.</span>
+<span class="sd">        :param num_best_sentences: Number of summary sentences to be returned.</span>
+<span class="sd">        :return: List[str] where each str is a sentence.</span>
+<span class="sd">        &quot;&quot;&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="TextRank"><a class="viewcode-back" href="../../../api/topics_and_summary.models.summarization.html#topics_and_summary.models.summarization.TextRank">[docs]</a><span class="k">class</span> <span class="nc">TextRank</span><span class="p">(</span><span class="n">SummarizationModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Summarization class using the TextRank algorithm&quot;&quot;&quot;</span>
+
+    <span class="n">_MAX_NUM_ITERATIONS</span> <span class="o">=</span> <span class="mi">500</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Max number of iterations in the power method eigenvalue solver. If the algorithm fails to converge to the</span>
+<span class="sd">    specified tolerance within the specified number of iterations of the power iteration method, the</span>
+<span class="sd">    PowerIterationFailedConvergence is raised.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_model</span><span class="o">=</span><span class="s1">&#39;glove&#39;</span><span class="p">,</span> <span class="n">glove_embedding_dim</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a TextRank object that uses the specified embedding model to create the sentence vectors.</span>
+
+<span class="sd">        :param embedding_model: Embedding model used to create the sentence vectors. \</span>
+<span class="sd">        Possible values are: &#39;glove&#39; or &#39;word2vec&#39;.</span>
+<span class="sd">        :param glove_embedding_dim: Dimension of the embedding word vectors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">embedding_model</span> <span class="o">==</span> <span class="s1">&#39;glove&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">Glove</span><span class="p">(</span><span class="n">glove_embedding_dim</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">Word2VecModel</span><span class="p">()</span>
+
+    <span class="c1"># TODO: Sometimes it can&#39;t converge, so it throws an Exception</span>
+<div class="viewcode-block" id="TextRank.get_k_best_sentences_of_text"><a class="viewcode-back" href="../../../api/topics_and_summary.models.summarization.html#topics_and_summary.models.summarization.TextRank.get_k_best_sentences_of_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_k_best_sentences_of_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_best_sentences</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the k best sentences of the given text. This method performs an Extractive Summary of the given text.</span>
+
+<span class="sd">        :param text: Text where sentences will be extracted.</span>
+<span class="sd">        :param num_best_sentences: Number of sentences of the text to be returned.</span>
+<span class="sd">        :return: List[str] where each str is a sentence. \</span>
+<span class="sd">        The list is in descending order by the importance of the sentences. \</span>
+<span class="sd">        It can raise a PowerIterationFailedConvergence exception if the algorithm doesn&#39;t converge.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># 1. Split text into sentences</span>
+        <span class="n">text_sentences</span> <span class="o">=</span> <span class="n">sent_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="c1"># 2. Preprocess each sentence</span>
+        <span class="n">preprocessed_sentences</span> <span class="o">=</span> <span class="p">[</span><span class="n">preprocess_text</span><span class="p">(</span><span class="n">sent</span><span class="p">)</span> <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">text_sentences</span><span class="p">]</span>
+
+        <span class="c1"># 3. Transform each sentence into a word embedding vector</span>
+        <span class="c1"># Transform each word of each sentence into a vector and calculate the mean</span>
+        <span class="c1"># of the vectors of the sentence. That mean vector will be the sentence vector.</span>
+        <span class="n">sentence_vectors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">preprocessed_sentences</span><span class="p">:</span>
+            <span class="n">sent_words</span> <span class="o">=</span> <span class="n">sent</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="c1"># If the sentence has no words after the preprocessing a default numpy array full of zeros is used</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sent_words</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">sent_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="o">.</span><span class="n">get_vectors_dim</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># For each word in the sentence, transform it to a vector. If the word is not present</span>
+                <span class="c1"># in the embeddings model, a default numpy array full of zeros is used.</span>
+                <span class="n">word_vectors</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="o">.</span><span class="n">get_word_vector</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">sent_words</span><span class="p">]</span>
+                <span class="c1"># Sentence vector is the mean of the word vectors</span>
+                <span class="n">sent_vector</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">word_vectors</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">word_vectors</span><span class="p">)</span>
+
+            <span class="n">sentence_vectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sent_vector</span><span class="p">)</span>
+
+        <span class="c1"># 4. Find similarities between sentences (Similarity Matrix)</span>
+        <span class="c1"># Define a matrix full of 0&#39;s of size MxM, being M the number of sentences</span>
+        <span class="n">similarity_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">sentence_vectors</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence_vectors</span><span class="p">)])</span>
+
+        <span class="c1"># Fill the matrix with the values of the cosine similarity between sentences</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sentence_vectors</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sentence_vectors</span><span class="p">)):</span>
+                <span class="c1"># If the sentence in the row and in the column is distinct</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
+                    <span class="n">similarity_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span>
+                        <span class="n">sentence_vectors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="o">.</span><span class="n">get_vectors_dim</span><span class="p">()),</span>
+                        <span class="n">sentence_vectors</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="o">.</span><span class="n">get_vectors_dim</span><span class="p">())</span>
+                    <span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># 5. Transform the similarity matrix into a graph</span>
+        <span class="n">nx_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">from_numpy_array</span><span class="p">(</span><span class="n">similarity_matrix</span><span class="p">)</span>
+
+        <span class="c1"># 6. Apply TextRank to the graph</span>
+        <span class="n">sentence_scores</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">pagerank</span><span class="p">(</span><span class="n">nx_graph</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_MAX_NUM_ITERATIONS</span><span class="p">)</span>
+
+        <span class="c1"># 7. Order sentences by the Page Rank score</span>
+        <span class="n">sorted_sentences</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(((</span><span class="n">sentence_scores</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sent</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">text_sentences</span><span class="p">)),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># 8. Get k best sentences</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">sent_tuple</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sent_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()),</span> <span class="n">sorted_sentences</span><span class="p">[:</span><span class="n">num_best_sentences</span><span class="p">]))</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development.html">Development</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

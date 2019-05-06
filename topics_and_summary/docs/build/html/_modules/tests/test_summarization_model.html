@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>tests.test_summarization_model &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_summarization_model</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">from</span> <span class="nn">models.summarization</span> <span class="k">import</span> <span class="n">TextRank</span>
+<span class="kn">from</span> <span class="nn">tests.paths</span> <span class="k">import</span> <span class="n">SAVED_OBJECTS_PATH</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">load_obj_from_disk</span>
+
+
+<div class="viewcode-block" id="TestSummarizationModel"><a class="viewcode-back" href="../../api/tests.test_summarization_model.html#tests.test_summarization_model.TestSummarizationModel">[docs]</a><span class="k">class</span> <span class="nc">TestSummarizationModel</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestSummarizationModel.test_get_k_best_sentences_of_text"><a class="viewcode-back" href="../../api/tests.test_summarization_model.html#tests.test_summarization_model.TestSummarizationModel.test_get_k_best_sentences_of_text">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_k_best_sentences_of_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. </span>
+<span class="s2">        John&#39;s gospel does not directly describe Jesus&#39; baptism.</span>
+<span class="s2">        Most modern theologians view the baptism of Jesus by John the Baptist as a historical event </span>
+<span class="s2">        to which a high degree of certainty can be assigned.[1][2][3][4][5] Along with the crucifixion </span>
+<span class="s2">        of Jesus, most biblical scholars view it as one of the two historically certain facts about him, </span>
+<span class="s2">        and often use it as the starting point for the study of the historical Jesus.[6]</span>
+<span class="s2">        The baptism is one of the five major milestones in the gospel narrative of the life of Jesus, </span>
+<span class="s2">        the others being the Transfiguration, Crucifixion, Resurrection, and Ascension.[7][8] </span>
+<span class="s2">        Most Christian denominations view the baptism of Jesus as an important event and a basis for the </span>
+<span class="s2">        Christian rite of baptism (see also Acts 19:1–7). In Eastern Christianity, Jesus&#39; baptism is commemorated </span>
+<span class="s2">        on 6 January (the Julian calendar date of which corresponds to 19 January on the Gregorian calendar), </span>
+<span class="s2">        the feast of Epiphany.[9] In the Roman Catholic Church, the Anglican Communion, the Lutheran Churches and </span>
+<span class="s2">        some other Western denominations, it is recalled on a day within the following week, the feast of the </span>
+<span class="s2">        baptism of the Lord. In Roman Catholicism, the baptism of Jesus is one of the Luminous Mysteries sometimes </span>
+<span class="s2">        added to the Rosary. It is a Trinitarian feast in the Eastern Orthodox Churches.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Expected result was previously calculated and stored in disk</span>
+        <span class="n">expected_result</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;test_get_k_best_sentences_of_text_expected_result&#39;</span><span class="p">,</span> <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+
+        <span class="n">tr_model</span> <span class="o">=</span> <span class="n">TextRank</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">tr_model</span><span class="o">.</span><span class="n">get_k_best_sentences_of_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">expected_result</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo-list.html">TODO List</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

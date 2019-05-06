@@ -1,0 +1,738 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>models.topics module &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-models.topics">
+<span id="models-topics-module"></span><h1>models.topics module<a class="headerlink" href="#module-models.topics" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="models.topics.Keyword">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">Keyword</code><span class="sig-paren">(</span><em>name: str</em>, <em>probability: float</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#Keyword"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.Keyword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that simply stores the name of a keywords and it’s probability inside a topic.
+It’s used for data transfer.</p>
+<dl class="method">
+<dt id="models.topics.Keyword.as_tuple">
+<code class="descname">as_tuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Tuple[str, float]<a class="reference internal" href="../_modules/models/topics.html#Keyword.as_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.Keyword.as_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Keyword as a tuple: (name, prob).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="models.topics.LdaGensimModel">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">LdaGensimModel</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em>, <em>dictionary: gensim.corpora.dictionary.Dictionary = None</em>, <em>corpus: List[List[Tuple[int</em>, <em>int]]] = None</em>, <em>num_topics=20</em>, <em>model=None</em>, <em>random_state=100</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaGensimModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaGensimModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.topics.TopicsModel" title="models.topics.TopicsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.topics.TopicsModel</span></code></a></p>
+<p>Class that encapsulates the functionality of gensim.models.LdaModel, making it easier to use.</p>
+<dl class="classmethod">
+<dt id="models.topics.LdaGensimModel.load">
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>dataset: topics_and_summary.datasets.common.Dataset</em>, <em>model_dir_path='/Users/carlos/anaconda3/lib/python3.6/site-packages/topics_and_summary/saved-elements/topics/lda'</em>, <em>docs_topics_df: pandas.core.frame.DataFrame = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaGensimModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaGensimModel.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the model with the given name from the specified path, and returns a TopicsModel instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model_name</strong> – Model name.</li>
+<li><strong>dataset</strong> – Dataset.</li>
+<li><strong>model_dir_path</strong> – Path to the directory where the model is in.</li>
+<li><strong>docs_topics_df</strong> – DataFrame with the dominant topic of each document, previously created with the method         get_dominant_topic_of_each_doc_as_df().</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a TopicsModel object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.LdaGensimModel.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>path='/Users/carlos/anaconda3/lib/python3.6/site-packages/topics_and_summary/saved-elements/topics/lda'</em>, <em>add_metadata_to_base_name=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaGensimModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaGensimModel.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the model to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_name</strong> – Name of the model.</li>
+<li><strong>path</strong> – Path were the models will be stored.</li>
+<li><strong>add_metadata_to_base_name</strong> – If True, the number of topics, the coherence value and the current time         are added at the end of the model name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="models.topics.LdaMalletModel">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">LdaMalletModel</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em>, <em>dictionary: gensim.corpora.dictionary.Dictionary = None</em>, <em>corpus: List[List[Tuple[int</em>, <em>int]]] = None</em>, <em>num_topics=20</em>, <em>model=None</em>, <em>mallet_path='/Users/carlos/anaconda3/lib/python3.6/site-packages/mallet-2.0.8/bin/mallet'</em>, <em>model_name: str = None</em>, <em>model_path='/Users/carlos/anaconda3/lib/python3.6/site-packages/topics_and_summary/saved-elements/topics/lda_mallet'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaMalletModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaMalletModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.topics.TopicsModel" title="models.topics.TopicsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.topics.TopicsModel</span></code></a></p>
+<p>Class that encapsulates the functionality of gensim.models.wrappers.LdaMallet, making it easier to use.</p>
+<dl class="classmethod">
+<dt id="models.topics.LdaMalletModel.load">
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>dataset: topics_and_summary.datasets.common.Dataset</em>, <em>model_dir_path='/Users/carlos/anaconda3/lib/python3.6/site-packages/topics_and_summary/saved-elements/topics/lda_mallet'</em>, <em>mallet_path='/Users/carlos/anaconda3/lib/python3.6/site-packages/mallet-2.0.8/bin/mallet'</em>, <em>docs_topics_df: pandas.core.frame.DataFrame = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaMalletModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaMalletModel.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the model with the given name from the specified path, and returns a LdaMalletModel instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model_name</strong> – Model name.</li>
+<li><strong>dataset</strong> – Dataset used to create the model previously.</li>
+<li><strong>model_dir_path</strong> – Path to the directory where the model is in.</li>
+<li><strong>mallet_path</strong> – Path to the mallet source code.</li>
+<li><strong>docs_topics_df</strong> – DataFrame with the dominant topic of each document, previously created with the method         get_dominant_topic_of_each_doc_as_df().</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a LdaMalletModel object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.LdaMalletModel.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaMalletModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaMalletModel.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the mallet model to the path specified in self.model.prefix and stores in a .txt the coherence value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="models.topics.LdaMalletModelsList">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">LdaMalletModelsList</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaMalletModelsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaMalletModelsList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.topics.TopicsModelsList" title="models.topics.TopicsModelsList"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.topics.TopicsModelsList</span></code></a></p>
+<p>Class for creating, comparing and storing easily a list of LdaMalletModels.</p>
+<dl class="method">
+<dt id="models.topics.LdaMalletModelsList.create_models_and_compute_coherence_values">
+<code class="descname">create_models_and_compute_coherence_values</code><span class="sig-paren">(</span><em>start=2</em>, <em>stop=20</em>, <em>step=1</em>, <em>coherence='c_v'</em>, <em>print_and_plot=True</em>, <em>title=&quot;Topic's model coherence comparison&quot;</em>, <em>save_plot=False</em>, <em>save_plot_path=None</em>, <em>models_base_name='mallet_model'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaMalletModelsList.create_models_and_compute_coherence_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaMalletModelsList.create_models_and_compute_coherence_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates, stores and returns topics models and it’s coherence values.         Can be used to determine an optimum number of topics.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> – Number of topics to start looking for the optimum.</li>
+<li><strong>stop</strong> – Maximum number of topics to be tried.</li>
+<li><strong>step</strong> – Number of topics to be incremented while looking for the optimum.</li>
+<li><strong>coherence</strong> – String that represents the type of coherence to calculate.         Valid values are: ‘c_v’, ‘c_uci’ and ‘c_npmi’.</li>
+<li><strong>print_and_plot</strong> – If true, prints and plots the results.</li>
+<li><strong>title</strong> – Title of the result’s plot. Ignored if print_and_plot is False.</li>
+<li><strong>save_plot</strong> – If is true and print_and_plot is True, save the plot to disk.</li>
+<li><strong>save_plot_path</strong> – If save_plot is True and print_and_plot is True, this is the path where         the plot will be saved.</li>
+<li><strong>models_base_name</strong> – Base name for the Mallet models. This param + num_topics of each model         is passed to the LdaMalletModel __init__ method, because is needed for storing the files of the model.</li>
+<li><strong>kwargs</strong> – Other keyword parameters for creating the models.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List of the created models and their corresponding coherence values.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.LdaMalletModelsList.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>index: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaMalletModelsList.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaMalletModelsList.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>If index parameter is None, saves all the models to disk.         If is a number, saves only the model with that index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> – Index of the model to be saved. If is none, saves all models.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="models.topics.LdaModelsList">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">LdaModelsList</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LdaModelsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LdaModelsList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.topics.TopicsModelsList" title="models.topics.TopicsModelsList"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.topics.TopicsModelsList</span></code></a></p>
+<p>Class for creating, comparing and storing easily a list of LdaModels.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="models.topics.LsaGensimModel">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">LsaGensimModel</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em>, <em>dictionary: gensim.corpora.dictionary.Dictionary = None</em>, <em>corpus: List[List[Tuple[int</em>, <em>int]]] = None</em>, <em>num_topics=20</em>, <em>model=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LsaGensimModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LsaGensimModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.topics.TopicsModel" title="models.topics.TopicsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.topics.TopicsModel</span></code></a></p>
+<p>Class that encapsulates the functionality of gensim.models.LsiModel, making it easier to use.</p>
+<dl class="classmethod">
+<dt id="models.topics.LsaGensimModel.load">
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>dataset: topics_and_summary.datasets.common.Dataset</em>, <em>model_dir_path='/Users/carlos/anaconda3/lib/python3.6/site-packages/topics_and_summary/saved-elements/topics/lsa'</em>, <em>docs_topics_df: pandas.core.frame.DataFrame = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LsaGensimModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LsaGensimModel.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the model with the given name from the specified path, and returns a TopicsModel instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model_name</strong> – Model name.</li>
+<li><strong>dataset</strong> – Dataset.</li>
+<li><strong>model_dir_path</strong> – Path to the directory where the model is in.</li>
+<li><strong>docs_topics_df</strong> – DataFrame with the dominant topic of each document, previously created with the method         get_dominant_topic_of_each_doc_as_df().</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a TopicsModel object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.LsaGensimModel.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>path='/Users/carlos/anaconda3/lib/python3.6/site-packages/topics_and_summary/saved-elements/topics/lsa'</em>, <em>add_metadata_to_base_name=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LsaGensimModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LsaGensimModel.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the model to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_name</strong> – Name of the model.</li>
+<li><strong>path</strong> – Path were the models will be stored.</li>
+<li><strong>add_metadata_to_base_name</strong> – If True, the number of topics, the coherence value and the current time         are added at the end of the model name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="models.topics.LsaModelsList">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">LsaModelsList</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#LsaModelsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.LsaModelsList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.topics.TopicsModelsList" title="models.topics.TopicsModelsList"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.topics.TopicsModelsList</span></code></a></p>
+<p>Class for creating, comparing and storing easily a list of LsaModels.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="models.topics.Topic">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">Topic</code><span class="sig-paren">(</span><em>id: int, kws_as_list_of_tuples: List[Tuple[str, float]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#Topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.Topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that simply stores the id of a topic and a specific number of keywords obtained from that topic.
+It’s used for data transfer.</p>
+<dl class="method">
+<dt id="models.topics.Topic.as_list_of_tuples">
+<code class="descname">as_list_of_tuples</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[Tuple[str, float]]<a class="reference internal" href="../_modules/models/topics.html#Topic.as_list_of_tuples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.Topic.as_list_of_tuples" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Topics as a list of tuples: [(name1, prob1), (name2, prob2), …].</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.Topic.num_keywords">
+<code class="descname">num_keywords</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/models/topics.html#Topic.num_keywords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.Topic.num_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Number of keywords stored in this topic object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="models.topics.TopicsModel">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">TopicsModel</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em>, <em>dictionary: gensim.corpora.dictionary.Dictionary = None</em>, <em>corpus: List[List[Tuple[int</em>, <em>int]]] = None</em>, <em>num_topics=20</em>, <em>model=None</em>, <em>docs_topics_df: pandas.core.frame.DataFrame = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#TopicsModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class that represents a topics model.</p>
+<dl class="method">
+<dt id="models.topics.TopicsModel.compute_coherence_value">
+<code class="descname">compute_coherence_value</code><span class="sig-paren">(</span><em>coherence='c_v'</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.compute_coherence_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.compute_coherence_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates, stores and returns the coherence value of the topics model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coherence</strong> – String that represents the type of coherence to calculate.         Valid values are: ‘c_v’, ‘c_uci’ and ‘c_npmi’.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The coherence value of the topics model.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.get_doc_topic_prob_matrix">
+<code class="descname">get_doc_topic_prob_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.get_doc_topic_prob_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.get_doc_topic_prob_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns a numpy matrix where the rows are documents and columns are topics.         Each cell represents the probability of the document in that row being related with the topic in that column.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.get_dominant_topic_of_each_doc_as_df">
+<code class="descname">get_dominant_topic_of_each_doc_as_df</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.get_dominant_topic_of_each_doc_as_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.get_dominant_topic_of_each_doc_as_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pandas DataFrame with the dominant topic of each document.         The df has the following columns: Doc index, Dominant topic index, Topic prob,Topic keywords, Doc text.         This method can take to much time to execute if the dataset is big.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">pandas DataFrame.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.get_k_kws_of_topic_as_str">
+<code class="descname">get_k_kws_of_topic_as_str</code><span class="sig-paren">(</span><em>topic: int</em>, <em>k: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#TopicsModel.get_k_kws_of_topic_as_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.get_k_kws_of_topic_as_str" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>topic</strong> – Topic where keywords will be obtained.</li>
+<li><strong>k</strong> – Number of keywords to be returned.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">k keywords from the given topic as a str.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.get_k_most_repr_docs_of_topic_as_df">
+<code class="descname">get_k_most_repr_docs_of_topic_as_df</code><span class="sig-paren">(</span><em>topic: int</em>, <em>k=1</em>, <em>remove_duplicates=True</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.get_k_most_repr_docs_of_topic_as_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.get_k_most_repr_docs_of_topic_as_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a DataFrame with the k most representative documents of the given topic.         The DataFrame has k rows, where each row contains the document index, the document-topic probability and         the document text, in descending order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>topic</strong> – Index of the topic.</li>
+<li><strong>k</strong> – Number of the most representative documents of the topic you want.</li>
+<li><strong>remove_duplicates</strong> – If True, duplicate documents are not present in the returned DataFrame.         Even so, k documents are returned, obtained from below of the removed documents (the documents are         ordered descending).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A pandas DataFrame with the following columns: Doc index, Topic prob and Doc text.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.get_k_most_repr_docs_per_topic_as_df">
+<code class="descname">get_k_most_repr_docs_per_topic_as_df</code><span class="sig-paren">(</span><em>k=1</em>, <em>remove_duplicates=True</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.get_k_most_repr_docs_per_topic_as_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.get_k_most_repr_docs_per_topic_as_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a DataFrame where the topics are grouped in ascending order by their indices, and inside each         topic group there are k rows, where each row contains the topic and one of the most representative documents         of that topic, in descending order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>k</strong> – Number of the most representative documents per topic you want.</li>
+<li><strong>remove_duplicates</strong> – If True, duplicate documents are not present in the same topic in the returned         DataFrame. Even so, k documents per topic are returned, obtained from below of the removed documents         (the documents are ordered descending).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A pandas DataFrame with the following columns: Topic index, Doc index, Topic prob, Topic keywords and         Doc text.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.get_related_docs_as_df">
+<code class="descname">get_related_docs_as_df</code><span class="sig-paren">(</span><em>text: str</em>, <em>num_docs=5</em>, <em>preprocess=True</em>, <em>ngrams='uni'</em>, <em>ngrams_model_func: Callable = None</em>, <em>remove_duplicates=True</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.get_related_docs_as_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.get_related_docs_as_df" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Given a text, this method returns a df with the index and the content of the most similar documents         in the corpus. The similar/related documents are obtained as follows:</dt>
+<dd><ol class="first last arabic simple">
+<li>Obtain the topics more related with the given text.</li>
+<li>Obtain the documents more related with the topics obtained in step 1.</li>
+</ol>
+</dd>
+</dl>
+<p>The returned df contains the documents indices, it’s content, and the probability of that document         being related with the given text (with the topics and the documents we have).         That probability is obtained as follows: Probability of the text being related with the topic * Probability         that the document influence the topic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> – String.</li>
+<li><strong>num_docs</strong> – Number of related documents to retrieve.</li>
+<li><strong>preprocess</strong> – If True, apply preprocessing to the text.</li>
+<li><strong>ngrams</strong> – If ‘uni’, uses unigrams. If ‘bi’, create bigrams. If ‘tri’, creates trigrams.         By default is ‘uni’. If is ‘bi’ or ‘tri’, it uses the ngrams_model_func for creating the bi/trigrams.</li>
+<li><strong>ngrams_model_func</strong> – Function that receives a list of words and returns a list of words with         possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function         is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func()         functions in the preprocessing.ngrams module. If ngrams is ‘uni’ this function is not used.</li>
+<li><strong>remove_duplicates</strong> – If True, duplicate documents are not present in the returned DataFrame.         Even so, num_docs documents are returned, obtained from below of the removed documents (the documents are         ordered descending).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The pandas DataFrame.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.get_topic">
+<code class="descname">get_topic</code><span class="sig-paren">(</span><em>topic: int</em>, <em>num_keywords=10</em><span class="sig-paren">)</span> &#x2192; models.topics.Topic<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.get_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.get_topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of the topic keywords (keyword name and keyword probability).         Keywords are ordered by it’s probability inside the topic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>topic</strong> – Topic id.</li>
+<li><strong>num_keywords</strong> – Number of keywords to retrieve.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Topic obj.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.get_topic_distribution_as_df">
+<code class="descname">get_topic_distribution_as_df</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.get_topic_distribution_as_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.get_topic_distribution_as_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a DataFrame where each row contains a topic, the number of documents of that topic (the topic         is the dominant topic of those documents), and the percentage of documents of that topic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A pandas DataFrame with the following columns: Dominant topic index, Num docs, Percentage docs and         Topic keywords.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.get_topics">
+<code class="descname">get_topics</code><span class="sig-paren">(</span><em>num_keywords=10</em><span class="sig-paren">)</span> &#x2192; List[models.topics.Topic]<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.get_topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.get_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of the topics and it’s keywords (keyword name and keyword probability).         Keywords inside a topic are ordered by it’s probability inside that topic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_keywords</strong> – Number of keywords of each topic.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of Topics objs.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="models.topics.TopicsModel.load">
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>dataset: topics_and_summary.datasets.common.Dataset</em>, <em>model_dir_path='/Users/carlos/anaconda3/lib/python3.6/site-packages/topics_and_summary/saved-elements/topics'</em>, <em>docs_topics_df: pandas.core.frame.DataFrame = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#TopicsModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the model with the given name from the specified path, and returns a TopicsModel instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model_name</strong> – Model name.</li>
+<li><strong>dataset</strong> – Dataset.</li>
+<li><strong>model_dir_path</strong> – Path to the directory where the model is in.</li>
+<li><strong>docs_topics_df</strong> – DataFrame with the dominant topic of each document, previously created with the method         get_dominant_topic_of_each_doc_as_df().</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Instance of a TopicsModel object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.predict_topic_prob_on_text">
+<code class="descname">predict_topic_prob_on_text</code><span class="sig-paren">(</span><em>text: str</em>, <em>num_best_topics: int = None</em>, <em>preprocess=True</em>, <em>ngrams='uni'</em>, <em>ngrams_model_func: Callable = None</em>, <em>print_table=True</em><span class="sig-paren">)</span> &#x2192; List[Tuple[int, float]]<a class="reference internal" href="../_modules/models/topics.html#TopicsModel.predict_topic_prob_on_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.predict_topic_prob_on_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts the probability of each topic to be related to the given text.         The probabilities sum 1. When the probability of a topic is very high,         the other topics may not appear in the results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> – Text.</li>
+<li><strong>num_best_topics</strong> – Number of topics to return. If is None, returns all the topics that the model returns.</li>
+<li><strong>preprocess</strong> – If true, applies preprocessing to the given text using preprocessing.text.preprocess_text().</li>
+<li><strong>ngrams</strong> – If ‘uni’, uses unigrams. If ‘bi’, create bigrams. If ‘tri’, creates trigrams.         By default is ‘uni’. If is ‘bi’ or ‘tri’, it uses the ngrams_model_func for creating the bi/trigrams.</li>
+<li><strong>ngrams_model_func</strong> – Function that receives a list of words and returns a list of words with         possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function         is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func()         functions in the preprocessing.ngrams module. If ngrams is ‘uni’ this function is not used.</li>
+<li><strong>print_table</strong> – If True, this method also prints a table with the topics indices,         their probabilities, and their keywords.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Topic probability vector.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.print_topics">
+<code class="descname">print_topics</code><span class="sig-paren">(</span><em>num_keywords=10</em>, <em>gensim_way=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#TopicsModel.print_topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.print_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the topics of the topics model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_keywords</strong> – Number of keywords of each topic to be printed.</li>
+<li><strong>gensim_way</strong> – If True, the topics are printed in the gensim way.         If not, are printed using the __str__ methods of the Topic and Keywords classes.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModel.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>path='/Users/carlos/anaconda3/lib/python3.6/site-packages/topics_and_summary/saved-elements/topics'</em>, <em>add_metadata_to_base_name=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#TopicsModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModel.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the model to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_name</strong> – Name of the model.</li>
+<li><strong>path</strong> – Path were the models will be stored.</li>
+<li><strong>add_metadata_to_base_name</strong> – If True, the number of topics, the coherence value and the current time         are added at the end of the model name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="models.topics.TopicsModelsList">
+<em class="property">class </em><code class="descclassname">models.topics.</code><code class="descname">TopicsModelsList</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#TopicsModelsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModelsList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for creating, comparing and storing easily a list of topics models.</p>
+<dl class="method">
+<dt id="models.topics.TopicsModelsList.create_models_and_compute_coherence_values">
+<code class="descname">create_models_and_compute_coherence_values</code><span class="sig-paren">(</span><em>start=2</em>, <em>stop=20</em>, <em>step=1</em>, <em>coherence='c_v'</em>, <em>print_and_plot=True</em>, <em>title=&quot;Topic's model coherence comparison&quot;</em>, <em>save_plot=False</em>, <em>save_plot_path=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#TopicsModelsList.create_models_and_compute_coherence_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModelsList.create_models_and_compute_coherence_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates, stores and returns topics models and it’s coherence values.         Can be used to determine an optimum number of topics.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> – Number of topics to start looking for the optimum.</li>
+<li><strong>stop</strong> – Maximum number of topics to be tried.</li>
+<li><strong>step</strong> – Number of topics to be incremented while looking for the optimum.</li>
+<li><strong>coherence</strong> – String that represents the type of coherence to calculate.         Valid values are: ‘c_v’, ‘c_uci’ and ‘c_npmi’.</li>
+<li><strong>print_and_plot</strong> – If true, prints and plots the results.</li>
+<li><strong>title</strong> – Title of the result’s plot. Ignored if print_and_plot is False.</li>
+<li><strong>save_plot</strong> – If is true and print_and_plot is True, save the plot to disk.</li>
+<li><strong>save_plot_path</strong> – If save_plot is True and print_and_plot is True, this is the path where         the plot will be saved.</li>
+<li><strong>kwargs</strong> – Other keyword parameters for creating the models.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List of the created models and their corresponding coherence values.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModelsList.print_and_plot_coherence_values">
+<code class="descname">print_and_plot_coherence_values</code><span class="sig-paren">(</span><em>models_list=None</em>, <em>coherence_values=None</em>, <em>title=&quot;Topic's model coherence comparison&quot;</em>, <em>save_plot=False</em>, <em>save_plot_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#TopicsModelsList.print_and_plot_coherence_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModelsList.print_and_plot_coherence_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints and plots coherence values of the specified models.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>models_list</strong> – List of models. If is None, self.models_list is used.</li>
+<li><strong>coherence_values</strong> – List of coherence values. If is None, self.coherence_values is used.</li>
+<li><strong>title</strong> – Title of the plot.</li>
+<li><strong>save_plot</strong> – If is True, save the plot to disk.</li>
+<li><strong>save_plot_path</strong> – If save_plot is True, this is the path where the plot will be saved.         Must end in ‘.png’ or ‘.pdf’.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.topics.TopicsModelsList.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>base_name: str</em>, <em>path='/Users/carlos/anaconda3/lib/python3.6/site-packages/topics_and_summary/saved-elements/topics'</em>, <em>index: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/topics.html#TopicsModelsList.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.TopicsModelsList.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>If index parameter is None, saves all the models to disk.         If is a number, saves only the model with that index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>base_name</strong> – Base name of the models. After it, the current time, the number of topics, and         the coherence value are added.</li>
+<li><strong>path</strong> – Path were the models will be stored.</li>
+<li><strong>index</strong> – Index of the model to be saved. If is none, saves all models.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="models.topics.get_corpus">
+<code class="descclassname">models.topics.</code><code class="descname">get_corpus</code><span class="sig-paren">(</span><em>dictionary</em>, <em>documents</em><span class="sig-paren">)</span> &#x2192; List[List[Tuple[int, int]]]<a class="reference internal" href="../_modules/models/topics.html#get_corpus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.get_corpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a corpus/document-term matrix, that consists on a list, where each element is a list of tuples.     Each list of tuples represents a document, and each tuple contains the index of a word in that document     and the number of times that word appears in that document.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dictionary</strong> – gensim.corpora.Dictionary object.</li>
+<li><strong>documents</strong> – List of lists of strings. Each one of the nested lists represents a document, and the     strings the words in that document.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Returns a corpus/document-term matrix, that consists on a list, where each element is a list of tuples.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="models.topics.prepare_corpus">
+<code class="descclassname">models.topics.</code><code class="descname">prepare_corpus</code><span class="sig-paren">(</span><em>documents</em><span class="sig-paren">)</span> &#x2192; Tuple[gensim.corpora.dictionary.Dictionary, List[List[Tuple[int, int]]]]<a class="reference internal" href="../_modules/models/topics.html#prepare_corpus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.topics.prepare_corpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of documents, returns a term dictionary (dictionary) and a document-term matrix (corpus).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>documents</strong> – List of documents. Each document is a list of words, where each word is a string.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">2 things: Term’s dictionary (it’s attribute token2id is a dict mapping words to numeric identifiers)     and Document-term matrix (a list, where each element is a list of tuples. Each tuple contains the index of a word     and the number of times that word appears in that document).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/todo-list.html">TODO List</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

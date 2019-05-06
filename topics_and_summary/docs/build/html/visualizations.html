@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>visualizations module &#8212; Topics and Extractive Summary  documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TODO List" href="development/todo-list.html" />
+    <link rel="prev" title="utils module" href="utils.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="development/todo-list.html" title="TODO List"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="utils module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Topics and Extractive Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api-reference.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" accesskey="U">topics-and-extractive-summary-project</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-visualizations">
+<span id="visualizations-module"></span><h1>visualizations module<a class="headerlink" href="#module-visualizations" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="visualizations.plot_distribution_of_doc_word_counts">
+<code class="descclassname">visualizations.</code><code class="descname">plot_distribution_of_doc_word_counts</code><span class="sig-paren">(</span><em>documents: List[List[str]]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualizations.html#plot_distribution_of_doc_word_counts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualizations.plot_distribution_of_doc_word_counts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a histogram of the number of words in the documents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>documents</strong> – : List[List[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="visualizations.plot_word_clouds_of_topic">
+<code class="descclassname">visualizations.</code><code class="descname">plot_word_clouds_of_topic</code><span class="sig-paren">(</span><em>topic: models.topics.Topic</em>, <em>all_horizontal=True</em>, <em>save=False</em>, <em>dir_save_path=None</em>, <em>dpi=350</em>, <em>show_plot=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualizations.html#plot_word_clouds_of_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualizations.plot_word_clouds_of_topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the specified topic and it’s keywords as a word-cloud.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic</strong> – Topic obtained with the get_topic() method of the TopicsModel class.</p></li>
+<li><p><strong>all_horizontal</strong> – If True, all the keywords are plotted in horizontal.</p></li>
+<li><p><strong>save</strong> – If true, the plots are saved to disk.</p></li>
+<li><p><strong>dir_save_path</strong> – If save is True, this is the path of the directory where the plots will be saved.</p></li>
+<li><p><strong>dpi</strong> – Dots per inches for the images.</p></li>
+<li><p><strong>show_plot</strong> – If true, shows the plot while executing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="visualizations.plot_word_clouds_of_topics">
+<code class="descclassname">visualizations.</code><code class="descname">plot_word_clouds_of_topics</code><span class="sig-paren">(</span><em>topics: List[models.topics.Topic], single_plot_per_topic=False, all_horizontal=True, save=False, dir_save_path=None, dpi=350, show_plot=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualizations.html#plot_word_clouds_of_topics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualizations.plot_word_clouds_of_topics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the specified topics and it’s keywords as word-clouds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topics</strong> – Topics obtained with the get_topics() method of the TopicsModel class.</p></li>
+<li><p><strong>single_plot_per_topic</strong> – If True, each topic is plotted in a separated plot.     If False, each plot contains 4 topics.</p></li>
+<li><p><strong>all_horizontal</strong> – If True, all the keywords are plotted in horizontal.</p></li>
+<li><p><strong>save</strong> – If true, the plots are saved to disk.</p></li>
+<li><p><strong>dir_save_path</strong> – If save is True, this is the path of the directory where the plots will be saved.</p></li>
+<li><p><strong>dpi</strong> – Dots per inches for the images.</p></li>
+<li><p><strong>show_plot</strong> – If true, shows the plot while executing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="visualizations.tsne_clustering_chart">
+<code class="descclassname">visualizations.</code><code class="descname">tsne_clustering_chart</code><span class="sig-paren">(</span><em>model: models.topics.TopicsModel</em>, <em>angle=0.99</em>, <em>doc_threshold=0</em>, <em>plot_keywords=True</em>, <em>num_keywords=5</em>, <em>keywords_color_is_black=True</em>, <em>save_path='/Users/carlos/Desktop/Clase/4/2_Cuatri/TFG/Codigo/repo/topics-and-extractive-summary-project/saved-elements/topics/tsne'</em>, <em>plot_name=None</em>, <em>show_plot=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/visualizations.html#tsne_clustering_chart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#visualizations.tsne_clustering_chart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use t-SNE technique for dimensionality reduction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Topics Model.</p></li>
+<li><p><strong>angle</strong> – Number between 0 and 1. Angle less than 0.2 has quickly increasing computation     time and angle greater 0.8 has quickly increasing error.</p></li>
+<li><p><strong>doc_threshold</strong> – Threshold that each document has to pass to be added to the plot.</p></li>
+<li><p><strong>plot_keywords</strong> – If True, the keywords of each topic are plotted near a document of the topic.</p></li>
+<li><p><strong>num_keywords</strong> – Number of keyword to show if plot_keywords is True.</p></li>
+<li><p><strong>keywords_color_is_black</strong> – If true, the keywords color is black. If not, is the same color as the topic.</p></li>
+<li><p><strong>save_path</strong> – Path where the html file with the interactive plot will be saved.</p></li>
+<li><p><strong>plot_name</strong> – Name of the plot to be saved.</p></li>
+<li><p><strong>show_plot</strong> – If true, opens a browser and shows the html with the plot.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="utils.html"
+                        title="previous chapter">utils module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="development/todo-list.html"
+                        title="next chapter">TODO List</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/visualizations.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="development/todo-list.html" title="TODO List"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="utils module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Topics and Extractive Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api-reference.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" >topics-and-extractive-summary-project</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

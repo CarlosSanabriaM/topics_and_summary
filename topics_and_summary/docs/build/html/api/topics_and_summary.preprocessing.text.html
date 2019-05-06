@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>topics_and_summary.preprocessing.text module &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="topics_and_summary.utils module" href="topics_and_summary.utils.html" />
+    <link rel="prev" title="topics_and_summary.preprocessing.ngrams module" href="topics_and_summary.preprocessing.ngrams.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="topics_and_summary.utils.html" title="topics_and_summary.utils module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="topics_and_summary.preprocessing.ngrams.html" title="topics_and_summary.preprocessing.ngrams module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api-reference.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" >topics_and_summary</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="topics_and_summary.preprocessing.html" accesskey="U">topics_and_summary.preprocessing package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-topics_and_summary.preprocessing.text">
+<span id="topics-and-summary-preprocessing-text-module"></span><h1>topics_and_summary.preprocessing.text module<a class="headerlink" href="#module-topics_and_summary.preprocessing.text" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.to_lowercase">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">to_lowercase</code><span class="sig-paren">(</span><em>text: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#to_lowercase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.to_lowercase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the given text with all characters in lowercase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> – The text to be converted to lowercase. (String)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The given text with all characters in lowercase. (String)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.remove_stopwords">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">remove_stopwords</code><span class="sig-paren">(</span><em>text: str</em>, <em>basic_stopwords: Set[str] = None</em>, <em>additional_stopwords=True</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#remove_stopwords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.remove_stopwords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the given text with the stopwords removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – The text to remove stopwords. (String)</p></li>
+<li><p><strong>basic_stopwords</strong> – Set of basic stopwords to be removed.</p></li>
+<li><p><strong>additional_stopwords</strong> – Remove additional stopwords (stored in the file _ADDITIONAL_STOPWORDS_PATH).     By default is true.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The given text with all the stopwords removed. (String)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.remove_emails">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">remove_emails</code><span class="sig-paren">(</span><em>text: str</em>, <em>emails=re.compile('([a-zA-Z0-9_.+-]+&#64;[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+)')</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#remove_emails"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.remove_emails" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the given text with the emails removed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.substitute_punctuation">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">substitute_punctuation</code><span class="sig-paren">(</span><em>text: str</em>, <em>punctuation=re.compile('[—ºª#$€%&amp;*+-_.·</em>, <em>;:&lt;=&gt;&#64;/¡!¿?^¨`´&quot;(){|}~[\\]]')</em>, <em>substitute_by=' '</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#substitute_punctuation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.substitute_punctuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Substitutes the punctuation of the given text by the specified string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – The text where you want to substitute the punctuation.</p></li>
+<li><p><strong>punctuation</strong> – Regex of the punctuation elements you want to substitute.</p></li>
+<li><p><strong>substitute_by</strong> – The string yo want to use to substitute the punctuation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The text with the punctuation substituted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.stem_words">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">stem_words</code><span class="sig-paren">(</span><em>text: str</em>, <em>stemmer=&lt;PorterStemmer&gt;</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#stem_words"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.stem_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a string, it applies the specified Stemmer to each word of the string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – The text to be stemmed. (String)</p></li>
+<li><p><strong>stemmer</strong> – The stemmer to be applied. The default one is the Porter Stemmer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The text stemmed. (String)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.lemmatize_words">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">lemmatize_words</code><span class="sig-paren">(</span><em>text: str</em>, <em>lemmatizer=&lt;WordNetLemmatizer&gt;</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#lemmatize_words"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.lemmatize_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a string, it applies the specified lemmatizer to each word of the string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – The text to be lemmatized. (String)</p></li>
+<li><p><strong>lemmatizer</strong> – The lemmatizer to be applied. The default one is the WordNet Lemmatizer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The text lemmatized. (String)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.get_first_k_words">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">get_first_k_words</code><span class="sig-paren">(</span><em>text: str</em>, <em>num_words: int</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#get_first_k_words"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.get_first_k_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the given text with only the first k words. If k &gt;= len(text), returns the entire text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – The text to be limited in the number of words (String).</p></li>
+<li><p><strong>num_words</strong> – The value of k (int). Should be &gt;= 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The given text with only the first k words.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.substitute_word">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">substitute_word</code><span class="sig-paren">(</span><em>text: str</em>, <em>word: str</em>, <em>substitute_by: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#substitute_word"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.substitute_word" title="Permalink to this definition">¶</a></dt>
+<dd><p>Substitutes in the given text the specified word by the substitute_by word.     It doesn’t substitutes part of words. For example, substitute_word(‘you about u’, ‘u’, ‘-‘)     returns ‘you about -‘ and NOT ‘yo- abo-t -‘.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Text where you want to substitute the word.</p></li>
+<li><p><strong>word</strong> – Word to be substituted.</p></li>
+<li><p><strong>substitute_by</strong> – Word that substitutes the word to be substituted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The text with all occurrences of ‘word’ substituted by ‘substitute_by’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.substitute_words_with_dict">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">substitute_words_with_dict</code><span class="sig-paren">(</span><em>text: str, substitutions_dict: Union[str, dict]</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#substitute_words_with_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.substitute_words_with_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Substitutes in the given text the elements specified in the substitutions_dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Text where you want to substitute words.</p></li>
+<li><p><strong>substitutions_dict</strong> – It can be a dict or a str (which corresponds to the path     to a file containing the dict in json format). The keys of the dict are the words to     be replaced and the values are the corresponding word that substitutes the word to be replaced.     If it’s a str, the path should be relative to this file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The text with the words replaced.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.expand_contractions">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">expand_contractions</code><span class="sig-paren">(</span><em>text: str</em>, <em>expand_contractions_dict: dict = None</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#expand_contractions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.expand_contractions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands the contractions (for example: “don’t”) in the documents of the dataset.     For example, if expand_contractions_dict has the following pair: “don’t”: “do not”     all the appearances in the dataset of the word “don’t” will be replaces by “do not”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Text where you want to expand the contractions.</p></li>
+<li><p><strong>expand_contractions_dict</strong> – A dict where the keys are the words to be replaced     and the values the corresponding word that substitutes the word to be replaced.     If no value is passed, a dict is loaded from the file specified in _EXPAND_CONTRACTIONS_DICT_PATH.     The dict should be in lowercase.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The text with the contractions expanded.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.substitute_vulgar_words">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">substitute_vulgar_words</code><span class="sig-paren">(</span><em>text: str</em>, <em>vulgar_words_dict: dict = None</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#substitute_vulgar_words"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.substitute_vulgar_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Substitutes the vulgar words for their normal version. For example: “u” –&gt; “you”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Text where you want to substitute the vulgar words.</p></li>
+<li><p><strong>vulgar_words_dict</strong> – A dict where the keys are the words to be replaced     and the values the corresponding word that substitutes the word to be replaced.     If no value is passed, a dict is loaded from the file specified in _VULGAR_WORDS_DICT_PATH.     The dict should be in lowercase.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The text with the vulgar words substituted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.normalize_words">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">normalize_words</code><span class="sig-paren">(</span><em>text: str</em>, <em>normalize_words_dict: dict = None</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#normalize_words"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.normalize_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalization/canonicalization is a process for converting data that has more than one possible     representation into a “standard”, “normal”, or canonical form.     A single normalized form is chosen for words with multiple forms like USA and US or uh-huh and uhhuh.     This function substitutes the words specified in the given dict with the value specified in that dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Text where you want to substitute some words.</p></li>
+<li><p><strong>normalize_words_dict</strong> – A dict where the keys are the words to be replaced     and the values the corresponding word that substitutes the word to be replaced.     If no value is passed, a dict is loaded from the file specified in _NORMALIZE_WORDS_DICT_PATH.     The dict can have uppercase letter.     This function should be used before any other preprocessing, for example, convert words to lowercase.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The text with the words substituted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.remove_single_chars">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">remove_single_chars</code><span class="sig-paren">(</span><em>text: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#remove_single_chars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.remove_single_chars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the given text with the words that are simple chars (have length 1) removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> – The text to remove single chars. (String)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The given text with all the single chars removed. (String)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.remove_apostrophes">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">remove_apostrophes</code><span class="sig-paren">(</span><em>text: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#remove_apostrophes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.remove_apostrophes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the given text with the apostrophes removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> – The text to remove apostrophes. (String)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The given text with all the apostrophes removed. (String)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="topics_and_summary.preprocessing.text.preprocess_text">
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">preprocess_text</code><span class="sig-paren">(</span><em>text: str</em>, <em>normalize=True</em>, <em>lowercase=True</em>, <em>contractions=True</em>, <em>vulgar_words=True</em>, <em>stopwords=True</em>, <em>emails=True</em>, <em>punctuation=True</em>, <em>ngrams='uni'</em>, <em>ngrams_model_func: Callable = None</em>, <em>lemmatize=True</em>, <em>stem=False</em>, <em>apostrophes=True</em>, <em>chars=True</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#preprocess_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.preprocess_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives a str containing a text and returns a list of words after applying the specified preprocessing.     The original dataset is not modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – Text to be preprocessed.</p></li>
+<li><p><strong>normalize</strong> – Normalize words. By default is True.</p></li>
+<li><p><strong>lowercase</strong> – Transform to lowercase. By default is True.</p></li>
+<li><p><strong>contractions</strong> – Expand contractions. By default is True.</p></li>
+<li><p><strong>vulgar_words</strong> – Substitute vulgar words. By default is True.</p></li>
+<li><p><strong>stopwords</strong> – Remove stopwords. By default is True.</p></li>
+<li><p><strong>emails</strong> – Remove emails. By default is True.</p></li>
+<li><p><strong>punctuation</strong> – Remove punctuation. By default is True.</p></li>
+<li><p><strong>ngrams</strong> – If ‘uni’ uses unigrams. If ‘bi’ create bigrams. If ‘tri’ creates trigrams. By default is ‘uni’.     If is ‘bi’ or ‘tri’, it uses the ngrams_model_func for creating the bi/trigrams.</p></li>
+<li><p><strong>ngrams_model_func</strong> – Function that receives a list of words and returns a list of words with     possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function     is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions in     the preprocessing.ngrams module. If ngrams is ‘uni’ this function is not used.</p></li>
+<li><p><strong>lemmatize</strong> – Lemmatize words. By default is True.</p></li>
+<li><p><strong>stem</strong> – Stemm words. By default is False.</p></li>
+<li><p><strong>apostrophes</strong> – Remove apostrophes.</p></li>
+<li><p><strong>chars</strong> – Remove single chars. By default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of str.</p>
+</dd>
+</dl>
+<p>Note that lemmatize and stem shouldn’t be both True, because only one of them will be applied.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="topics_and_summary.preprocessing.ngrams.html"
+                        title="previous chapter">topics_and_summary.preprocessing.ngrams module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="topics_and_summary.utils.html"
+                        title="next chapter">topics_and_summary.utils module</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="topics_and_summary.utils.html" title="topics_and_summary.utils module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="topics_and_summary.preprocessing.ngrams.html" title="topics_and_summary.preprocessing.ngrams module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api-reference.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" >topics_and_summary</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="topics_and_summary.preprocessing.html" >topics_and_summary.preprocessing package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

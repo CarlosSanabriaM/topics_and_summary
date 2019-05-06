@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>tests.test_preprocessing &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_preprocessing</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">from</span> <span class="nn">datasets.twenty_news_groups</span> <span class="k">import</span> <span class="n">TwentyNewsGroupsDataset</span>
+<span class="kn">from</span> <span class="nn">preprocessing.dataset</span> <span class="k">import</span> <span class="n">preprocess_dataset</span>
+<span class="kn">from</span> <span class="nn">preprocessing.text</span> <span class="k">import</span> <span class="n">preprocess_text</span>
+<span class="kn">from</span> <span class="nn">tests.paths</span> <span class="k">import</span> <span class="n">TESTS_BASE_PATH</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">load_obj_from_disk</span><span class="p">,</span> <span class="n">join_paths</span><span class="p">,</span> <span class="n">load_func_from_disk</span>
+
+
+<div class="viewcode-block" id="TestPreprocessing"><a class="viewcode-back" href="../../api/tests.test_preprocessing.html#tests.test_preprocessing.TestPreprocessing">[docs]</a><span class="k">class</span> <span class="nc">TestPreprocessing</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestPreprocessing.test_preprocess_text"><a class="viewcode-back" href="../../api/tests.test_preprocessing.html#tests.test_preprocessing.TestPreprocessing.test_preprocess_text">[docs]</a>    <span class="k">def</span> <span class="nf">test_preprocess_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Windows DOS is a family of disk operating systems, hence the name. It isn&#39;t a very good OS. What do u think, user@gmail.com?</span>
+<span class="s2">        Mike&#39;s house is too big! N.A.S.A.</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">expected_preprocessed_text</span> <span class="o">=</span> <span class="s1">&#39;window disk_operating_system family disk_operating system good mike house big&#39;</span>
+
+        <span class="n">trigrams_func</span> <span class="o">=</span> <span class="n">load_func_from_disk</span><span class="p">(</span><span class="s1">&#39;trigrams_func&#39;</span><span class="p">,</span>
+                                            <span class="n">join_paths</span><span class="p">(</span><span class="n">TESTS_BASE_PATH</span><span class="p">,</span> <span class="s1">&#39;saved-elements/funcs&#39;</span><span class="p">))</span>
+        <span class="n">preprocessed_text</span> <span class="o">=</span> <span class="n">preprocess_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;tri&#39;</span><span class="p">,</span> <span class="n">ngrams_model_func</span><span class="o">=</span><span class="n">trigrams_func</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">expected_preprocessed_text</span><span class="p">,</span> <span class="n">preprocessed_text</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestPreprocessing.test_preprocess_dataset"><a class="viewcode-back" href="../../api/tests.test_preprocessing.html#tests.test_preprocessing.TestPreprocessing.test_preprocess_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">test_preprocess_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Load dataset and apply all preprocessing</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">TwentyNewsGroupsDataset</span><span class="p">()</span>
+        <span class="n">preprocessed_dataset</span><span class="p">,</span> <span class="n">trigrams_func</span> <span class="o">=</span> <span class="n">preprocess_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;tri&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Obtain the dataset stored in disk (it has been preprocessed too, with the same options)</span>
+        <span class="n">expected_preprocessed_dataset</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;trigrams_dataset&#39;</span><span class="p">,</span>
+                                                           <span class="n">join_paths</span><span class="p">(</span><span class="n">TESTS_BASE_PATH</span><span class="p">,</span> <span class="s1">&#39;saved-elements/objects&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">expected_preprocessed_dataset</span><span class="p">,</span> <span class="n">preprocessed_dataset</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo-list.html">TODO List</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

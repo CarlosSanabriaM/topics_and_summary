@@ -1,0 +1,154 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>models.summarization module &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-models.summarization">
+<span id="models-summarization-module"></span><h1>models.summarization module<a class="headerlink" href="#module-models.summarization" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="models.summarization.SummarizationModel">
+<em class="property">class </em><code class="descclassname">models.summarization.</code><code class="descname">SummarizationModel</code><a class="reference internal" href="../_modules/models/summarization.html#SummarizationModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.summarization.SummarizationModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Interface that represents a summarization model.</p>
+<dl class="method">
+<dt id="models.summarization.SummarizationModel.get_k_best_sentences_of_text">
+<code class="descname">get_k_best_sentences_of_text</code><span class="sig-paren">(</span><em>text: str</em>, <em>num_best_sentences=5</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="../_modules/models/summarization.html#SummarizationModel.get_k_best_sentences_of_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.summarization.SummarizationModel.get_k_best_sentences_of_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the k best sentences of the given text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> – Text where summary sentences will be obtained.</li>
+<li><strong>num_best_sentences</strong> – Number of summary sentences to be returned.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List[str] where each str is a sentence.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="models.summarization.TextRank">
+<em class="property">class </em><code class="descclassname">models.summarization.</code><code class="descname">TextRank</code><span class="sig-paren">(</span><em>embedding_model='glove'</em>, <em>glove_embedding_dim=100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/models/summarization.html#TextRank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.summarization.TextRank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#models.summarization.SummarizationModel" title="models.summarization.SummarizationModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">models.summarization.SummarizationModel</span></code></a></p>
+<p>Summarization class using the TextRank algorithm</p>
+<dl class="attribute">
+<dt id="models.summarization.TextRank.MAX_NUM_ITERATIONS">
+<code class="descname">MAX_NUM_ITERATIONS</code><em class="property"> = 500</em><a class="headerlink" href="#models.summarization.TextRank.MAX_NUM_ITERATIONS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Max number of iterations in the power method eigenvalue solver. If the algorithm fails to converge to the
+specified tolerance within the specified number of iterations of the power iteration method, the
+PowerIterationFailedConvergence is raised.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.summarization.TextRank.get_k_best_sentences_of_text">
+<code class="descname">get_k_best_sentences_of_text</code><span class="sig-paren">(</span><em>text: str</em>, <em>num_best_sentences=5</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="../_modules/models/summarization.html#TextRank.get_k_best_sentences_of_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.summarization.TextRank.get_k_best_sentences_of_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the k best sentences of the given text. This method performs an Extractive Summary of the given text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>text</strong> – Text where sentences will be extracted.</li>
+<li><strong>num_best_sentences</strong> – Number of sentences of the text to be returned.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List[str] where each str is a sentence.         The list is in descending order by the importance of the sentences.         It can raise a PowerIterationFailedConvergence exception if the algorithm doesn’t converge.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/todo-list.html">TODO List</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

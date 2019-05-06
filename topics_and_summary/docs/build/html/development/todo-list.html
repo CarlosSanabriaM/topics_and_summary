@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>TODO List &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Development: Documentation" href="documentation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="documentation.html" title="Development: Documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../development.html" accesskey="U">Development</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="todo-list">
+<h1>TODO List<a class="headerlink" href="#todo-list" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="source-code">
+<h2>Source code<a class="headerlink" href="#source-code" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Implement a solution for the TextRank main problem</strong>: With some texts, this algorithm <strong>doesn’t converge</strong>,
+throwing a PowerIterationFailedConvergence. Maybe in this case, the first k sentences of the text can be returned.</p></li>
+<li><p><strong>Evaluate the results of the TextRank summaries</strong>: This can be done selecting some texts of the 20 newsgroups dataset,
+and obtaining theirs summaries with TextRank. Once we have the summaries, we can use a LdaMalletModel previously trained
+on that dataset to predict the topics probabilities of the summaries. After that, we can compare the topics probabilities
+of the original selected documents and the topics probabilities of their summaries. The comparisson of those probabilities
+can be used to evaluate the TextRank algorithm. We expect that the summary of a text relates to the same topics as the
+original text.</p></li>
+<li><p><strong>Implement more summarization approaches</strong>. Some links to other alternatives can be found in the
+<a class="reference internal" href="api.html#other-summarization-alternatives"><span class="std std-ref">Other summarization alternatives</span></a> section of the Development: API page.</p></li>
+<li><p><strong>Revise the preprocessing order</strong> of the preprocess_text() and preprocess_dataset() functions.</p></li>
+<li><p><strong>Add more datasets</strong> to check the LdaMalletModel results on them, as explained in the <a class="reference internal" href="api.html#unstructured-dataset"><span class="std std-ref">Unstructured Dataset</span></a> section.</p></li>
+<li><p><strong>Implement the unstructured_dataset.py</strong> module, as explained</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Evaluating text summaries is a very hard task, and most of the times it needs human expert intervention.
+There are some metrics, like ROUGE, but they also need an expert saying which sentences summarize better the text.</p>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Change the <strong>API packages and modules toctree</strong> to don’t show topics_and_summary as a first item</p></li>
+<li><p>Create equivalent .bat files for the existing .sh files used for generating the api documentation</p></li>
+<li><p>Create equivalent .bat files for the existing .sh files used for generating the requirements files</p></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../development.html">Development</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Development Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">Development: API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html">Development: Documentation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">TODO List</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="documentation.html"
+                        title="previous chapter">Development: Documentation</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="documentation.html" title="Development: Documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../development.html" >Development</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

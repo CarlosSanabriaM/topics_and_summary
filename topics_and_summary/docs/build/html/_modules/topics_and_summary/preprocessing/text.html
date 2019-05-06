@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>topics_and_summary.preprocessing.text &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for topics_and_summary.preprocessing.text</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Set</span>
+
+<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="k">import</span> <span class="n">stopwords</span>
+<span class="kn">from</span> <span class="nn">nltk.stem</span> <span class="k">import</span> <span class="n">PorterStemmer</span>
+<span class="kn">from</span> <span class="nn">nltk.stem</span> <span class="k">import</span> <span class="n">WordNetLemmatizer</span>
+
+<span class="kn">from</span> <span class="nn">topics_and_summary.utils</span> <span class="k">import</span> <span class="n">join_paths</span><span class="p">,</span> <span class="n">get_abspath_from_project_source_root</span>
+
+<span class="n">_BASIC_STOPWORDS</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">))</span>
+<span class="n">_EMAILS_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)&quot;</span><span class="p">)</span>
+<span class="n">_PUNCTUATION_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[—ºª#$€%&amp;*+-_.·,;:&lt;=&gt;@/¡!¿?^¨`´</span><span class="se">\&quot;</span><span class="s1">(){|}~[</span><span class="se">\\</span><span class="s1">]]&#39;</span><span class="p">)</span>
+<span class="n">_PREPROCESSING_FILES_DIR</span> <span class="o">=</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;preprocessing-files&#39;</span><span class="p">)</span>
+<span class="n">_ADDITIONAL_STOPWORDS_PATH</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="n">_PREPROCESSING_FILES_DIR</span><span class="p">,</span> <span class="s1">&#39;stopwords.txt&#39;</span><span class="p">)</span>
+<span class="n">_EXPAND_CONTRACTIONS_DICT_PATH</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="n">_PREPROCESSING_FILES_DIR</span><span class="p">,</span> <span class="s1">&#39;expand_contractions_dict.txt&#39;</span><span class="p">)</span>
+<span class="n">_VULGAR_WORDS_DICT_PATH</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="n">_PREPROCESSING_FILES_DIR</span><span class="p">,</span> <span class="s1">&#39;vulgar_words_dict.txt&#39;</span><span class="p">)</span>
+<span class="n">_NORMALIZE_WORDS_DICT_PATH</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="n">_PREPROCESSING_FILES_DIR</span><span class="p">,</span> <span class="s1">&#39;normalize_words_dict.txt&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="to_lowercase"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.to_lowercase">[docs]</a><span class="k">def</span> <span class="nf">to_lowercase</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the given text with all characters in lowercase.</span>
+
+<span class="sd">    :param text: The text to be converted to lowercase. (String)</span>
+<span class="sd">    :return: The given text with all characters in lowercase. (String)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="remove_stopwords"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.remove_stopwords">[docs]</a><span class="k">def</span> <span class="nf">remove_stopwords</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basic_stopwords</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">additional_stopwords</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the given text with the stopwords removed.</span>
+
+<span class="sd">    :param text: The text to remove stopwords. (String)</span>
+<span class="sd">    :param basic_stopwords: Set of basic stopwords to be removed.</span>
+<span class="sd">    :param additional_stopwords: Remove additional stopwords (stored in the file _ADDITIONAL_STOPWORDS_PATH). \</span>
+<span class="sd">    By default is true.</span>
+<span class="sd">    :return: The given text with all the stopwords removed. (String)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">basic_stopwords</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">basic_stopwords</span> <span class="o">=</span> <span class="n">_BASIC_STOPWORDS</span>
+
+    <span class="n">_stopwords</span> <span class="o">=</span> <span class="n">basic_stopwords</span>
+
+    <span class="k">if</span> <span class="n">additional_stopwords</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_ADDITIONAL_STOPWORDS_PATH</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">additional_stopwords</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">)</span>
+        <span class="n">_stopwords</span> <span class="o">=</span> <span class="n">_stopwords</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">additional_stopwords</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_stopwords</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="remove_emails"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.remove_emails">[docs]</a><span class="k">def</span> <span class="nf">remove_emails</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">_EMAILS_RE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns the given text with the emails removed.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">emails</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="substitute_punctuation"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.substitute_punctuation">[docs]</a><span class="k">def</span> <span class="nf">substitute_punctuation</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">punctuation</span><span class="o">=</span><span class="n">_PUNCTUATION_RE</span><span class="p">,</span> <span class="n">substitute_by</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Substitutes the punctuation of the given text by the specified string.</span>
+
+<span class="sd">    :param text: The text where you want to substitute the punctuation.</span>
+<span class="sd">    :param punctuation: Regex of the punctuation elements you want to substitute.</span>
+<span class="sd">    :param substitute_by: The string yo want to use to substitute the punctuation.</span>
+<span class="sd">    :return: The text with the punctuation substituted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">punctuation</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">substitute_by</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="stem_words"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.stem_words">[docs]</a><span class="k">def</span> <span class="nf">stem_words</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stemmer</span><span class="o">=</span><span class="n">PorterStemmer</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a string, it applies the specified Stemmer to each word of the string.</span>
+
+<span class="sd">    :param text: The text to be stemmed. (String)</span>
+<span class="sd">    :param stemmer: The stemmer to be applied. The default one is the Porter Stemmer.</span>
+<span class="sd">    :return: The text stemmed. (String)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="lemmatize_words"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.lemmatize_words">[docs]</a><span class="k">def</span> <span class="nf">lemmatize_words</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lemmatizer</span><span class="o">=</span><span class="n">WordNetLemmatizer</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a string, it applies the specified lemmatizer to each word of the string.</span>
+
+<span class="sd">    :param text: The text to be lemmatized. (String)</span>
+<span class="sd">    :param lemmatizer: The lemmatizer to be applied. The default one is the WordNet Lemmatizer.</span>
+<span class="sd">    :return: The text lemmatized. (String)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lemmatizer</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="get_first_k_words"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.get_first_k_words">[docs]</a><span class="k">def</span> <span class="nf">get_first_k_words</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_words</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the given text with only the first k words. If k &gt;= len(text), returns the entire text.</span>
+
+<span class="sd">    :param text: The text to be limited in the number of words (String).</span>
+<span class="sd">    :param num_words: The value of k (int). Should be &gt;= 0.</span>
+<span class="sd">    :return: The given text with only the first k words.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">num_words</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">text</span>
+
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">[:</span><span class="n">num_words</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="substitute_word"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.substitute_word">[docs]</a><span class="k">def</span> <span class="nf">substitute_word</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">word</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">substitute_by</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Substitutes in the given text the specified word by the substitute_by word. \</span>
+<span class="sd">    It doesn&#39;t substitutes part of words. For example, substitute_word(&#39;you about u&#39;, &#39;u&#39;, &#39;-&#39;) \</span>
+<span class="sd">    returns &#39;you about -&#39; and NOT &#39;yo- abo-t -&#39;.</span>
+
+<span class="sd">    :param text: Text where you want to substitute the word.</span>
+<span class="sd">    :param word: Word to be substituted.</span>
+<span class="sd">    :param substitute_by: Word that substitutes the word to be substituted.</span>
+<span class="sd">    :return: The text with all occurrences of &#39;word&#39; substituted by &#39;substitute_by&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">b&#39;</span> <span class="o">+</span> <span class="n">word</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">b&#39;</span><span class="p">,</span> <span class="n">substitute_by</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="substitute_words_with_dict"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.substitute_words_with_dict">[docs]</a><span class="k">def</span> <span class="nf">substitute_words_with_dict</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">substitutions_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Substitutes in the given text the elements specified in the substitutions_dict.</span>
+
+<span class="sd">    :param text: Text where you want to substitute words.</span>
+<span class="sd">    :param substitutions_dict: It can be a dict or a str (which corresponds to the path \</span>
+<span class="sd">    to a file containing the dict in json format). The keys of the dict are the words to \</span>
+<span class="sd">    be replaced and the values are the corresponding word that substitutes the word to be replaced. \</span>
+<span class="sd">    If it&#39;s a str, the path should be relative to this file.</span>
+<span class="sd">    :return: The text with the words replaced.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="n">substitutions_dict</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">substitutions_dict</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The substitutions_dict type must be dict or str. &#39;</span>
+                        <span class="s1">&#39;If it is str, it has to be the path to the dict stored in json format.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If substitutions_dict is a str, then it&#39;s the path to a file containing the dict in json format.</span>
+    <span class="c1"># So, we have to load the dict from the hard drive to memory.</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">substitutions_dict</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">substitutions_dict</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">substitutions_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="c1"># If it&#39;s a dict (it was at the beginning or it was converted above) we make the substitutions.</span>
+    <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">substitute_by</span> <span class="ow">in</span> <span class="n">substitutions_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">substitute_word</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">substitute_by</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="expand_contractions"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.expand_contractions">[docs]</a><span class="k">def</span> <span class="nf">expand_contractions</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expand_contractions_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Expands the contractions (for example: &quot;don&#39;t&quot;) in the documents of the dataset. \</span>
+<span class="sd">    For example, if expand_contractions_dict has the following pair: &quot;don&#39;t&quot;: &quot;do not&quot; \</span>
+<span class="sd">    all the appearances in the dataset of the word &quot;don&#39;t&quot; will be replaces by &quot;do not&quot;.</span>
+
+<span class="sd">    :param text: Text where you want to expand the contractions.</span>
+<span class="sd">    :param expand_contractions_dict: A dict where the keys are the words to be replaced \</span>
+<span class="sd">    and the values the corresponding word that substitutes the word to be replaced. \</span>
+<span class="sd">    If no value is passed, a dict is loaded from the file specified in _EXPAND_CONTRACTIONS_DICT_PATH. \</span>
+<span class="sd">    The dict should be in lowercase.</span>
+<span class="sd">    :return: The text with the contractions expanded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">expand_contractions_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">substitute_words_with_dict</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">_EXPAND_CONTRACTIONS_DICT_PATH</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">substitute_words_with_dict</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">expand_contractions_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="substitute_vulgar_words"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.substitute_vulgar_words">[docs]</a><span class="k">def</span> <span class="nf">substitute_vulgar_words</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vulgar_words_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Substitutes the vulgar words for their normal version. For example: &quot;u&quot; --&gt; &quot;you&quot;.</span>
+
+<span class="sd">    :param text: Text where you want to substitute the vulgar words.</span>
+<span class="sd">    :param vulgar_words_dict: A dict where the keys are the words to be replaced \</span>
+<span class="sd">    and the values the corresponding word that substitutes the word to be replaced. \</span>
+<span class="sd">    If no value is passed, a dict is loaded from the file specified in _VULGAR_WORDS_DICT_PATH. \</span>
+<span class="sd">    The dict should be in lowercase.</span>
+<span class="sd">    :return: The text with the vulgar words substituted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">vulgar_words_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">substitute_words_with_dict</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">_VULGAR_WORDS_DICT_PATH</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">substitute_words_with_dict</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">vulgar_words_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="normalize_words"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.normalize_words">[docs]</a><span class="k">def</span> <span class="nf">normalize_words</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">normalize_words_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalization/canonicalization is a process for converting data that has more than one possible \</span>
+<span class="sd">    representation into a &quot;standard&quot;, &quot;normal&quot;, or canonical form. \</span>
+<span class="sd">    A single normalized form is chosen for words with multiple forms like USA and US or uh-huh and uhhuh. \</span>
+<span class="sd">    This function substitutes the words specified in the given dict with the value specified in that dict.</span>
+
+<span class="sd">    :param text: Text where you want to substitute some words.</span>
+<span class="sd">    :param normalize_words_dict: A dict where the keys are the words to be replaced \</span>
+<span class="sd">    and the values the corresponding word that substitutes the word to be replaced. \</span>
+<span class="sd">    If no value is passed, a dict is loaded from the file specified in _NORMALIZE_WORDS_DICT_PATH. \</span>
+<span class="sd">    The dict can have uppercase letter. \</span>
+<span class="sd">    This function should be used before any other preprocessing, for example, convert words to lowercase.</span>
+<span class="sd">    :return: The text with the words substituted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">normalize_words_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">substitute_words_with_dict</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">_NORMALIZE_WORDS_DICT_PATH</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">substitute_words_with_dict</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">normalize_words_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="remove_single_chars"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.remove_single_chars">[docs]</a><span class="k">def</span> <span class="nf">remove_single_chars</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the given text with the words that are simple chars (have length 1) removed.</span>
+
+<span class="sd">    :param text: The text to remove single chars. (String)</span>
+<span class="sd">    :return: The given text with all the single chars removed. (String)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="remove_apostrophes"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.remove_apostrophes">[docs]</a><span class="k">def</span> <span class="nf">remove_apostrophes</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the given text with the apostrophes removed.</span>
+
+<span class="sd">    :param text: The text to remove apostrophes. (String)</span>
+<span class="sd">    :return: The given text with all the apostrophes removed. (String)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">apostrophes_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">apostrophes_re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="preprocess_text"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.text.html#topics_and_summary.preprocessing.text.preprocess_text">[docs]</a><span class="k">def</span> <span class="nf">preprocess_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lowercase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">contractions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vulgar_words</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">stopwords</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">punctuation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;uni&#39;</span><span class="p">,</span> <span class="n">ngrams_model_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">lemmatize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stem</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">apostrophes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">chars</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Receives a str containing a text and returns a list of words after applying the specified preprocessing. \</span>
+<span class="sd">    The original dataset is not modified.</span>
+
+<span class="sd">    :type text: str</span>
+<span class="sd">    :param text: Text to be preprocessed.</span>
+<span class="sd">    :param normalize: Normalize words. By default is True.</span>
+<span class="sd">    :param lowercase: Transform to lowercase. By default is True.</span>
+<span class="sd">    :param contractions: Expand contractions. By default is True.</span>
+<span class="sd">    :param vulgar_words: Substitute vulgar words. By default is True.</span>
+<span class="sd">    :param stopwords: Remove stopwords. By default is True.</span>
+<span class="sd">    :param emails: Remove emails. By default is True.</span>
+<span class="sd">    :param punctuation: Remove punctuation. By default is True.</span>
+<span class="sd">    :param ngrams: If &#39;uni&#39; uses unigrams. If &#39;bi&#39; create bigrams. If &#39;tri&#39; creates trigrams. By default is &#39;uni&#39;. \</span>
+<span class="sd">    If is &#39;bi&#39; or &#39;tri&#39;, it uses the ngrams_model_func for creating the bi/trigrams.</span>
+<span class="sd">    :param ngrams_model_func: Function that receives a list of words and returns a list of words with \</span>
+<span class="sd">    possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \</span>
+<span class="sd">    is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions in \</span>
+<span class="sd">    the preprocessing.ngrams module. If ngrams is &#39;uni&#39; this function is not used.</span>
+<span class="sd">    :param lemmatize: Lemmatize words. By default is True.</span>
+<span class="sd">    :param stem: Stemm words. By default is False.</span>
+<span class="sd">    :param apostrophes: Remove apostrophes.</span>
+<span class="sd">    :param chars: Remove single chars. By default is True.</span>
+<span class="sd">    :return: List of str.</span>
+
+<span class="sd">    Note that lemmatize and stem shouldn&#39;t be both True, because only one of them will be applied.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+        <span class="c1"># TODO: Problem: Here we can have &#39;USA,&#39; and the &#39;USA&#39; in the .txt file doesn&#39;t match that.</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">normalize_words</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lowercase</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">to_lowercase</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stopwords</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">remove_stopwords</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">contractions</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">expand_contractions</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">vulgar_words</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">substitute_vulgar_words</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">emails</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">remove_emails</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">punctuation</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">substitute_punctuation</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stopwords</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">remove_stopwords</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ngrams</span> <span class="o">==</span> <span class="s1">&#39;bi&#39;</span> <span class="ow">or</span> <span class="n">ngrams</span> <span class="o">==</span> <span class="s1">&#39;tri&#39;</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ngrams_model_func</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="n">lemmatize</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">lemmatize_words</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">stem</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">stem_words</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">apostrophes</span><span class="p">:</span>  <span class="c1"># TODO: Move below substitute_punctuation?</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">remove_apostrophes</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">chars</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">remove_single_chars</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">text</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development.html">Development</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

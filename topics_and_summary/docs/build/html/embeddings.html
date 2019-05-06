@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>embeddings module &#8212; Topics and Extractive Summary  documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="examples package" href="examples.html" />
+    <link rel="prev" title="datasets.twenty_news_groups module" href="datasets.twenty_news_groups.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="examples package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="datasets.twenty_news_groups.html" title="datasets.twenty_news_groups module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Topics and Extractive Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api-reference.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" accesskey="U">topics-and-extractive-summary-project</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-embeddings">
+<span id="embeddings-module"></span><h1>embeddings module<a class="headerlink" href="#module-embeddings" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="embeddings.EmbeddingsModel">
+<em class="property">class </em><code class="descclassname">embeddings.</code><code class="descname">EmbeddingsModel</code><a class="reference internal" href="_modules/embeddings.html#EmbeddingsModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.EmbeddingsModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Interface for embedding’s models.</p>
+<dl class="method">
+<dt id="embeddings.EmbeddingsModel.get_vectors_dim">
+<code class="descname">get_vectors_dim</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/embeddings.html#EmbeddingsModel.get_vectors_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.EmbeddingsModel.get_vectors_dim" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The dimension of the embeddings vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="embeddings.EmbeddingsModel.get_word_vector">
+<code class="descname">get_word_vector</code><span class="sig-paren">(</span><em>word: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/embeddings.html#EmbeddingsModel.get_word_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.EmbeddingsModel.get_word_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the embedding vector of the given word. If the word is         not present in the embedding’s model, a default numpy array full         of zeros of the same size of the vectors in the embedding’s model is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>word</strong> – Word to be converted as a vector.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The embedding vector of the given word.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="embeddings.Glove">
+<em class="property">class </em><code class="descclassname">embeddings.</code><code class="descname">Glove</code><span class="sig-paren">(</span><em>vectors_dim=100</em>, <em>glove_dir='/Users/carlos/Desktop/Clase/4/2_Cuatri/TFG/Codigo/repo/embeddings/glove/glove.6B'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/embeddings.html#Glove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.Glove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#embeddings.EmbeddingsModel" title="embeddings.EmbeddingsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">embeddings.EmbeddingsModel</span></code></a></p>
+<p>Glove word embedding model.</p>
+<dl class="method">
+<dt id="embeddings.Glove.get_vectors_dim">
+<code class="descname">get_vectors_dim</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/embeddings.html#Glove.get_vectors_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.Glove.get_vectors_dim" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The dimension of the embeddings vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="embeddings.Glove.get_word_vector">
+<code class="descname">get_word_vector</code><span class="sig-paren">(</span><em>word: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/embeddings.html#Glove.get_word_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.Glove.get_word_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the glove vector of the given word. If the word is not present         in the glove model, a default numpy array full of zeros of the same size         of the vectors in the glove model is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>word</strong> – Word to be converted as a vector.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The glove vector of the given word.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="embeddings.Word2VecModel">
+<em class="property">class </em><code class="descclassname">embeddings.</code><code class="descname">Word2VecModel</code><span class="sig-paren">(</span><em>model_path='/Users/carlos/Desktop/Clase/4/2_Cuatri/TFG/Codigo/repo/embeddings/word2vec/GoogleNews-vectors-negative300.bin.gz'</em>, <em>vectors_dim=300</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/embeddings.html#Word2VecModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.Word2VecModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#embeddings.EmbeddingsModel" title="embeddings.EmbeddingsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">embeddings.EmbeddingsModel</span></code></a></p>
+<p>Word2Vec word embedding model.</p>
+<dl class="method">
+<dt id="embeddings.Word2VecModel.get_keras_embedding">
+<code class="descname">get_keras_embedding</code><span class="sig-paren">(</span><em>train_embeddings=False</em><span class="sig-paren">)</span> &#x2192; keras.layers.embeddings.Embedding<a class="reference internal" href="_modules/embeddings.html#Word2VecModel.get_keras_embedding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.Word2VecModel.get_keras_embedding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a keras embedding layer using the Word2Vec model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>train_embeddings</strong> – If True, the embedding layer weights are updated during training.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The keras embedding layer using the Word2Vec model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="embeddings.Word2VecModel.get_vectors_dim">
+<code class="descname">get_vectors_dim</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/embeddings.html#Word2VecModel.get_vectors_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.Word2VecModel.get_vectors_dim" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The dimension of the embeddings vectors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="embeddings.Word2VecModel.get_word_index">
+<code class="descname">get_word_index</code><span class="sig-paren">(</span><em>word: str</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/embeddings.html#Word2VecModel.get_word_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.Word2VecModel.get_word_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the index of the specified word.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>word</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Index of the specified word. If the word isn’t in the vocabulary of the model,         returns the index of the UNK token.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="embeddings.Word2VecModel.get_word_vector">
+<code class="descname">get_word_vector</code><span class="sig-paren">(</span><em>word: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/embeddings.html#Word2VecModel.get_word_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#embeddings.Word2VecModel.get_word_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the word2vec vector of the given word. If the word is not present         in the word2vec model, a default numpy array full of zeros of the same size         of the vectors in the word2vec model is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>word</strong> – Word to be converted as a vector.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The word2vec vector of the given word.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="datasets.twenty_news_groups.html"
+                        title="previous chapter">datasets.twenty_news_groups module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="examples.html"
+                        title="next chapter">examples package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/embeddings.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="examples package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="datasets.twenty_news_groups.html" title="datasets.twenty_news_groups module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Topics and Extractive Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api-reference.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" >topics-and-extractive-summary-project</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>tests.test_topics_model &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_topics_model</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="k">import</span> <span class="n">rmtree</span>
+
+<span class="kn">from</span> <span class="nn">models.topics</span> <span class="k">import</span> <span class="n">LdaGensimModel</span><span class="p">,</span> <span class="n">LdaMalletModel</span><span class="p">,</span> <span class="n">LsaGensimModel</span>
+<span class="kn">from</span> <span class="nn">tests.paths</span> <span class="k">import</span> <span class="n">SAVED_OBJECTS_PATH</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">,</span> <span class="n">SAVED_FUNCS_PATH</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">join_paths</span><span class="p">,</span> <span class="n">load_obj_from_disk</span><span class="p">,</span> <span class="n">load_func_from_disk</span>
+
+
+<div class="viewcode-block" id="TestTopicsModel"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel">[docs]</a><span class="k">class</span> <span class="nc">TestTopicsModel</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestTopicsModel.setUpClass"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.setUpClass">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">setUpClass</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;trigrams_dataset&#39;</span><span class="p">,</span> <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span></div>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestTopicsModel.test_save_and_load_lda_gensim_model_on_disk"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.test_save_and_load_lda_gensim_model_on_disk">[docs]</a>    <span class="k">def</span> <span class="nf">test_save_and_load_lda_gensim_model_on_disk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Instead of creating a new model, we load a pre-created model from disk</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaGensimModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;lda-gensim-model&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+
+        <span class="c1"># Here we really test the save and load methods</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;test-lda-gensim-model&#39;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+        <span class="n">test_model_from_disk</span> <span class="o">=</span> <span class="n">LdaGensimModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+
+        <span class="c1"># Remove the created model (it&#39;s directory and it&#39;s files inside that directory)</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="n">join_paths</span><span class="p">(</span><span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">,</span> <span class="n">model_name</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">test_model_from_disk</span><span class="p">)</span></div>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestTopicsModel.test_save_and_load_lda_mallet_model_on_disk"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.test_save_and_load_lda_mallet_model_on_disk">[docs]</a>    <span class="k">def</span> <span class="nf">test_save_and_load_lda_mallet_model_on_disk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Lda mallet models cant&#39; be stored in a different path than the original one</span>
+        <span class="c1"># To test correctly this 2 methods, we need to create a new model</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;test-lda-mallet-model&#39;</span>
+        <span class="n">test_model</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span>
+                                    <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+                                    <span class="n">model_path</span><span class="o">=</span><span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">,</span>
+                                    <span class="n">iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># 10 iterations to make it too much faster (default is 1000)</span>
+
+        <span class="c1"># Here we really test the save and load methods</span>
+        <span class="n">test_model</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">test_model_from_disk</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+
+        <span class="c1"># Remove the created model (it&#39;s directory and it&#39;s files inside that directory)</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="n">join_paths</span><span class="p">(</span><span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">,</span> <span class="n">model_name</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">test_model</span><span class="p">,</span> <span class="n">test_model_from_disk</span><span class="p">)</span></div>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestTopicsModel.test_save_and_load_lsa_gensim_model_on_disk"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.test_save_and_load_lsa_gensim_model_on_disk">[docs]</a>    <span class="k">def</span> <span class="nf">test_save_and_load_lsa_gensim_model_on_disk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Instead of creating a new model, we load a pre-created model from disk</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LsaGensimModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;lsa-gensim-model&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+
+        <span class="c1"># Here we really test the save and load methods</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;test-lsa-gensim-model&#39;</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+        <span class="n">test_model_from_disk</span> <span class="o">=</span> <span class="n">LsaGensimModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+
+        <span class="c1"># Remove the created model (it&#39;s directory and it&#39;s files inside that directory)</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="n">join_paths</span><span class="p">(</span><span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">,</span> <span class="n">model_name</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">test_model_from_disk</span><span class="p">)</span></div>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestTopicsModel.test_get_topics"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.test_get_topics">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_topics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># For testing this method, an LdaMalletModel loaded from disk will be used</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;lda-mallet-model&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+
+        <span class="c1"># Expected result was previously calculated and stored in disk</span>
+        <span class="n">expected_result</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;test_get_topics_expected_result&#39;</span><span class="p">,</span> <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_topics</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">expected_result</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestTopicsModel.test_predict_topic_prob_on_text"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.test_predict_topic_prob_on_text">[docs]</a>    <span class="k">def</span> <span class="nf">test_predict_topic_prob_on_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># For testing this method, an LdaMalletModel loaded from disk will be used</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;lda-mallet-model&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+        <span class="n">trigrams_func</span> <span class="o">=</span> <span class="n">load_func_from_disk</span><span class="p">(</span><span class="s1">&#39;trigrams_func&#39;</span><span class="p">,</span> <span class="n">SAVED_FUNCS_PATH</span><span class="p">)</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John&#39;s gospel does not</span>
+<span class="s2">        directly describe Jesus&#39; baptism. Most modern theologians view the baptism of Jesus by John the Baptist as a</span>
+<span class="s2">        historical event to which a high degree of certainty can be assigned.[1][2][3][4][5] Along with the crucifixion</span>
+<span class="s2">        of Jesus, most biblical scholars view it as one of the two historically certain facts about him, and often use </span>
+<span class="s2">        it as the starting point for the study of the historical Jesus.[6]&quot;&quot;&quot;</span>
+
+        <span class="c1"># Expected result was previously calculated and stored in disk</span>
+        <span class="n">expected_result</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;test_predict_topic_prob_on_text_expected_result&#39;</span><span class="p">,</span>
+                                             <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_topic_prob_on_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;tri&#39;</span><span class="p">,</span> <span class="n">ngrams_model_func</span><span class="o">=</span><span class="n">trigrams_func</span><span class="p">,</span>
+                                                  <span class="n">print_table</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">expected_result</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestTopicsModel.test_get_dominant_topic_of_each_doc_as_df"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.test_get_dominant_topic_of_each_doc_as_df">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_dominant_topic_of_each_doc_as_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># For testing this method, an LdaGensimModel loaded from disk will be used,</span>
+        <span class="c1"># because LdaMallet is extremely slow to generate the docs_topics_df</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaGensimModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;lda-gensim-model&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">)</span>
+
+        <span class="c1"># Expected result was previously calculated and stored in disk</span>
+        <span class="n">expected_result</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;test_get_dominant_topic_of_each_doc_as_df_expected_result&#39;</span><span class="p">,</span>
+                                             <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_dominant_topic_of_each_doc_as_df</span><span class="p">()</span>
+
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">expected_result</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">result</span><span class="p">))</span></div>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestTopicsModel.test_get_related_docs_as_df"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.test_get_related_docs_as_df">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_related_docs_as_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># For testing this method, an LdaMalletModel loaded from disk will be used</span>
+        <span class="n">docs_topics_df</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;lda_mallet_17topics_docs_topics_df&#39;</span><span class="p">,</span> <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;lda-mallet-model&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">,</span>
+                                    <span class="n">docs_topics_df</span><span class="o">=</span><span class="n">docs_topics_df</span><span class="p">)</span>
+        <span class="n">trigrams_func</span> <span class="o">=</span> <span class="n">load_func_from_disk</span><span class="p">(</span><span class="s1">&#39;trigrams_func&#39;</span><span class="p">,</span> <span class="n">SAVED_FUNCS_PATH</span><span class="p">)</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John&#39;s gospel does not</span>
+<span class="s2">        directly describe Jesus&#39; baptism. Most modern theologians view the baptism of Jesus by John the Baptist as a</span>
+<span class="s2">        historical event to which a high degree of certainty can be assigned.[1][2][3][4][5] Along with the crucifixion</span>
+<span class="s2">        of Jesus, most biblical scholars view it as one of the two historically certain facts about him, and often use </span>
+<span class="s2">        it as the starting point for the study of the historical Jesus.[6]&quot;&quot;&quot;</span>
+
+        <span class="c1"># Expected result was previously calculated and stored in disk</span>
+        <span class="n">expected_result</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;test_get_related_docs_as_df_expected_result&#39;</span><span class="p">,</span> <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_related_docs_as_df</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;tri&#39;</span><span class="p">,</span> <span class="n">ngrams_model_func</span><span class="o">=</span><span class="n">trigrams_func</span><span class="p">)</span>
+
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">expected_result</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">result</span><span class="p">))</span></div>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestTopicsModel.test_get_k_most_representative_docs_per_topic_as_df"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.test_get_k_most_representative_docs_per_topic_as_df">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_k_most_representative_docs_per_topic_as_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># For testing this method, an LdaMalletModel loaded from disk will be used</span>
+        <span class="n">docs_topics_df</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;lda_mallet_17topics_docs_topics_df&#39;</span><span class="p">,</span> <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;lda-mallet-model&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">,</span>
+                                    <span class="n">docs_topics_df</span><span class="o">=</span><span class="n">docs_topics_df</span><span class="p">)</span>
+
+        <span class="c1"># Expected result was previously calculated and stored in disk</span>
+        <span class="n">expected_result</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;test_get_k_most_representative_docs_per_topic_as_df_expected_result&#39;</span><span class="p">,</span>
+                                             <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_k_most_repr_docs_per_topic_as_df</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">expected_result</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">result</span><span class="p">))</span></div>
+
+    <span class="c1"># noinspection PyTypeChecker</span>
+<div class="viewcode-block" id="TestTopicsModel.test_get_k_most_representative_docs_of_topic_as_df"><a class="viewcode-back" href="../../api/tests.test_topics_model.html#tests.test_topics_model.TestTopicsModel.test_get_k_most_representative_docs_of_topic_as_df">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_k_most_representative_docs_of_topic_as_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># For testing this method, an LdaMalletModel loaded from disk will be used</span>
+        <span class="n">docs_topics_df</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;lda_mallet_17topics_docs_topics_df&#39;</span><span class="p">,</span> <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;lda-mallet-model&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">SAVED_TOPICS_MODELS_PATH</span><span class="p">,</span>
+                                    <span class="n">docs_topics_df</span><span class="o">=</span><span class="n">docs_topics_df</span><span class="p">)</span>
+
+        <span class="c1"># Expected result was previously calculated and stored in disk</span>
+        <span class="n">expected_result</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="s1">&#39;test_get_k_most_representative_docs_of_topic_as_df_expected_result&#39;</span><span class="p">,</span>
+                                             <span class="n">SAVED_OBJECTS_PATH</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_k_most_repr_docs_of_topic_as_df</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">expected_result</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">result</span><span class="p">))</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/todo-list.html">TODO List</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>
