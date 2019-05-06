@@ -15,14 +15,14 @@ def execute():
     # region 1. Load dataset and preprocessing
     pretty_print('1. Load dataset and preprocessing')
 
-    user_input = input('Load previously preprocessed dataset from disk (quick) or '
-                       'load dataset and preprocess it in the moment (slow)? (Y/n): ')
-    if user_input.lower() != 'n':  # Y option
+    user_input = input('Load previously preprocessed dataset from [d]isk (quick) or '
+                       'load dataset and preprocess it in the [m]oment (slow)? (D/m): ')
+    if user_input.lower() != 'm':  # D option
         dataset = TwentyNewsGroupsDataset.load('trigrams_dataset')
         trigrams_func = load_func_from_disk('trigrams_func')
         pretty_print("One of the files of the preprocessed dataset")
         dataset.print_some_files(n=1, print_file_num=False)
-    else:  # n option
+    else:  # m option
         # Load 20 newsgroups dataset, applying the specific preprocessing
         dataset = TwentyNewsGroupsDataset()
 
@@ -40,8 +40,8 @@ def execute():
     # region 2. Generate LdaGensimModel or load LdaMalletModel
     pretty_print('2. Generate or load a TopicsModel')
 
-    user_input = input('Load previously generated LdaMalletModel (quick and better model) or '
-                       'generate LdaGensimModel in the moment (slow and worst model)? (M/g): ')
+    user_input = input('Load previously generated Lda[M]alletModel (quick and better model) or '
+                       'generate Lda[G]ensimModel in the moment (slow and worst model)? (M/g): ')
     if user_input.lower() != 'g':  # M option
         model_dir_path = get_abspath_from_project_source_root('saved-elements/topics/'
                                                               'best-model/trigrams/lda-mallet')
@@ -55,7 +55,7 @@ def execute():
     # region 3. Show topics
     pretty_print('3. Show the topics of the chosen model')
 
-    user_input = input('In which format (text, images, both)? (t/i/B):')
+    user_input = input('In which format ([t]ext, [i]mages, [b]oth)? (t/i/B):')
 
     text_format = images_format = False
     if user_input.lower() != 't' and user_input.lower() != 'i':  # B option
@@ -93,9 +93,11 @@ def execute():
     # region 5. Given a text, predict the topics probability
     pretty_print('5. Given a text, predict the topics probability')
 
-    input('Press any key')
+    user_input = input('Use a religion [h]ardcoded text or '
+                       'write your [o]wn text? (H/o): ')
 
-    text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. 
+    if user_input.lower() != 'o':  # H option
+        text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. 
 John's gospel does not directly describe Jesus' baptism. Most modern theologians view the 
 baptism of Jesus by John the Baptist as a historical event to which a high degree of 
 certainty can be assigned.[1][2][3][4][5] Along with the crucifixion of Jesus, most biblical 
@@ -111,6 +113,17 @@ Communion, the Lutheran Churches and some other Western denominations, it is rec
 within the following week, the feast of the baptism of the Lord. In Roman Catholicism, 
 the baptism of Jesus is one of the Luminous Mysteries sometimes added to the Rosary.
 It is a Trinitarian feast in the Eastern Orthodox Churches."""
+
+    else:  # o option
+        print('Write your text (when finish, press Enter two times):')
+        lines = []
+        while True:
+            line = input()
+            if line:
+                lines.append(line)
+            else:
+                break
+        text = '\n'.join(lines)
 
     pretty_print('Text')
     print(text)

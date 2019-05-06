@@ -167,13 +167,13 @@ preprocessing.dataset module. The preprocess_dataset() function returned the pre
 which is the one passed here to the ngrams_model_func parameter.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-   :emphasize-lines-in-source-code: 119 <-- -94+1  = 26
+   :emphasize-lines-in-source-code: 132 <-- -94+1 = 39
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
     :lineno-start: 94
     :language: python
-    :lines: 94-119
-    :emphasize-lines: 26
+    :lines: 94-132
+    :emphasize-lines: 39
 
 
 
@@ -190,12 +190,12 @@ In this example, the *ngrams='tri'* and the *ngrams_model_func=trigrams_func* pa
 for the same reason as the one explained above.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-   :emphasize-lines-in-source-code: 134-136,139,141 <-- -123+1 = 12-14,17,19
+   :emphasize-lines-in-source-code: 147-149,152,154 <-- -136+1 = 12-14,17,19
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 123
+    :lineno-start: 136
     :language: python
-    :lines: 123-141
+    :lines: 136-154
     :emphasize-lines: 12-14,17,19
 
 
@@ -212,12 +212,12 @@ get_k_best_sentences_of_text(), that returns the k best sentences of the given t
 Internally, the get_k_best_sentences_of_text() method uses word embeddings (either GloVe or Word2Vec).
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-   :emphasize-lines-in-source-code: 157,158 <-- -145+1 = 13,14
+   :emphasize-lines-in-source-code: 170,171 <-- -158+1 = 13,14
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 145
+    :lineno-start: 158
     :language: python
-    :lines: 145-162
+    :lines: 158-175
     :emphasize-lines: 13,14
 
 
