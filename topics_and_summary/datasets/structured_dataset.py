@@ -53,7 +53,7 @@ class StructuredDataset(Dataset):
 
                 self.files_dict[directory].append(self._create_structured_document(directory, file_name, file_content))
 
-    def _create_structured_document(self, directory: str, file_name: str, file_content: str):
+    def _create_structured_document(self, directory: str, file_name: str, file_content: str) -> 'StructuredDocument':
         """
         Factory Method design pattern. The subclasses override this method, \
         creating and returning the specific structured document that the subclasses represent.
@@ -112,7 +112,7 @@ class StructuredDataset(Dataset):
 
         return [file for files_list in list(self.files_dict.values()) for file in files_list]
 
-    def get_document_index(self, category: str, doc_name: str):
+    def get_document_index(self, category: str, doc_name: str) -> int:
         """
         Returns the index of the specified document.
 

@@ -1,12 +1,10 @@
 Quickstart
 ==========
 
-Demo
-----
 The module **examples.demo.py** contains a **demo of the main functionality** of this library.
 
 How to execute the demo
-^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------
 
 The demo can be executed in 2 ways:
 
@@ -39,12 +37,12 @@ b. If the library isn't installed, but the source code is available, it can be e
       >>> exec(open("<project-root-path>/topics_and_summary/examples/demo.py").read())
 
 Demo content
-^^^^^^^^^^^^
+------------
 
 This section explains the demo, that is divided in sections.
 
 Section 1
-"""""""""
+^^^^^^^^^
 
 **Loads the 20 newsgroups dataset and applies preprocessing**, or **loads a preprocessed dataset stored on disk**.
 
@@ -64,7 +62,7 @@ topics probability on that text, or to return the related documents.
 
 
 Section 2
-"""""""""
+^^^^^^^^^
 
 **Generates a LdaGensimModel** or **loads a LdaMalletModel stored on disk**.
 
@@ -97,7 +95,7 @@ and pass it to the load() or __init__ method of the models.
 
 
 Section 3
-"""""""""
+^^^^^^^^^
 
 **Shows the topics** obtained with the model.
 
@@ -122,7 +120,7 @@ The topics can be showed in 2 ways:
 
 
 Section 4
-"""""""""
+^^^^^^^^^
 
 **Shows the k most representative documents of the topic 16.**
 
@@ -145,7 +143,7 @@ with the k most representative documents of the specified topic.
 
 
 Section 5
-"""""""""
+^^^^^^^^^
 
 **Predicts the topics probabilities of a text.**
 
@@ -178,7 +176,7 @@ which is the one passed here to the ngrams_model_func parameter.
 
 
 Section 6
-"""""""""
+^^^^^^^^^
 
 **Shows the k most related documents to a text**
 
@@ -201,7 +199,7 @@ for the same reason as the one explained above.
 
 
 Section 7
-"""""""""
+^^^^^^^^^
 
 **Summarizes a text**
 
@@ -226,45 +224,82 @@ Internally, the get_k_best_sentences_of_text() method uses word embeddings (eith
 Execute the demo using a docker container
 ------------------------------------------
 
-A docker container can be created using the Dockerfile.
+A docker image can be created using the Dockerfile. **Docker must be installed.** See the `docker web page <https://www.docker.com>`__.
 
-.. warning:: The Dockerfile expects that the **20 newsgroups dataset, the embeddings, and the mallet source have been
-   download by the user**, because the docker container mounts the source code and this files as a volume.
+This allows to install all the dependencies in a separeted "enviroment" (a docker container).
 
-   * The topics_and_summary/datasets folder must contain the 20_newsgroups folder with the dataset
-   * The topics_and_summary/embeddings folder must contain the glove and the word2vec folders.
+.. warning:: The Dockerfile expects that the **20 newsgroups dataset, the glove embeddings, and the mallet source
+   have been download by the user**.
+
+   * The topics_and_summary/datasets folder must contain the 20_newsgroups.
+   * The topics_and_summary/embeddings folder must contain the glove folder.
    * The mallet-2.0.8 folder must contain the mallet source code.
 
    The :ref:`download-other-elements` section of the Usage Installation page explains how to download this files.
 
-How to run the docker container
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   The **word2vec embeddings are not needed**, because they are not used in the demo.
 
-Execute the following commands the **first time** you want to execute the demo:
+The steps are the following:
+
+1. Create a docker image using the Dockerfile
+2. Create a docker container using the recently created image
+3. Run the docker container
+
+Creating the docker image
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Execute the following commands to create the docker image:
 
    ::
 
       cd <project-root-folder>
-
-      # Create the docker image
       docker build . -t topics_and_summary:latest
 
-      # Run the a docker container using that image
-      docker run -v $PWD:/topics_and_summary -i -t topics_and_summary:latest
+.. note:: This is the step that takes most time to execute. 10-20 minutes, depending on your system.
 
-After executing this, the demo will execute.
+Creating and running a docker container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. warning:: Executing the demo in docker this way will make mallet slower, because it needs to communicate
-   using a text file between the container and the host.
-
-The **next times** you are going to run the demo, execute this command:
+Execute the following commands to create and run a docker container using the previously created image:
 
 ::
 
-   docker container ls
-   # Copy the CONTAINER ID
+   docker run --name topics_and_summary -v $PWD/demo-images:/topics_and_summary/demo-images -i -t topics_and_summary:latest
 
-   docker exec -i -t <container-id> python -c "import sys;sys.path.extend(['/topics_and_summary']);exec(open('/topics_and_summary/topics_and_summary/examples/demo.py').read())"
+After executing this command, the demo will start. When the demo finishes, the container will stop.
+To execute the demo more than one time, see the section below.
+
+.. note:: This step is much faster than the previous one.
+
+Running an existing docker container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the docker container was previously created, to execute the demo again you don't need to create another container.
+You can start the existing container, using the following command:
+
+::
+
+   docker start -i topics_and_summary
+
+Removing the docker container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To remove the docker container, execute the following command:
+
+::
+
+   docker container rm topics_and_summary
+
+Removing the docker image
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To remove the docker image, execute the following command:
+
+::
+
+   docker image rm topics_and_summary:latest
+
+
 
 
 

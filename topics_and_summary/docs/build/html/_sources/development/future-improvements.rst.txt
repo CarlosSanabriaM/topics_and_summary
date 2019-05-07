@@ -17,6 +17,7 @@ Source code
 * **Revise the preprocessing order** of the preprocess_text() and preprocess_dataset() functions.
 * **Add more datasets** to check the LdaMalletModel results on them, as explained in the :ref:`unstructured-dataset` section.
 * **Implement the unstructured_dataset.py** module, as explained
+* Create equivalent .bat files for the existing .sh files
 
 .. note:: Evaluating text summaries is a very hard task, and most of the times it needs human expert intervention.
    There are some metrics, like ROUGE, but they also need an expert saying which sentences summarize better the text.

@@ -40,7 +40,8 @@ class TwentyNewsGroupsDataset(StructuredDataset):
         if remove_quotes:
             self._strip_quotes()
 
-    def _create_structured_document(self, directory: str, file_name: str, file_content: str):
+    def _create_structured_document(self, directory: str, file_name: str,
+                                    file_content: str) -> 'TwentyNewsGroupsDocument':
         return TwentyNewsGroupsDocument(directory, file_name, file_content)
 
     @classmethod
@@ -136,7 +137,7 @@ class TwentyNewsGroupsDataset(StructuredDataset):
 
         for i in range(n):
             if print_file_num:
-                pretty_print('File {0}'.format(i+1))
+                pretty_print('File {0}'.format(i + 1))
 
             doc_index_inside_category = self.get_document_index(*category_and_name_list[i])
             print(textwrap.fill(

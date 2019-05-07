@@ -264,7 +264,7 @@ def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=Tr
                        contractions=True, vulgar_words=True, stopwords=True, emails=True, punctuation=True,
                        ngrams='uni', min_bigrams_count=50, bigrams_threshold=75, min_trigrams_count=100,
                        trigrams_threshold=175, lemmatize=True, stem=False, trash_words=True, apostrophes=True,
-                       chars=True, empty_docs=True) -> Dataset:
+                       chars=True, empty_docs=True) -> StructuredDataset:
     """
     Creates a copy of the given dataset and returns the copy with the specified preprocessing. \
     The original dataset is not modified.

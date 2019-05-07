@@ -19,14 +19,12 @@ class EmbeddingsModel(metaclass=abc.ABCMeta):
         :param word: Word to be converted as a vector.
         :return: The embedding vector of the given word.
         """
-        pass
 
     @abc.abstractmethod
     def get_vectors_dim(self) -> int:
         """
         :return: The dimension of the embeddings vectors.
         """
-        pass
 
 
 class Word2VecModel(EmbeddingsModel):

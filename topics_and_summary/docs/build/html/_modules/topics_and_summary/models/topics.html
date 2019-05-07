@@ -544,7 +544,7 @@
 
         <span class="k">return</span> <span class="n">doc_topic_prob_matrix</span></div>
 
-<div class="viewcode-block" id="TopicsModel.get_k_kws_of_topic_as_str"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModel.get_k_kws_of_topic_as_str">[docs]</a>    <span class="k">def</span> <span class="nf">get_k_kws_of_topic_as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="TopicsModel.get_k_kws_of_topic_as_str"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModel.get_k_kws_of_topic_as_str">[docs]</a>    <span class="k">def</span> <span class="nf">get_k_kws_of_topic_as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param topic: Topic where keywords will be obtained.</span>
 <span class="sd">        :param k: Number of keywords to be returned.</span>
@@ -683,7 +683,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">num_topics</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span>
                          <span class="n">mallet_path</span><span class="o">=</span><span class="n">mallet_path</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">LdaMallet</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates the LdaMallet model and returns it.</span>
 
@@ -712,11 +712,12 @@
 
     <span class="c1"># noinspection PyMethodOverriding</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mallet_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mallet_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">LdaMallet</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads the gensim.models.wrappers.LdaMallet in the specified path and returns it.</span>
 
 <span class="sd">        :param path: Path of the saved gensim.models.wrappers.LdaMallet.</span>
+<span class="sd">        :param mallet_path: Path tho the mallet source code.</span>
 <span class="sd">        :return: The gensim.models.wrappers.LdaMallet model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">LdaMallet</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -794,7 +795,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">num_topics</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates the Lda model and returns it.</span>
 
@@ -821,7 +822,7 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LdaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">,</span> <span class="n">docs_topics_df</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads the gensim.models.LdaModel in the specified path and returns it.</span>
 
@@ -850,7 +851,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">corpus</span><span class="p">,</span> <span class="n">num_topics</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_create_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LsiModel</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates the Lda model and returns it.</span>
 
@@ -876,7 +877,7 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LsaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">,</span> <span class="n">docs_topics_df</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LsiModel</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads the gensim.models.LsiModel in the specified path and returns it.</span>
 
@@ -887,7 +888,7 @@
 
 
 <div class="viewcode-block" id="TopicsModelsList"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModelsList">[docs]</a><span class="k">class</span> <span class="nc">TopicsModelsList</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for creating, comparing and storing easily a list of topics models.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for easily creating, comparing and storing a list of topics models.&quot;&quot;&quot;</span>
 
     <span class="n">_SAVE_MODELS_PATH</span> <span class="o">=</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;saved-elements/topics/&#39;</span><span class="p">)</span>  <span class="c1"># Path where the models will be saved</span>
 
@@ -1005,7 +1006,7 @@
 
 
 <div class="viewcode-block" id="LdaMalletModelsList"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.LdaMalletModelsList">[docs]</a><span class="k">class</span> <span class="nc">LdaMalletModelsList</span><span class="p">(</span><span class="n">TopicsModelsList</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for creating, comparing and storing easily a list of LdaMalletModels.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for easily creating, comparing and storing a list of LdaMalletModels.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
@@ -1071,7 +1072,7 @@
 
 
 <div class="viewcode-block" id="LdaModelsList"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.LdaModelsList">[docs]</a><span class="k">class</span> <span class="nc">LdaModelsList</span><span class="p">(</span><span class="n">TopicsModelsList</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for creating, comparing and storing easily a list of LdaModels.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for easily creating, comparing and storing a list of LdaModels.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
@@ -1081,7 +1082,7 @@
 
 
 <div class="viewcode-block" id="LsaModelsList"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.LsaModelsList">[docs]</a><span class="k">class</span> <span class="nc">LsaModelsList</span><span class="p">(</span><span class="n">TopicsModelsList</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for creating, comparing and storing easily a list of LsaModels.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for easily creating, comparing and storing a list of LsaModels.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>

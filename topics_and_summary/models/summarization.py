@@ -43,9 +43,9 @@ class TextRank(SummarizationModel):
         :param glove_embedding_dim: Dimension of the embedding word vectors.
         """
         if embedding_model == 'glove':
-            self.embedding_model = Glove(glove_embedding_dim)
+            self.embeddings_model = Glove(glove_embedding_dim)
         else:
-            self.embedding_model = Word2VecModel()
+            self.embeddings_model = Word2VecModel()
 
     # TODO: Sometimes it can't converge, so it throws an Exception
     def get_k_best_sentences_of_text(self, text: str, num_best_sentences=5) -> List[str]:
@@ -73,11 +73,11 @@ class TextRank(SummarizationModel):
             sent_words = sent.split()
             # If the sentence has no words after the preprocessing a default numpy array full of zeros is used
             if len(sent_words) == 0:
-                sent_vector = np.zeros(self.embedding_model.get_vectors_dim())
+                sent_vector = np.zeros(self.embeddings_model.get_vectors_dim())
             else:
                 # For each word in the sentence, transform it to a vector. If the word is not present
                 # in the embeddings model, a default numpy array full of zeros is used.
-                word_vectors = [self.embedding_model.get_word_vector(word) for word in sent_words]
+                word_vectors = [self.embeddings_model.get_word_vector(word) for word in sent_words]
                 # Sentence vector is the mean of the word vectors
                 sent_vector = sum(word_vectors) / len(word_vectors)
 
@@ -93,8 +93,8 @@ class TextRank(SummarizationModel):
                 # If the sentence in the row and in the column is distinct
                 if i != j:
                     similarity_matrix[i][j] = cosine_similarity(
-                        sentence_vectors[i].reshape(1, self.embedding_model.get_vectors_dim()),
-                        sentence_vectors[j].reshape(1, self.embedding_model.get_vectors_dim())
+                        sentence_vectors[i].reshape(1, self.embeddings_model.get_vectors_dim()),
+                        sentence_vectors[j].reshape(1, self.embeddings_model.get_vectors_dim())
                     )[0, 0]
 
         # 5. Transform the similarity matrix into a graph

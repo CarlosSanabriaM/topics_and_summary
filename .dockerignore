@@ -1,2 +1,43 @@
-*
-!requirements.txt
+# All the files and folder specified in this file won't be added to the docker build context
+# That means that those files won't be able to be used by the dockerfile commmands COPY and ADD
+
+### JupyterNotebook ###
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+*.ipynb
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+### PyCharm ###
+.idea/
+
+### Mac files ###
+.DS_Store
+
+### SonarQube ###
+.scannerwork
+sonar-project.properties
+
+### Documentation files ###
+topics_and_summary/docs
+topics_and_summary/logs
+
+### Project stored objects ###
+# Exclude all the elements stored on disk, except the best-model
+topics_and_summary/saved-elements/topics/*
+!topics_and_summary/saved-elements/topics/best-model
+
+# Elements stored on disk used in the tests are also excluded
+topics_and_summary/tests/saved-elements
+
+## Files for packaging ##
+topics_and_summary.egg-info
+
+## Glove zip ##
+embeddings/glove/glove.6B.zip
+
+## Word2Vec ##
+# Only Glove is used in the demo
+embeddings/word2vec

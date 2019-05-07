@@ -293,7 +293,7 @@
 
 <dl class="method">
 <dt id="topics_and_summary.models.topics.TopicsModel.get_k_kws_of_topic_as_str">
-<code class="descname">get_k_kws_of_topic_as_str</code><span class="sig-paren">(</span><em>topic: int</em>, <em>k: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#TopicsModel.get_k_kws_of_topic_as_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.TopicsModel.get_k_kws_of_topic_as_str" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_k_kws_of_topic_as_str</code><span class="sig-paren">(</span><em>topic: int</em>, <em>k: int</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#TopicsModel.get_k_kws_of_topic_as_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.TopicsModel.get_k_kws_of_topic_as_str" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -474,7 +474,7 @@ It’s used for data transfer.</p>
 <dt id="topics_and_summary.models.topics.TopicsModelsList">
 <em class="property">class </em><code class="descclassname">topics_and_summary.models.topics.</code><code class="descname">TopicsModelsList</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#TopicsModelsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.TopicsModelsList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Base class for creating, comparing and storing easily a list of topics models.</p>
+<p>Base class for easily creating, comparing and storing a list of topics models.</p>
 <dl class="method">
 <dt id="topics_and_summary.models.topics.TopicsModelsList.create_models_and_compute_coherence_values">
 <code class="descname">create_models_and_compute_coherence_values</code><span class="sig-paren">(</span><em>start=2</em>, <em>stop=20</em>, <em>step=1</em>, <em>coherence='c_v'</em>, <em>print_and_plot=True</em>, <em>title=&quot;Topic's model coherence comparison&quot;</em>, <em>save_plot=False</em>, <em>save_plot_path=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#TopicsModelsList.create_models_and_compute_coherence_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.TopicsModelsList.create_models_and_compute_coherence_values" title="Permalink to this definition">¶</a></dt>
@@ -537,7 +537,7 @@ It’s used for data transfer.</p>
 <dt id="topics_and_summary.models.topics.LdaMalletModelsList">
 <em class="property">class </em><code class="descclassname">topics_and_summary.models.topics.</code><code class="descname">LdaMalletModelsList</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LdaMalletModelsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LdaMalletModelsList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#topics_and_summary.models.topics.TopicsModelsList" title="topics_and_summary.models.topics.TopicsModelsList"><code class="xref py py-class docutils literal notranslate"><span class="pre">topics_and_summary.models.topics.TopicsModelsList</span></code></a></p>
-<p>Class for creating, comparing and storing easily a list of LdaMalletModels.</p>
+<p>Class for easily creating, comparing and storing a list of LdaMalletModels.</p>
 <dl class="method">
 <dt id="topics_and_summary.models.topics.LdaMalletModelsList.create_models_and_compute_coherence_values">
 <code class="descname">create_models_and_compute_coherence_values</code><span class="sig-paren">(</span><em>start=2</em>, <em>stop=20</em>, <em>step=1</em>, <em>coherence='c_v'</em>, <em>print_and_plot=True</em>, <em>title=&quot;Topic's model coherence comparison&quot;</em>, <em>save_plot=False</em>, <em>save_plot_path: str = None</em>, <em>models_base_name='mallet_model'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LdaMalletModelsList.create_models_and_compute_coherence_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LdaMalletModelsList.create_models_and_compute_coherence_values" title="Permalink to this definition">¶</a></dt>
@@ -580,14 +580,14 @@ It’s used for data transfer.</p>
 <dt id="topics_and_summary.models.topics.LdaModelsList">
 <em class="property">class </em><code class="descclassname">topics_and_summary.models.topics.</code><code class="descname">LdaModelsList</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LdaModelsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LdaModelsList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#topics_and_summary.models.topics.TopicsModelsList" title="topics_and_summary.models.topics.TopicsModelsList"><code class="xref py py-class docutils literal notranslate"><span class="pre">topics_and_summary.models.topics.TopicsModelsList</span></code></a></p>
-<p>Class for creating, comparing and storing easily a list of LdaModels.</p>
+<p>Class for easily creating, comparing and storing a list of LdaModels.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="topics_and_summary.models.topics.LsaModelsList">
 <em class="property">class </em><code class="descclassname">topics_and_summary.models.topics.</code><code class="descname">LsaModelsList</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.common.Dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LsaModelsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LsaModelsList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#topics_and_summary.models.topics.TopicsModelsList" title="topics_and_summary.models.topics.TopicsModelsList"><code class="xref py py-class docutils literal notranslate"><span class="pre">topics_and_summary.models.topics.TopicsModelsList</span></code></a></p>
-<p>Class for creating, comparing and storing easily a list of LsaModels.</p>
+<p>Class for easily creating, comparing and storing a list of LsaModels.</p>
 </dd></dl>
 
 </div>
@@ -600,10 +600,14 @@ It’s used for data transfer.</p>
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table of Contents</a></h3>
 <p class="caption"><span class="caption-text">Documentation contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api-reference.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api-reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-reference.html#indices-and-search">Indices and search</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api-reference.html#api-packages-and-modules">API packages and modules</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
 </ul>
 

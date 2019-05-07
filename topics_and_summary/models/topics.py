@@ -507,7 +507,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return doc_topic_prob_matrix
 
-    def get_k_kws_of_topic_as_str(self, topic: int, k: int):
+    def get_k_kws_of_topic_as_str(self, topic: int, k: int) -> str:
         """
         :param topic: Topic where keywords will be obtained.
         :param k: Number of keywords to be returned.
@@ -646,7 +646,7 @@ class LdaMalletModel(TopicsModel):
         super().__init__(dataset, dictionary, corpus, num_topics, model,
                          mallet_path=mallet_path, model_path=model_path, **kwargs)
 
-    def _create_model(self, **kwargs):
+    def _create_model(self, **kwargs) -> gensim.models.wrappers.LdaMallet:
         """
         Creates the LdaMallet model and returns it.
 
@@ -675,11 +675,12 @@ class LdaMalletModel(TopicsModel):
 
     # noinspection PyMethodOverriding
     @classmethod
-    def _load_gensim_model(cls, path: str, mallet_path: str):
+    def _load_gensim_model(cls, path: str, mallet_path: str) -> gensim.models.wrappers.LdaMallet:
         """
         Loads the gensim.models.wrappers.LdaMallet in the specified path and returns it.
 
         :param path: Path of the saved gensim.models.wrappers.LdaMallet.
+        :param mallet_path: Path tho the mallet source code.
         :return: The gensim.models.wrappers.LdaMallet model.
         """
         model = gensim.models.wrappers.LdaMallet.load(path)
@@ -757,7 +758,7 @@ class LdaGensimModel(TopicsModel):
         """
         super().__init__(dataset, dictionary, corpus, num_topics, model, random_state=random_state, **kwargs)
 
-    def _create_model(self, **kwargs):
+    def _create_model(self, **kwargs) -> gensim.models.LdaModel:
         """
         Creates the Lda model and returns it.
 
@@ -784,7 +785,7 @@ class LdaGensimModel(TopicsModel):
         return super(LdaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
     @classmethod
-    def _load_gensim_model(cls, path: str):
+    def _load_gensim_model(cls, path: str) -> gensim.models.LdaModel:
         """
         Loads the gensim.models.LdaModel in the specified path and returns it.
 
@@ -813,7 +814,7 @@ class LsaGensimModel(TopicsModel):
         """
         super().__init__(dataset, dictionary, corpus, num_topics, model, **kwargs)
 
-    def _create_model(self, **kwargs):
+    def _create_model(self, **kwargs) -> gensim.models.LsiModel:
         """
         Creates the Lda model and returns it.
 
@@ -839,7 +840,7 @@ class LsaGensimModel(TopicsModel):
         return super(LsaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
 
     @classmethod
-    def _load_gensim_model(cls, path: str):
+    def _load_gensim_model(cls, path: str) -> gensim.models.LsiModel:
         """
         Loads the gensim.models.LsiModel in the specified path and returns it.
 
@@ -850,7 +851,7 @@ class LsaGensimModel(TopicsModel):
 
 
 class TopicsModelsList(metaclass=abc.ABCMeta):
-    """Base class for creating, comparing and storing easily a list of topics models."""
+    """Base class for easily creating, comparing and storing a list of topics models."""
 
     _SAVE_MODELS_PATH = get_abspath_from_project_source_root('saved-elements/topics/')  # Path where the models will be saved
 
@@ -968,7 +969,7 @@ class TopicsModelsList(metaclass=abc.ABCMeta):
 
 
 class LdaMalletModelsList(TopicsModelsList):
-    """Class for creating, comparing and storing easily a list of LdaMalletModels."""
+    """Class for easily creating, comparing and storing a list of LdaMalletModels."""
 
     def __init__(self, dataset: Dataset):
         super().__init__(dataset)
@@ -1034,7 +1035,7 @@ class LdaMalletModelsList(TopicsModelsList):
 
 
 class LdaModelsList(TopicsModelsList):
-    """Class for creating, comparing and storing easily a list of LdaModels."""
+    """Class for easily creating, comparing and storing a list of LdaModels."""
 
     def __init__(self, dataset: Dataset):
         super().__init__(dataset)
@@ -1044,7 +1045,7 @@ class LdaModelsList(TopicsModelsList):
 
 
 class LsaModelsList(TopicsModelsList):
-    """Class for creating, comparing and storing easily a list of LsaModels."""
+    """Class for easily creating, comparing and storing a list of LsaModels."""
 
     def __init__(self, dataset: Dataset):
         super().__init__(dataset)

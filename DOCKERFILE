@@ -1,8 +1,8 @@
 FROM debian:latest
-VOLUME /topics_and_summary
+VOLUME /topics_and_summary/demo-images
 
 #  $ docker build . -t topics_and_summary:latest
-#  $ docker run -v $PWD:/topics_and_summary -i -t topics_and_summary:latest
+#  $ docker run --name topics_and_summary -v $PWD/demo-images:/topics_and_summary/demo-images -i -t topics_and_summary:latest
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV PATH /opt/conda/bin:$PATH
@@ -24,5 +24,21 @@ ENV TINI_VERSION v0.16.1
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
 RUN chmod +x /usr/bin/tini
 
+# Copy all the files of the project (except the ones specified in the .dockerignore)
+# into the /topics_and_summary folder of the docker image
+COPY $PWD /topics_and_summary
+
+# Install dependencies using conda
+RUN conda install --file=/topics_and_summary/requirements.txt --channel conda-forge -y
+
+# Install nltk resources
+RUN python -c "import nltk;nltk.download('stopwords');nltk.download('wordnet');nltk.download('punkt')"
+
+# Install java
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install default-jdk -y
+
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
-CMD [ "/topics_and_summary/docker-init-script.sh" ]
+# Run the demo at the start of the container
+CMD [ "/topics_and_summary/docker-run-demo.sh" ]

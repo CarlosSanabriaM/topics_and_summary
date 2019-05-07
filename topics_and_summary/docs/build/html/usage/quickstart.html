@@ -44,11 +44,9 @@
             
   <div class="section" id="quickstart">
 <h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="demo">
-<h2>Demo<a class="headerlink" href="#demo" title="Permalink to this headline">¶</a></h2>
 <p>The module <strong>examples.demo.py</strong> contains a <strong>demo of the main functionality</strong> of this library.</p>
 <div class="section" id="how-to-execute-the-demo">
-<h3>How to execute the demo<a class="headerlink" href="#how-to-execute-the-demo" title="Permalink to this headline">¶</a></h3>
+<h2>How to execute the demo<a class="headerlink" href="#how-to-execute-the-demo" title="Permalink to this headline">¶</a></h2>
 <p>The demo can be executed in 2 ways:</p>
 <ol class="loweralpha">
 <li><p>If the library is installed, can be executed as follows:</p>
@@ -79,10 +77,10 @@ because it doesn’t copy any files. Rather, it points to the source code folder
 </ol>
 </div>
 <div class="section" id="demo-content">
-<h3>Demo content<a class="headerlink" href="#demo-content" title="Permalink to this headline">¶</a></h3>
+<h2>Demo content<a class="headerlink" href="#demo-content" title="Permalink to this headline">¶</a></h2>
 <p>This section explains the demo, that is divided in sections.</p>
 <div class="section" id="section-1">
-<h4>Section 1<a class="headerlink" href="#section-1" title="Permalink to this headline">¶</a></h4>
+<h3>Section 1<a class="headerlink" href="#section-1" title="Permalink to this headline">¶</a></h3>
 <p><strong>Loads the 20 newsgroups dataset and applies preprocessing</strong>, or <strong>loads a preprocessed dataset stored on disk</strong>.</p>
 <p>The trigrams_func is the function obtained after preprocessing the dataset with the ngrams=’tri’ option.
 It needs to be saved, because it will be used later to preprocess the text passed to the model to predict the
@@ -134,7 +132,7 @@ topics probability on that text, or to return the related documents.</p>
 </td></tr></table></div>
 </div>
 <div class="section" id="section-2">
-<h4>Section 2<a class="headerlink" href="#section-2" title="Permalink to this headline">¶</a></h4>
+<h3>Section 2<a class="headerlink" href="#section-2" title="Permalink to this headline">¶</a></h3>
 <p><strong>Generates a LdaGensimModel</strong> or <strong>loads a LdaMalletModel stored on disk</strong>.</p>
 <p>Both classes inherit from the TopicsModel class. The __init__ method of LdaGensimModel, LsaGensimModel and LdaMalletModel
 creates the model. Creating the model in LdaMalletModel takes much more time than the others (up to 10 min).</p>
@@ -176,7 +174,7 @@ and pass it to the load() or __init__ method of the models.</p>
 </td></tr></table></div>
 </div>
 <div class="section" id="section-3">
-<h4>Section 3<a class="headerlink" href="#section-3" title="Permalink to this headline">¶</a></h4>
+<h3>Section 3<a class="headerlink" href="#section-3" title="Permalink to this headline">¶</a></h3>
 <p><strong>Shows the topics</strong> obtained with the model.</p>
 <p>The topics can be showed in 2 ways:</p>
 <ul class="simple">
@@ -223,14 +221,14 @@ that can be obtained with the get_topics() method of the TopicsModel class.</p><
 <span class="hll">        <span class="n">model</span><span class="o">.</span><span class="n">print_topics</span><span class="p">(</span><span class="n">pretty_format</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </span>    <span class="k">if</span> <span class="n">images_format</span><span class="p">:</span>
         <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Images&#39;</span><span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Images are being saved in the project root folder&#39;</span><span class="p">)</span>
-<span class="hll">        <span class="n">plot_word_clouds_of_topics</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_topics</span><span class="p">(</span><span class="n">num_keywords</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-</span><span class="hll">                          <span class="n">save</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">dir_save_path</span><span class="o">=</span><span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Images are being saved in the &lt;project-root-path&gt;/images folder&#39;</span><span class="p">)</span>
+<span class="hll">        <span class="n">plot_word_clouds_of_topics</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_topics</span><span class="p">(</span><span class="n">num_keywords</span><span class="o">=</span><span class="mi">15</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+</span><span class="hll">                <span class="n">save</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">dir_save_path</span><span class="o">=</span><span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;../demo-images&#39;</span><span class="p">))</span>
 </span></pre></div>
 </td></tr></table></div>
 </div>
 <div class="section" id="section-4">
-<h4>Section 4<a class="headerlink" href="#section-4" title="Permalink to this headline">¶</a></h4>
+<h3>Section 4<a class="headerlink" href="#section-4" title="Permalink to this headline">¶</a></h3>
 <p><strong>Shows the k most representative documents of the topic 16.</strong></p>
 <p>This is done with the get_k_most_repr_docs_of_topic_as_df() method of the TopicsModel class.
 This function uses the docs_topics_df. If the get_dominant_topic_of_each_doc_as_df() was called before, it is stored
@@ -268,7 +266,7 @@ with the k most representative documents of the specified topic.</p>
 </td></tr></table></div>
 </div>
 <div class="section" id="section-5">
-<h4>Section 5<a class="headerlink" href="#section-5" title="Permalink to this headline">¶</a></h4>
+<h3>Section 5<a class="headerlink" href="#section-5" title="Permalink to this headline">¶</a></h3>
 <p><strong>Predicts the topics probabilities of a text.</strong></p>
 <p>This is done with the predict_topic_prob_on_text() method of the TopicsModel class.
 This method doesn’t need the docs_topics_df. In fact, predict_topic_prob_on_text() is called by
@@ -364,7 +362,7 @@ which is the one passed here to the ngrams_model_func parameter.</p>
 </td></tr></table></div>
 </div>
 <div class="section" id="section-6">
-<h4>Section 6<a class="headerlink" href="#section-6" title="Permalink to this headline">¶</a></h4>
+<h3>Section 6<a class="headerlink" href="#section-6" title="Permalink to this headline">¶</a></h3>
 <p><strong>Shows the k most related documents to a text</strong></p>
 <p>This is done with the get_related_docs_as_df() method of the TopicsModel class.
 This method calls the predict_topic_prob_on_text() and the  get_k_most_repr_docs_per_topic_as_df() methods,
@@ -412,7 +410,7 @@ for the same reason as the one explained above.</p>
 </td></tr></table></div>
 </div>
 <div class="section" id="section-7">
-<h4>Section 7<a class="headerlink" href="#section-7" title="Permalink to this headline">¶</a></h4>
+<h3>Section 7<a class="headerlink" href="#section-7" title="Permalink to this headline">¶</a></h3>
 <p><strong>Summarizes a text</strong></p>
 <p>This is done with the TextRank class (that uses the TextRank algorithm). This class has only one method:
 get_k_best_sentences_of_text(), that returns the k best sentences of the given text
@@ -457,46 +455,74 @@ get_k_best_sentences_of_text(), that returns the k best sentences of the given t
 </td></tr></table></div>
 </div>
 </div>
-</div>
 <div class="section" id="execute-the-demo-using-a-docker-container">
 <h2>Execute the demo using a docker container<a class="headerlink" href="#execute-the-demo-using-a-docker-container" title="Permalink to this headline">¶</a></h2>
-<p>A docker container can be created using the Dockerfile.</p>
+<p>A docker image can be created using the Dockerfile. <strong>Docker must be installed.</strong> See the <a class="reference external" href="https://www.docker.com">docker web page</a>.</p>
+<p>This allows to install all the dependencies in a separeted “enviroment” (a docker container).</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The Dockerfile expects that the <strong>20 newsgroups dataset, the embeddings, and the mallet source have been
-download by the user</strong>, because the docker container mounts the source code and this files as a volume.</p>
+<p>The Dockerfile expects that the <strong>20 newsgroups dataset, the glove embeddings, and the mallet source
+have been download by the user</strong>.</p>
 <ul class="simple">
-<li><p>The topics_and_summary/datasets folder must contain the 20_newsgroups folder with the dataset</p></li>
-<li><p>The topics_and_summary/embeddings folder must contain the glove and the word2vec folders.</p></li>
+<li><p>The topics_and_summary/datasets folder must contain the 20_newsgroups.</p></li>
+<li><p>The topics_and_summary/embeddings folder must contain the glove folder.</p></li>
 <li><p>The mallet-2.0.8 folder must contain the mallet source code.</p></li>
 </ul>
 <p>The <a class="reference internal" href="installation.html#download-other-elements"><span class="std std-ref">Download other elements</span></a> section of the Usage Installation page explains how to download this files.</p>
+<p>The <strong>word2vec embeddings are not needed</strong>, because they are not used in the demo.</p>
 </div>
-<div class="section" id="how-to-run-the-docker-container">
-<h3>How to run the docker container<a class="headerlink" href="#how-to-run-the-docker-container" title="Permalink to this headline">¶</a></h3>
-<p>Execute the following commands the <strong>first time</strong> you want to execute the demo:</p>
+<p>The steps are the following:</p>
+<ol class="arabic simple">
+<li><p>Create a docker image using the Dockerfile</p></li>
+<li><p>Create a docker container using the recently created image</p></li>
+<li><p>Run the docker container</p></li>
+</ol>
+<div class="section" id="creating-the-docker-image">
+<h3>Creating the docker image<a class="headerlink" href="#creating-the-docker-image" title="Permalink to this headline">¶</a></h3>
+<p>Execute the following commands to create the docker image:</p>
 <blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd &lt;project-root-folder&gt;
-
-# Create the docker image
-docker build . -t topics_and_summary:latest
-
-# Run the a docker container using that image
-docker run -v $PWD:/topics_and_summary -i -t topics_and_summary:latest
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">&lt;</span><span class="n">project</span><span class="o">-</span><span class="n">root</span><span class="o">-</span><span class="n">folder</span><span class="o">&gt;</span>
+<span class="n">docker</span> <span class="n">build</span> <span class="o">.</span> <span class="o">-</span><span class="n">t</span> <span class="n">topics_and_summary</span><span class="p">:</span><span class="n">latest</span>
 </pre></div>
 </div>
 </div></blockquote>
-<p>After executing this, the demo will execute.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Executing the demo in docker this way will make mallet slower, because it needs to communicate
-using a text file between the container and the host.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the step that takes most time to execute. 10-20 minutes, depending on your system.</p>
 </div>
-<p>The <strong>next times</strong> you are going to run the demo, execute this command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">container</span> <span class="n">ls</span>
-<span class="c1"># Copy the CONTAINER ID</span>
-
-<span class="n">docker</span> <span class="n">exec</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">t</span> <span class="o">&lt;</span><span class="n">container</span><span class="o">-</span><span class="nb">id</span><span class="o">&gt;</span> <span class="n">python</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;import sys;sys.path.extend([&#39;/topics_and_summary&#39;]);exec(open(&#39;/topics_and_summary/topics_and_summary/examples/demo.py&#39;).read())&quot;</span>
+</div>
+<div class="section" id="creating-and-running-a-docker-container">
+<h3>Creating and running a docker container<a class="headerlink" href="#creating-and-running-a-docker-container" title="Permalink to this headline">¶</a></h3>
+<p>Execute the following commands to create and run a docker container using the previously created image:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --name topics_and_summary -v $PWD/demo-images:/topics_and_summary/demo-images -i -t topics_and_summary:latest
+</pre></div>
+</div>
+<p>After executing this command, the demo will start. When the demo finishes, the container will stop.
+To execute the demo more than one time, see the section below.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This step is much faster than the previous one.</p>
+</div>
+</div>
+<div class="section" id="running-an-existing-docker-container">
+<h3>Running an existing docker container<a class="headerlink" href="#running-an-existing-docker-container" title="Permalink to this headline">¶</a></h3>
+<p>If the docker container was previously created, to execute the demo again you don’t need to create another container.
+You can start the existing container, using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">start</span> <span class="o">-</span><span class="n">i</span> <span class="n">topics_and_summary</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="removing-the-docker-container">
+<h3>Removing the docker container<a class="headerlink" href="#removing-the-docker-container" title="Permalink to this headline">¶</a></h3>
+<p>To remove the docker container, execute the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">container</span> <span class="n">rm</span> <span class="n">topics_and_summary</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="removing-the-docker-image">
+<h3>Removing the docker image<a class="headerlink" href="#removing-the-docker-image" title="Permalink to this headline">¶</a></h3>
+<p>To remove the docker image, execute the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">image</span> <span class="n">rm</span> <span class="n">topics_and_summary</span><span class="p">:</span><span class="n">latest</span>
 </pre></div>
 </div>
 <p class="rubric">Footnotes</p>
