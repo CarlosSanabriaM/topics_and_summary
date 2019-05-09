@@ -4,7 +4,7 @@ import warnings
 
 from topics_and_summary.datasets.common import Document
 from topics_and_summary.datasets.structured_dataset import StructuredDataset, StructuredDocument
-from topics_and_summary.utils import pretty_print, get_abspath_from_project_source_root, load_obj_from_disk
+from topics_and_summary.utils import pretty_print, get_abspath_from_project_source_root
 
 
 class TwentyNewsGroupsDataset(StructuredDataset):
@@ -155,25 +155,17 @@ class TwentyNewsGroupsDataset(StructuredDataset):
         return False
 
     @classmethod
-    def load(cls, name: str, folder_path: str = None) -> 'TwentyNewsGroupsDataset':
+    def load(cls, name: str, parent_dir_path: str = None) -> 'TwentyNewsGroupsDataset':
         """
         Loads a saved dataset from disk. This function must be used to load datasets,
         instead of utils.the load_obj_from_disk() function, because this function updates
         the current value of the dataset path.
 
         :param name: Name of the dataset.
-        :param folder_path: Path of the folder where the dataset object is stored on disk.
+        :param parent_dir_path: Path of the folder where the dataset object is stored on disk.
         :return: The object loaded from disk.
         """
-        dataset = load_obj_from_disk(name, folder_path)
-
-        # If the path to the files of the dataset has changed after the dataset object was stored,
-        # the dataset_path attribute of the loaded object is wrong, but in this class we don't know the current
-        # path of the dataset files, so the user needs to check if the path is ok or it needs to be updated.
-
-        # But here we know the default path of the dataset, so if the user didn't changed it the __init__ method
-        # when creating the saved dataset, the following line fixes the problem with the dataset_path
-        # if the dataset files where moved.
+        dataset = super().load(name, parent_dir_path)
         dataset.dataset_path = cls._DATASET_PATH
 
         warnings.warn("The dataset_path attribute of the loaded dataset object may need to be updated. "

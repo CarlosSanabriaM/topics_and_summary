@@ -1,9 +1,12 @@
 import abc
+import os
 import warnings
+from copy import deepcopy
 from typing import List, Callable
 
 import pandas as pd
 
+from topics_and_summary.preprocessing.dataset_preprocessing_options import DatasetPreprocessingOptions
 from topics_and_summary.utils import join_paths, load_obj_from_disk, save_obj_to_disk
 
 
@@ -29,6 +32,8 @@ class Dataset(metaclass=abc.ABCMeta):
         """
         self.dataset_path = dataset_path
         self.encoding = encoding
+        # This attribute will store the preprocessing options applied with the preprocess_dataset() function
+        self.preprocessing_options: DatasetPreprocessingOptions = None
 
     def get_original_doc_content_from_disk(self, doc: 'Document') -> str:
         """
@@ -74,24 +79,50 @@ class Dataset(metaclass=abc.ABCMeta):
 
     def save(self, name: str, folder_path: str = None):
         """
-        Stores the dataset on disk.
+        Stores the dataset on disk. Creates a folder that contains the files needed to store \
+        the dataset object attributes.
 
-        :param name: Name that will have the dataset file on disk. It's extension will be '.pickle'.
+        :param name: Name that will have the dataset folder on disk.
         :param folder_path: Path of the folder where the dataset will be stored on disk.
         """
-        save_obj_to_disk(self, name, folder_path)
+        # Create the directory where all the files will be saved
+        files_folder = join_paths(folder_path, name)
+        os.mkdir(files_folder)
+
+        # Create a copy of self
+        self_copy = deepcopy(self)
+        # Remove the preprocessing_options from the self copy
+        del self_copy.preprocessing_options
+
+        # Save the copy of self in a file (the preprocessing_options are not saved because where removed from the copy)
+        save_obj_to_disk(self_copy, name + '_except_preprocessing_options', files_folder)
+
+        # Save the preprocessing options (if are not None)
+        if self.preprocessing_options is not None:
+            self.preprocessing_options.save(name + '_preprocessing_options', files_folder)
 
     @classmethod
-    def load(cls, name: str, folder_path: str = None) -> 'Dataset':
+    def load(cls, name: str, parent_dir_path: str = None) -> 'Dataset':
         """
         Loads a saved dataset from disk. This function must be used to load datasets, \
         instead of utils.the load_obj_from_disk() function.
 
-        :param name: Name of the dataset.
-        :param folder_path: Path of the folder where the dataset object is stored on disk.
+        :param name: Name of the folder where the dataset files are stored.
+        :param parent_dir_path: Path of the folder where the dataset folder is stored on disk.
         :return: The dataset loaded from disk.
         """
-        dataset = load_obj_from_disk(name, folder_path)
+        files_folder = join_paths(parent_dir_path, name)
+
+        # Load the dataset (except the preprocessing options)
+        dataset = load_obj_from_disk(name + '_except_preprocessing_options', files_folder)
+
+        # If the <dataset-name>_preprocessing_options folder exists, it means that the preprocessing_options where saved
+        # In that case, the preprocessing_options are loaded
+        if os.path.exists(join_paths(files_folder, name + '_preprocessing_options')):
+            dataset.preprocessing_options = \
+                DatasetPreprocessingOptions.load(name + '_preprocessing_options', files_folder)
+        else:
+            dataset.preprocessing_options = None
 
         # If the path to the files of the dataset has changed after the dataset object was stored,
         # the dataset_path attribute of the loaded object is wrong, but in this class we don't know the current
@@ -105,7 +136,8 @@ class Dataset(metaclass=abc.ABCMeta):
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
-            return self.as_documents_obj_list() == other.as_documents_obj_list()
+            return self.as_documents_obj_list() == other.as_documents_obj_list() and \
+                   self.preprocessing_options == other.preprocessing_options
         return False
 
 

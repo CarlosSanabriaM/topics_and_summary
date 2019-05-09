@@ -190,7 +190,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         # Load the dataset
         dataset_name = model_name + 'dataset'
-        dataset = dataset_class.load(name=dataset_name, folder_path=model_dir_path)
+        dataset = dataset_class.load(name=dataset_name, parent_dir_path=model_dir_path)
 
         # Create an instance of the LdaMalletModel class
         return cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
@@ -798,7 +798,7 @@ class LdaMalletModel(TopicsModel):
 
         # Load the dataset
         dataset_name = model_name + 'dataset'
-        dataset = dataset_class.load(name=dataset_name, folder_path=model_dir_path)
+        dataset = dataset_class.load(name=dataset_name, parent_dir_path=model_dir_path)
 
         # Create an instance of the LdaMalletModel class
         mallet_obj = cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
