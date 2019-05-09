@@ -7,7 +7,6 @@ from topics_and_summary.utils import load_obj_from_disk
 
 class TestSummarizationModel(unittest.TestCase):
 
-    # noinspection PyTypeChecker
     def test_get_k_best_sentences_of_text(self):
         text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. 
         John's gospel does not directly describe Jesus' baptism.

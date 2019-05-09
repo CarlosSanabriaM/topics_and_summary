@@ -46,10 +46,10 @@ class DatasetPreprocessingOptions:
         DatasetPreprocessingOptions are passed to the preprocess_text() function.
 
         Instead of passing them like this: \
-        preprocess_text(text, normalize=obj.normalize, lowercase=obj.lowercase, ...)
+        preprocess_text(text, normalize=preprocessing_options.normalize, lowercase=preprocessing_options.lowercase, ...)
 
         The options should be passed like this: \
-        preprocess_text(text, **obj.as_dict())
+        preprocess_text(text, **preprocessing_options.as_dict())
         """
         return deepcopy(vars(self))
 

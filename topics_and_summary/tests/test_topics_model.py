@@ -3,8 +3,8 @@ from shutil import rmtree
 
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.models.topics import LdaGensimModel, LdaMalletModel, LsaGensimModel
-from topics_and_summary.tests.paths import SAVED_OBJECTS_PATH, SAVED_TOPICS_MODELS_PATH, SAVED_FUNCS_PATH
-from topics_and_summary.utils import join_paths, load_obj_from_disk, load_func_from_disk
+from topics_and_summary.tests.paths import SAVED_OBJECTS_PATH, SAVED_TOPICS_MODELS_PATH
+from topics_and_summary.utils import join_paths, load_obj_from_disk
 
 
 class TestTopicsModel(unittest.TestCase):
@@ -72,7 +72,6 @@ class TestTopicsModel(unittest.TestCase):
     def test_predict_topic_prob_on_text(self):
         # For testing this method, an LdaMalletModel loaded from disk will be used
         model = LdaMalletModel.load('lda-mallet-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
-        trigrams_func = load_func_from_disk('trigrams_func', SAVED_FUNCS_PATH)
 
         text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not
         directly describe Jesus' baptism. Most modern theologians view the baptism of Jesus by John the Baptist as a
@@ -81,11 +80,9 @@ class TestTopicsModel(unittest.TestCase):
         it as the starting point for the study of the historical Jesus.[6]"""
 
         # Expected result was previously calculated and stored in disk
-        expected_result = load_obj_from_disk('test_predict_topic_prob_on_text_expected_result',
-                                             SAVED_OBJECTS_PATH)
+        expected_result = load_obj_from_disk('test_predict_topic_prob_on_text_expected_result', SAVED_OBJECTS_PATH)
 
-        result = model.predict_topic_prob_on_text(text, ngrams='tri', ngrams_model_func=trigrams_func,
-                                                  print_table=False)
+        result = model.predict_topic_prob_on_text(text, print_table=False)
 
         self.assertEqual(expected_result, result)
 
@@ -107,7 +104,6 @@ class TestTopicsModel(unittest.TestCase):
     def test_get_related_docs_as_df(self):
         # For testing this method, an LdaMalletModel loaded from disk will be used
         model = LdaMalletModel.load('lda-mallet-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
-        trigrams_func = load_func_from_disk('trigrams_func', SAVED_FUNCS_PATH)
 
         text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not
         directly describe Jesus' baptism. Most modern theologians view the baptism of Jesus by John the Baptist as a
@@ -118,7 +114,7 @@ class TestTopicsModel(unittest.TestCase):
         # Expected result was previously calculated and stored in disk
         expected_result = load_obj_from_disk('test_get_related_docs_as_df_expected_result', SAVED_OBJECTS_PATH)
 
-        result = model.get_related_docs_as_df(text, ngrams='tri', ngrams_model_func=trigrams_func)
+        result = model.get_related_docs_as_df(text)
 
         # noinspection PyUnresolvedReferences
         self.assertTrue(expected_result.equals(result))

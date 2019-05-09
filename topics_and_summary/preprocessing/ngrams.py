@@ -1,12 +1,9 @@
+import warnings
 from typing import Tuple, Callable
-from warnings import filterwarnings
 
 import gensim
 
 from topics_and_summary.datasets.common import Dataset
-
-# Ignore Phraser warnings
-filterwarnings("ignore")
 
 
 def create_bigram_model(dataset: Dataset, min_count=50, threshold=75) -> gensim.models.phrases.Phraser:
@@ -18,7 +15,9 @@ def create_bigram_model(dataset: Dataset, min_count=50, threshold=75) -> gensim.
     :param threshold: Represent a score threshold for forming the phrases (higher means fewer phrases).
     :return: Bigram model.
     """
-    bigram = gensim.models.Phrases(dataset.as_documents_content_list(), min_count=min_count, threshold=threshold)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        bigram = gensim.models.Phrases(dataset.as_documents_content_list(), min_count=min_count, threshold=threshold)
 
     # Return a Phraser, because it is much smaller and somewhat faster than using the full Phrases model
     return gensim.models.phrases.Phraser(bigram)
@@ -41,8 +40,11 @@ def create_trigram_model(dataset: Dataset, min_count1=50, threshold1=75, min_cou
     :return: Bigram and Trigram model. Both are needed to create trigrams.
     """
     docs_list = dataset.as_documents_content_list()
-    bigram = gensim.models.Phrases(docs_list, min_count=min_count1, threshold=threshold1)
-    trigram = gensim.models.Phrases(bigram[docs_list], min_count=min_count2, threshold=threshold2)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        bigram = gensim.models.Phrases(docs_list, min_count=min_count1, threshold=threshold1)
+        trigram = gensim.models.Phrases(bigram[docs_list], min_count=min_count2, threshold=threshold2)
 
     # Return a Phraser, because it is much smaller and somewhat faster than using the full Phrases model
     return gensim.models.phrases.Phraser(bigram), gensim.models.phrases.Phraser(trigram)

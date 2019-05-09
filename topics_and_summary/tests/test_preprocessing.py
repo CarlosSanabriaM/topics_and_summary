@@ -25,7 +25,7 @@ class TestPreprocessing(unittest.TestCase):
     def test_preprocess_dataset(self):
         # Load dataset and apply all preprocessing
         dataset = TwentyNewsGroupsDataset()
-        preprocessed_dataset, trigrams_func = preprocess_dataset(dataset, ngrams='tri')
+        preprocessed_dataset = preprocess_dataset(dataset, ngrams='tri')
 
         # Obtain the dataset stored in disk (it has been preprocessed too, with the same options)
         expected_preprocessed_dataset = TwentyNewsGroupsDataset.load('trigrams_dataset', SAVED_OBJECTS_PATH)

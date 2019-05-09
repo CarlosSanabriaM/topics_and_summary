@@ -33,6 +33,7 @@ class Dataset(metaclass=abc.ABCMeta):
         self.dataset_path = dataset_path
         self.encoding = encoding
         # This attribute will store the preprocessing options applied with the preprocess_dataset() function
+        # noinspection PyTypeChecker
         self.preprocessing_options: DatasetPreprocessingOptions = None
 
     def get_original_doc_content_from_disk(self, doc: 'Document') -> str:
@@ -114,7 +115,8 @@ class Dataset(metaclass=abc.ABCMeta):
         files_folder = join_paths(parent_dir_path, name)
 
         # Load the dataset (except the preprocessing options)
-        dataset = load_obj_from_disk(name + '_except_preprocessing_options', files_folder)
+        # noinspection PyTypeChecker
+        dataset: Dataset = load_obj_from_disk(name + '_except_preprocessing_options', files_folder)
 
         # If the <dataset-name>_preprocessing_options folder exists, it means that the preprocessing_options where saved
         # In that case, the preprocessing_options are loaded
@@ -129,7 +131,8 @@ class Dataset(metaclass=abc.ABCMeta):
         # path of the dataset files, so the user needs to check if the path is ok or it needs to be updated
         warnings.warn("The dataset_path attribute of the loaded dataset object may need to be updated. "
                       "It's current value is: {0}. If the path to the files of the dataset has changed after "
-                      "the dataset object was stored, the dataset_path attribute of the loaded object is wrong."
+                      "the dataset object was stored, the dataset_path attribute of the loaded object is wrong "
+                      "and needs to be changed manually."
                       .format(dataset.dataset_path))
 
         return dataset

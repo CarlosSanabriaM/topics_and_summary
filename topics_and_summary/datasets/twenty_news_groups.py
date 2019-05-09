@@ -165,14 +165,15 @@ class TwentyNewsGroupsDataset(StructuredDataset):
         :param parent_dir_path: Path of the folder where the dataset object is stored on disk.
         :return: The object loaded from disk.
         """
-        dataset = super().load(name, parent_dir_path)
+        # noinspection PyTypeChecker
+        dataset: TwentyNewsGroupsDataset = super().load(name, parent_dir_path)
         dataset.dataset_path = cls._DATASET_PATH
 
-        warnings.warn("The dataset_path attribute of the loaded dataset object may need to be updated. "
-                      "It's current value is: {0} (the _DATASET_PATH value). If other dataset_path value "
-                      "was given in the __init__ method while creating the dataset, the dataset_path attribute "
-                      "of the loaded object is wrong."
-                      .format(dataset.dataset_path))
+        warnings.warn(
+            "The dataset_path attribute was updated to the value of the TwentyNewsGroupsDataset._DATASET_PATH "
+            "variable. If a dataset_path value was given in the __init__ method while creating the dataset, "
+            "the dataset_path attribute of the loaded object is wrong and needs to be changed manually."
+                .format(dataset.dataset_path))
 
         return dataset
 

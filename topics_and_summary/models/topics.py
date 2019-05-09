@@ -1,7 +1,7 @@
 import abc
 import os
 import warnings
-from typing import List, Tuple, Callable
+from typing import List, Tuple
 
 import gensim
 import matplotlib.pyplot as plt
@@ -146,7 +146,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         if self.docs_topics_df is not None:
             save_obj_to_disk(self.docs_topics_df, model_name + 'docs_topics_df', self.dir_path)
 
-        # Save the dataset
+        # Save the dataset (dataset preprocessing options are saved with the dataset)
         self.dataset.save(model_name + 'dataset', self.dir_path)
 
     @classmethod
@@ -246,8 +246,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         """
         return Topic(topic, self.model.show_topic(topic, num_keywords))
 
-    def predict_topic_prob_on_text(self, text: str, num_best_topics: int = None, preprocess=True,
-                                   ngrams='uni', ngrams_model_func: Callable = None, print_table=True) \
+    def predict_topic_prob_on_text(self, text: str, num_best_topics: int = None, print_table=True) \
             -> List[Tuple[int, float]]:
         """
         Predicts the probability of each topic to be related to the given text. \
@@ -256,19 +255,11 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         :param text: Text.
         :param num_best_topics: Number of topics to return. If is None, returns all the topics that the model returns.
-        :param preprocess: If true, applies preprocessing to the given text using preprocessing.text.preprocess_text().
-        :param ngrams: If 'uni', uses unigrams. If 'bi', create bigrams. If 'tri', creates trigrams. \
-        By default is 'uni'. If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
-        :param ngrams_model_func: Function that receives a list of words and returns a list of words with \
-        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \
-        is returned by make_bigrams_and_get_bigrams_model_func() or make_trigrams_and_get_trigrams_model_func() \
-        functions in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
         :param print_table: If True, this method also prints a table with the topics indices, \
         their probabilities, and their keywords.
         :return: Topic probability vector.
         """
-        if preprocess:
-            text = preprocess_text(text, ngrams=ngrams, ngrams_model_func=ngrams_model_func)
+        text = preprocess_text(text, **self.dataset.preprocessing_options.as_dict())
 
         text_as_bow = self.dictionary.doc2bow(text.split())
         topic_prob_vector = self.model[text_as_bow]
@@ -295,8 +286,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         return topic_prob_vector[:num_best_topics]
 
-    def get_related_docs_as_df(self, text: str, num_docs=5, preprocess=True, ngrams='uni',
-                               ngrams_model_func: Callable = None, remove_duplicates=True) -> pd.DataFrame:
+    def get_related_docs_as_df(self, text: str, num_docs=5, remove_duplicates=True) -> pd.DataFrame:
         """
         Given a text, this method returns a df with the index and the content of the most similar documents \
         in the corpus. The similar/related documents are obtained as follows:
@@ -310,21 +300,13 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         :param text: String.
         :param num_docs: Number of related documents to retrieve.
-        :param preprocess: If True, apply preprocessing to the text.
-        :param ngrams: If 'uni', uses unigrams. If 'bi', create bigrams. If 'tri', creates trigrams. \
-        By default is 'uni'. If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
-        :param ngrams_model_func: Function that receives a list of words and returns a list of words with \
-        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \
-        is returned by make_bigrams_and_get_bigrams_model_func() or make_trigrams_and_get_trigrams_model_func() \
-        functions in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
         :param remove_duplicates: If True, duplicate documents are not present in the returned DataFrame. \
         Even so, num_docs documents are returned, obtained from below of the removed documents (the documents are \
         ordered descending).
         :return: The pandas DataFrame.
         """
         # 1. Obtain the list of topics more related with the text
-        topic_prob_vector = self.predict_topic_prob_on_text(text, preprocess=preprocess, ngrams=ngrams,
-                                                            ngrams_model_func=ngrams_model_func, print_table=False)
+        topic_prob_vector = self.predict_topic_prob_on_text(text, print_table=False)
 
         topics = list(map(lambda x: x[0], topic_prob_vector))  # Stores the indices of the topics
 
@@ -721,7 +703,8 @@ class LdaMalletModel(TopicsModel):
         :param mallet_path: Path tho the mallet source code.
         :return: The gensim.models.wrappers.LdaMallet model.
         """
-        model = gensim.models.wrappers.LdaMallet.load(path)
+        # noinspection PyTypeChecker
+        model: gensim.models.wrappers.LdaMallet = gensim.models.wrappers.LdaMallet.load(path)
         # Save path in the prefix attribute of the mallet model, because it's needed to access the files
         model.prefix = path
         # Save mallet path in the mallet_path attribute
@@ -749,7 +732,7 @@ class LdaMalletModel(TopicsModel):
         if self.docs_topics_df is not None:
             save_obj_to_disk(self.docs_topics_df, self.model_name + 'docs_topics_df', self.dir_path)
 
-        # Save the dataset
+        # Save the dataset (dataset preprocessing options are saved with the dataset)
         self.dataset.save(self.model_name + 'dataset', self.dir_path)
 
     @classmethod
