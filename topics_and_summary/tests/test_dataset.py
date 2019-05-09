@@ -1,8 +1,8 @@
 import unittest
 
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset, TwentyNewsGroupsDocument
-from topics_and_summary.tests.paths import TESTS_BASE_PATH
-from topics_and_summary.utils import load_obj_from_disk, join_paths
+from topics_and_summary.tests.paths import SAVED_OBJECTS_PATH
+from topics_and_summary.utils import load_obj_from_disk
 
 
 class TestTwentyNewsGroupsDataset(unittest.TestCase):
@@ -13,8 +13,7 @@ class TestTwentyNewsGroupsDataset(unittest.TestCase):
 
     def test_create_dataset(self):
         # Obtain the dataset stored in disk
-        expected_dataset = load_obj_from_disk('dataset',
-                                              join_paths(TESTS_BASE_PATH, 'saved-elements/objects'))
+        expected_dataset = TwentyNewsGroupsDataset.load('dataset', SAVED_OBJECTS_PATH)
 
         self.assertEqual(expected_dataset, self.dataset)
 
@@ -36,8 +35,7 @@ are the cause of a bad situation of another party."""
         self.assertEqual(expected_original_doc_content, original_doc_content)
 
     def test_as_documents_content_list_method(self):
-        expected_as_documents_content_list = \
-            load_obj_from_disk('as_documents_content_list', join_paths(TESTS_BASE_PATH, 'saved-elements/objects'))
+        expected_as_documents_content_list = load_obj_from_disk('as_documents_content_list', SAVED_OBJECTS_PATH)
         self.assertEqual(expected_as_documents_content_list, self.dataset.as_documents_content_list())
 
 

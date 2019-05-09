@@ -40,14 +40,12 @@ def execute():
     # region 2. Generate LdaGensimModel or load LdaMalletModel
     pretty_print('2. Generate or load a TopicsModel')
 
-    user_input = input('Load previously generated Lda[M]alletModel (quick and better model) or '
-                       'generate Lda[G]ensimModel in the moment (slow and worst model)? (M/g): ')
+    user_input = input('Load previously generated Lda[M]alletModel (quick op. and better model) or '
+                       'generate Lda[G]ensimModel in the moment (slow op. and worst model)? (M/g): ')
     if user_input.lower() != 'g':  # M option
         model_dir_path = get_abspath_from_project_source_root('saved-elements/topics/'
                                                               'best-model/trigrams/lda-mallet')
-        docs_topics_df = load_obj_from_disk('mallet_17topics_docs_topics_df')
-        model = LdaMalletModel.load('model17', dataset, model_dir_path,
-                                    docs_topics_df=docs_topics_df)
+        model = LdaMalletModel.load('model17', TwentyNewsGroupsDataset, model_dir_path)
     else:  # g option
         model = LdaGensimModel(dataset, num_topics=17)
     # endregion
@@ -72,7 +70,7 @@ def execute():
         pretty_print('Images')
         print('Images are being saved in the <project-root-path>/images folder')
         plot_word_clouds_of_topics(model.get_topics(num_keywords=15), dpi=150, show_plot=False,
-                save=True, dir_save_path=get_abspath_from_project_source_root('../demo-images'))
+                                   save=True, dir_save_path=get_abspath_from_project_source_root('../demo-images'))
     # endregion
 
     # region 4. Most repr docs of one topic

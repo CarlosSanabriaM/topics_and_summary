@@ -250,7 +250,7 @@ def preprocess_text(text: str, normalize=True, lowercase=True, contractions=True
     If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
     :param ngrams_model_func: Function that receives a list of words and returns a list of words with \
     possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \
-    is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions in \
+    is returned by make_bigrams_and_get_bigrams_model_func() or make_trigrams_and_get_trigrams_model_func() functions in \
     the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
     :param lemmatize: Lemmatize words. By default is True.
     :param stem: Stemm words. By default is False.

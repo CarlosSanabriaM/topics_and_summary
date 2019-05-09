@@ -1,5 +1,6 @@
 import abc
 import os
+import warnings
 from typing import List, Tuple, Callable
 
 import gensim
@@ -11,7 +12,8 @@ from tqdm import tqdm
 
 from topics_and_summary.datasets.common import Dataset
 from topics_and_summary.preprocessing.text import preprocess_text
-from topics_and_summary.utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_source_root
+from topics_and_summary.utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_source_root, \
+    save_obj_to_disk, load_obj_from_disk
 
 
 def prepare_corpus(documents) -> Tuple[gensim.corpora.Dictionary, List[List[Tuple[int, int]]]]:
@@ -109,7 +111,8 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
     def save(self, model_name: str, path: str = None, add_metadata_to_base_name=False):
         """
-        Saves the model to disk.
+        Saves the model to disk. Also, the coherence value is computed and saved in a txt file. \
+        If docs_topics_df was generated, it's also saved.
 
         :param model_name: Name of the model.
         :param path: Path were the models will be stored.
@@ -139,22 +142,57 @@ class TopicsModel(metaclass=abc.ABCMeta):
         with open(coherence_path, 'w') as f:
             f.write(str(self.coherence_value))
 
+        # If the docs_topics_df DataFrame is not None, save it inside the model folder
+        if self.docs_topics_df is not None:
+            save_obj_to_disk(self.docs_topics_df, model_name + 'docs_topics_df', self.dir_path)
+
+        # Save the dataset
+        self.dataset.save(model_name + 'dataset', self.dir_path)
+
     @classmethod
-    def load(cls, model_name: str, dataset: Dataset, model_dir_path: str = None, docs_topics_df: pd.DataFrame = None):
+    def load(cls, model_name: str, dataset_class: type, model_parent_dir_path: str = None):
         """
         Loads the model with the given name from the specified path, and returns a TopicsModel instance.
 
         :param model_name: Model name.
-        :param dataset: Dataset.
-        :param model_dir_path: Path to the directory where the model is in.
-        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method \
-        get_dominant_topic_of_each_doc_as_df().
+        :param dataset_class: Dataset class of the dataset used to create the model previously. \
+        It must be a subclass of Dataset. \
+        For example, a possible value for this parameter is TwentyNewsGroupsDataset. \
+        The Dataset classmethod load() will be used to load the stored dataset.
+        :param model_parent_dir_path: Path to the directory where the model folder is in.
         :return: Instance of a TopicsModel object.
         """
-        if model_dir_path is None:
-            model_dir_path = cls._SAVE_PATH
+        # The dataset_class param must be a subclass of Dataset
+        if not issubclass(dataset_class, Dataset):
+            raise Exception('dataset_class param must be a subclass of the Dataset class, '
+                            'and {0} is not a subclass of the Dataset class.'.format(dataset_class))
 
-        model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name))
+        if model_parent_dir_path is None:
+            model_parent_dir_path = cls._SAVE_PATH
+
+        # Path to the folder that contains the model files
+        model_dir_path = join_paths(model_parent_dir_path, model_name)
+        # Path to the file inside the model folder that has the same name as the model name
+        model_file_path = join_paths(model_dir_path, model_name)
+
+        # Load the gensim model
+        model = cls._load_gensim_model(model_file_path)
+
+        # Load the docs_topics_df. If it wasn't saved, show a warning message to the user.
+        try:
+            docs_topics_df = load_obj_from_disk(model_name + 'docs_topics_df', model_dir_path)
+        except FileNotFoundError:
+            docs_topics_df = None
+            warnings.warn('Warning: docs_topics_df was not loaded into the model object, '
+                          'because no {0} file was found in {1}. This means that the first call to the '
+                          'get_dominant_topic_of_each_doc_as_df() method will be slow.'
+                          .format(model_name + 'docs_topics_df', model_dir_path))
+
+        # Load the dataset
+        dataset_name = model_name + 'dataset'
+        dataset = dataset_class.load(name=dataset_name, folder_path=model_dir_path)
+
+        # Create an instance of the LdaMalletModel class
         return cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
                    docs_topics_df=docs_topics_df)
 
@@ -223,7 +261,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         By default is 'uni'. If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
         :param ngrams_model_func: Function that receives a list of words and returns a list of words with \
         possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \
-        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() \
+        is returned by make_bigrams_and_get_bigrams_model_func() or make_trigrams_and_get_trigrams_model_func() \
         functions in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
         :param print_table: If True, this method also prints a table with the topics indices, \
         their probabilities, and their keywords.
@@ -277,7 +315,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
         By default is 'uni'. If is 'bi' or 'tri', it uses the ngrams_model_func for creating the bi/trigrams.
         :param ngrams_model_func: Function that receives a list of words and returns a list of words with \
         possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \
-        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() \
+        is returned by make_bigrams_and_get_bigrams_model_func() or make_trigrams_and_get_trigrams_model_func() \
         functions in the preprocessing.ngrams module. If ngrams is 'uni' this function is not used.
         :param remove_duplicates: If True, duplicate documents are not present in the returned DataFrame. \
         Even so, num_docs documents are returned, obtained from below of the removed documents (the documents are \
@@ -707,29 +745,68 @@ class LdaMalletModel(TopicsModel):
         with open(coherence_path, 'w') as f:
             f.write(str(self.coherence_value))
 
+        # If the docs_topics_df DataFrame is not None, save it inside the model folder
+        if self.docs_topics_df is not None:
+            save_obj_to_disk(self.docs_topics_df, self.model_name + 'docs_topics_df', self.dir_path)
+
+        # Save the dataset
+        self.dataset.save(self.model_name + 'dataset', self.dir_path)
+
     @classmethod
-    def load(cls, model_name: str, dataset: Dataset,
-             model_dir_path: str = None, mallet_path: str = None, docs_topics_df: pd.DataFrame = None):
+    def load(cls, model_name: str, dataset_class: type, model_parent_dir_path: str = None, mallet_path: str = None):
         """
-        Loads the model with the given name from the specified path, and returns a LdaMalletModel instance.
+        Loads the model with the given name from the specified path, and returns a LdaMalletModel instance. \
+        The dataset used to create the model and the docs_topics_df (if exists) will be loaded from the model directory.
 
         :param model_name: Model name.
-        :param dataset: Dataset used to create the model previously.
-        :param model_dir_path: Path to the directory where the model is in.
+        :param dataset_class: Dataset class of the dataset used to create the model previously. \
+        It must be a subclass of Dataset. \
+        For example, a possible value for this parameter is TwentyNewsGroupsDataset. \
+        The Dataset classmethod load() will be used to load the stored dataset.
+        :param model_parent_dir_path: Path to the directory where the model folder is in.
         :param mallet_path: Path to the mallet source code.
-        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method \
-        get_dominant_topic_of_each_doc_as_df().
         :return: Instance of a LdaMalletModel object.
         """
-        if model_dir_path is None:
-            model_dir_path = cls._MALLET_SAVED_MODELS_PATH
+        # The dataset_class param must be a subclass of Dataset
+        if not issubclass(dataset_class, Dataset):
+            raise Exception('dataset_class param must be a subclass of the Dataset class, '
+                            'and {0} is not a subclass of the Dataset class.'.format(dataset_class))
+
+        if model_parent_dir_path is None:
+            model_parent_dir_path = cls._MALLET_SAVED_MODELS_PATH
 
         if mallet_path is None:
             mallet_path = cls._MALLET_SOURCE_CODE_PATH
 
-        model = cls._load_gensim_model(join_paths(model_dir_path, model_name, model_name), mallet_path)
-        return cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
-                   docs_topics_df=docs_topics_df)
+        # Path to the folder that contains the model files
+        model_dir_path = join_paths(model_parent_dir_path, model_name)
+        # Path to the file inside the model folder that has the same name as the model name
+        model_file_path = join_paths(model_dir_path, model_name)
+
+        # Load the gensim.models.wrappers.LdaMallet model
+        model = cls._load_gensim_model(model_file_path, mallet_path)
+
+        # Load the docs_topics_df. If it wasn't saved, show a warning message to the user.
+        try:
+            docs_topics_df = load_obj_from_disk(model_name + 'docs_topics_df', model_dir_path)
+        except FileNotFoundError:
+            docs_topics_df = None
+            warnings.warn('Warning: docs_topics_df was not loaded into the model object, '
+                          'because no {0} file was found in {1}. This means that the first call to the '
+                          'get_dominant_topic_of_each_doc_as_df() method will be slow.'
+                          .format(model_name + 'docs_topics_df', model_dir_path))
+
+        # Load the dataset
+        dataset_name = model_name + 'dataset'
+        dataset = dataset_class.load(name=dataset_name, folder_path=model_dir_path)
+
+        # Create an instance of the LdaMalletModel class
+        mallet_obj = cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
+                         docs_topics_df=docs_topics_df)
+        # Update the path to the directory that contains the model files
+        mallet_obj.dir_path = model_dir_path
+
+        return mallet_obj
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
@@ -778,11 +855,11 @@ class LdaGensimModel(TopicsModel):
         super(LdaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
 
     @classmethod
-    def load(cls, model_name: str, dataset: Dataset, model_dir_path: str = None, docs_topics_df: pd.DataFrame = None):
-        if model_dir_path is None:
-            model_dir_path = cls._LDA_SAVED_MODELS_PATH
+    def load(cls, model_name: str, dataset_class: type, model_parent_dir_path: str = None):
+        if model_parent_dir_path is None:
+            model_parent_dir_path = cls._LDA_SAVED_MODELS_PATH
 
-        return super(LdaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
+        return super(LdaGensimModel, cls).load(model_name, dataset_class, model_parent_dir_path)
 
     @classmethod
     def _load_gensim_model(cls, path: str) -> gensim.models.LdaModel:
@@ -833,11 +910,11 @@ class LsaGensimModel(TopicsModel):
         super(LsaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
 
     @classmethod
-    def load(cls, model_name: str, dataset: Dataset, model_dir_path: str = None, docs_topics_df: pd.DataFrame = None):
-        if model_dir_path is None:
-            model_dir_path = cls._LSA_SAVED_MODELS_PATH
+    def load(cls, model_name: str, dataset_class: type, model_parent_dir_path: str = None):
+        if model_parent_dir_path is None:
+            model_parent_dir_path = cls._LSA_SAVED_MODELS_PATH
 
-        return super(LsaGensimModel, cls).load(model_name, dataset, model_dir_path, docs_topics_df)
+        return super(LsaGensimModel, cls).load(model_name, dataset_class, model_parent_dir_path)
 
     @classmethod
     def _load_gensim_model(cls, path: str) -> gensim.models.LsiModel:
@@ -853,7 +930,8 @@ class LsaGensimModel(TopicsModel):
 class TopicsModelsList(metaclass=abc.ABCMeta):
     """Base class for easily creating, comparing and storing a list of topics models."""
 
-    _SAVE_MODELS_PATH = get_abspath_from_project_source_root('saved-elements/topics/')  # Path where the models will be saved
+    _SAVE_MODELS_PATH = get_abspath_from_project_source_root(
+        'saved-elements/topics/')  # Path where the models will be saved
 
     def __init__(self, dataset: Dataset):
         self.dataset = dataset

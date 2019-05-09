@@ -1,4 +1,3 @@
-import abc
 from collections import OrderedDict
 from copy import deepcopy
 from os import listdir
@@ -130,6 +129,8 @@ class StructuredDataset(Dataset):
 
         # If the document exists, we return it's index inside the specified category
         return self.files_dict[category].index(doc)
+
+    # load() method is inherited from Dataset
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):

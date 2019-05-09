@@ -9,12 +9,11 @@ if __name__ == '__main__':
 
     # Load dataset and apply preprocessing
     dataset = TwentyNewsGroupsDataset()
-    dataset = preprocess_dataset(dataset)
+    dataset = preprocess_dataset(dataset, ngrams='tri')
 
     # Create the Lda model
     pretty_print('Creating the Lda model')
-    documents = dataset.as_documents_content_list()
-    model = LdaGensimModel(documents, num_topics=20, random_state=RANDOM_STATE)
+    model = LdaGensimModel(dataset, num_topics=20, random_state=RANDOM_STATE)
 
     # Visualize with tsne
     tsne_clustering_chart(model)

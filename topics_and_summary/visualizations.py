@@ -11,8 +11,7 @@ from sklearn.manifold import TSNE
 from tqdm import tqdm
 from wordcloud import WordCloud, STOPWORDS
 
-from topics_and_summary.models.topics import Topic
-from topics_and_summary.models.topics import TopicsModel
+from topics_and_summary.models.topics import Topic, TopicsModel
 from topics_and_summary.utils import RANDOM_STATE, now_as_str, join_paths, get_abspath_from_project_source_root
 
 

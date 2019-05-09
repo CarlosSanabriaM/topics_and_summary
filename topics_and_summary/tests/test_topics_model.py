@@ -13,59 +13,54 @@ class TestTopicsModel(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.dataset = TwentyNewsGroupsDataset.load('trigrams_dataset', SAVED_OBJECTS_PATH)
 
-    # noinspection PyTypeChecker
     def test_save_and_load_lda_gensim_model_on_disk(self):
         # Instead of creating a new model, we load a pre-created model from disk
-        model = LdaGensimModel.load('lda-gensim-model', self.dataset, SAVED_TOPICS_MODELS_PATH)
+        model = LdaGensimModel.load('lda-gensim-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
 
         # Here we really test the save and load methods
         model_name = 'test-lda-gensim-model'
         model.save(model_name, SAVED_TOPICS_MODELS_PATH)
-        test_model_from_disk = LdaGensimModel.load(model_name, self.dataset, SAVED_TOPICS_MODELS_PATH)
+        test_model_from_disk = LdaGensimModel.load(model_name, TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
 
         # Remove the created model (it's directory and it's files inside that directory)
         rmtree(join_paths(SAVED_TOPICS_MODELS_PATH, model_name))
 
         self.assertEqual(model, test_model_from_disk)
 
-    # noinspection PyTypeChecker
     def test_save_and_load_lda_mallet_model_on_disk(self):
         # Lda mallet models cant' be stored in a different path than the original one
         # To test correctly this 2 methods, we need to create a new model
         model_name = 'test-lda-mallet-model'
         test_model = LdaMalletModel(self.dataset, num_topics=17,
-                                    model_name=model_name,
-                                    model_path=SAVED_TOPICS_MODELS_PATH,
+                                    model_name=model_name, model_path=SAVED_TOPICS_MODELS_PATH,
                                     iterations=10)  # 10 iterations to make it too much faster (default is 1000)
 
         # Here we really test the save and load methods
         test_model.save()
-        test_model_from_disk = LdaMalletModel.load(model_name, self.dataset, SAVED_TOPICS_MODELS_PATH)
+        test_model_from_disk = LdaMalletModel.load(model_name, TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
 
         # Remove the created model (it's directory and it's files inside that directory)
         rmtree(join_paths(SAVED_TOPICS_MODELS_PATH, model_name))
 
         self.assertEqual(test_model, test_model_from_disk)
 
-    # noinspection PyTypeChecker
     def test_save_and_load_lsa_gensim_model_on_disk(self):
         # Instead of creating a new model, we load a pre-created model from disk
-        model = LsaGensimModel.load('lsa-gensim-model', self.dataset, SAVED_TOPICS_MODELS_PATH)
+        model = LsaGensimModel.load('lsa-gensim-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
 
         # Here we really test the save and load methods
         model_name = 'test-lsa-gensim-model'
         model.save(model_name, SAVED_TOPICS_MODELS_PATH)
-        test_model_from_disk = LsaGensimModel.load(model_name, self.dataset, SAVED_TOPICS_MODELS_PATH)
+        test_model_from_disk = LsaGensimModel.load(model_name, TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
 
         # Remove the created model (it's directory and it's files inside that directory)
         rmtree(join_paths(SAVED_TOPICS_MODELS_PATH, model_name))
 
         self.assertEqual(model, test_model_from_disk)
 
-    # noinspection PyTypeChecker
     def test_get_topics(self):
         # For testing this method, an LdaMalletModel loaded from disk will be used
-        model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH)
+        model = LdaMalletModel.load('lda-mallet-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
 
         # Expected result was previously calculated and stored in disk
         expected_result = load_obj_from_disk('test_get_topics_expected_result', SAVED_OBJECTS_PATH)
@@ -74,10 +69,9 @@ class TestTopicsModel(unittest.TestCase):
 
         self.assertEqual(expected_result, result)
 
-    # noinspection PyTypeChecker
     def test_predict_topic_prob_on_text(self):
         # For testing this method, an LdaMalletModel loaded from disk will be used
-        model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH)
+        model = LdaMalletModel.load('lda-mallet-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
         trigrams_func = load_func_from_disk('trigrams_func', SAVED_FUNCS_PATH)
 
         text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not
@@ -95,11 +89,11 @@ class TestTopicsModel(unittest.TestCase):
 
         self.assertEqual(expected_result, result)
 
-    # noinspection PyTypeChecker
     def test_get_dominant_topic_of_each_doc_as_df(self):
         # For testing this method, an LdaGensimModel loaded from disk will be used,
         # because LdaMallet is extremely slow to generate the docs_topics_df
-        model = LdaGensimModel.load('lda-gensim-model', self.dataset, SAVED_TOPICS_MODELS_PATH)
+        model = LdaGensimModel.load('lda-gensim-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
+        model.docs_topics_df = None  # After loading the model, docs_topics_df was also loaded from disk
 
         # Expected result was previously calculated and stored in disk
         expected_result = load_obj_from_disk('test_get_dominant_topic_of_each_doc_as_df_expected_result',
@@ -110,12 +104,9 @@ class TestTopicsModel(unittest.TestCase):
         # noinspection PyUnresolvedReferences
         self.assertTrue(expected_result.equals(result))
 
-    # noinspection PyTypeChecker
     def test_get_related_docs_as_df(self):
         # For testing this method, an LdaMalletModel loaded from disk will be used
-        docs_topics_df = load_obj_from_disk('lda_mallet_17topics_docs_topics_df', SAVED_OBJECTS_PATH)
-        model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH,
-                                    docs_topics_df=docs_topics_df)
+        model = LdaMalletModel.load('lda-mallet-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
         trigrams_func = load_func_from_disk('trigrams_func', SAVED_FUNCS_PATH)
 
         text = """The baptism of Jesus is described in the gospels of Matthew, Mark and Luke. John's gospel does not
@@ -132,12 +123,9 @@ class TestTopicsModel(unittest.TestCase):
         # noinspection PyUnresolvedReferences
         self.assertTrue(expected_result.equals(result))
 
-    # noinspection PyTypeChecker
     def test_get_k_most_representative_docs_per_topic_as_df(self):
         # For testing this method, an LdaMalletModel loaded from disk will be used
-        docs_topics_df = load_obj_from_disk('lda_mallet_17topics_docs_topics_df', SAVED_OBJECTS_PATH)
-        model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH,
-                                    docs_topics_df=docs_topics_df)
+        model = LdaMalletModel.load('lda-mallet-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
 
         # Expected result was previously calculated and stored in disk
         expected_result = load_obj_from_disk('test_get_k_most_representative_docs_per_topic_as_df_expected_result',
@@ -148,12 +136,9 @@ class TestTopicsModel(unittest.TestCase):
         # noinspection PyUnresolvedReferences
         self.assertTrue(expected_result.equals(result))
 
-    # noinspection PyTypeChecker
     def test_get_k_most_representative_docs_of_topic_as_df(self):
         # For testing this method, an LdaMalletModel loaded from disk will be used
-        docs_topics_df = load_obj_from_disk('lda_mallet_17topics_docs_topics_df', SAVED_OBJECTS_PATH)
-        model = LdaMalletModel.load('lda-mallet-model', self.dataset, SAVED_TOPICS_MODELS_PATH,
-                                    docs_topics_df=docs_topics_df)
+        model = LdaMalletModel.load('lda-mallet-model', TwentyNewsGroupsDataset, SAVED_TOPICS_MODELS_PATH)
 
         # Expected result was previously calculated and stored in disk
         expected_result = load_obj_from_disk('test_get_k_most_representative_docs_of_topic_as_df_expected_result',

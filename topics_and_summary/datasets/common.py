@@ -1,9 +1,10 @@
 import abc
+import warnings
 from typing import List, Callable
 
 import pandas as pd
 
-from topics_and_summary.utils import join_paths
+from topics_and_summary.utils import join_paths, load_obj_from_disk, save_obj_to_disk
 
 
 def get_file_content(file_path: str, encoding: str = None) -> str:
@@ -71,12 +72,43 @@ class Dataset(metaclass=abc.ABCMeta):
         :return: List of Document objects of the documents in the dataset.
         """
 
+    def save(self, name: str, folder_path: str = None):
+        """
+        Stores the dataset on disk.
+
+        :param name: Name that will have the dataset file on disk. It's extension will be '.pickle'.
+        :param folder_path: Path of the folder where the dataset will be stored on disk.
+        """
+        save_obj_to_disk(self, name, folder_path)
+
+    @classmethod
+    def load(cls, name: str, folder_path: str = None) -> 'Dataset':
+        """
+        Loads a saved dataset from disk. This function must be used to load datasets, \
+        instead of utils.the load_obj_from_disk() function.
+
+        :param name: Name of the dataset.
+        :param folder_path: Path of the folder where the dataset object is stored on disk.
+        :return: The dataset loaded from disk.
+        """
+        dataset = load_obj_from_disk(name, folder_path)
+
+        # If the path to the files of the dataset has changed after the dataset object was stored,
+        # the dataset_path attribute of the loaded object is wrong, but in this class we don't know the current
+        # path of the dataset files, so the user needs to check if the path is ok or it needs to be updated
+        warnings.warn("The dataset_path attribute of the loaded dataset object may need to be updated. "
+                      "It's current value is: {0}. If the path to the files of the dataset has changed after "
+                      "the dataset object was stored, the dataset_path attribute of the loaded object is wrong."
+                      .format(dataset.dataset_path))
+
+        return dataset
+
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return self.as_documents_obj_list() == other.as_documents_obj_list()
         return False
 
-    
+
 class Document(metaclass=abc.ABCMeta):
     """
     Class that represents a dataset document.

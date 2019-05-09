@@ -60,7 +60,7 @@ def make_ngrams(dataset: Dataset, ngram_model_func: Callable):
     dataset.apply_function_to_files(lambda doc: ' '.join(ngram_model_func(doc.split())))
 
 
-def make_bigrams_and_get_bigram_model_func(dataset: Dataset, min_count=50, threshold=75) -> Callable:
+def make_bigrams_and_get_bigrams_model_func(dataset: Dataset, min_count=50, threshold=75) -> Callable:
     """
     Creates a bigram model based on the documents in the dataset, makes bigrams in the \
     dataset using that model, and returns a function that allows to obtain bigrams \
@@ -80,8 +80,8 @@ def make_bigrams_and_get_bigram_model_func(dataset: Dataset, min_count=50, thres
     return bigram_model_func
 
 
-def make_trigrams_and_get_trigram_model_func(dataset: Dataset, min_count1=50, threshold1=75,
-                                             min_count2=100, threshold2=175) -> Callable:
+def make_trigrams_and_get_trigrams_model_func(dataset: Dataset, min_count1=50, threshold1=75,
+                                              min_count2=100, threshold2=175) -> Callable:
     """
     Creates a trigram model based on the documents in the dataset, makes trigrams in the \
     dataset using that model, and returns a function that allows to obtain trigrams \

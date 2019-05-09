@@ -6,8 +6,8 @@ from texttable import Texttable
 
 from topics_and_summary.datasets.common import Dataset
 from topics_and_summary.datasets.twenty_news_groups import StructuredDataset
-from topics_and_summary.preprocessing.ngrams import make_bigrams_and_get_bigram_model_func, \
-    make_trigrams_and_get_trigram_model_func
+from topics_and_summary.preprocessing.ngrams import make_bigrams_and_get_bigrams_model_func, \
+    make_trigrams_and_get_trigrams_model_func
 from topics_and_summary.preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, \
     remove_stopwords, substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, \
     remove_single_chars, remove_apostrophes
@@ -320,11 +320,11 @@ def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=Tr
     if stopwords:
         dataset_copy.apply_function_to_files(remove_stopwords)
     if ngrams == 'bi':
-        bigram_model_func = make_bigrams_and_get_bigram_model_func(dataset_copy, min_bigrams_count, bigrams_threshold)
+        bigrams_model_func = make_bigrams_and_get_bigrams_model_func(dataset_copy, min_bigrams_count, bigrams_threshold)
     elif ngrams == 'tri':
-        trigram_model_func = make_trigrams_and_get_trigram_model_func(dataset_copy,
-                                                                      min_bigrams_count, bigrams_threshold,
-                                                                      min_trigrams_count, trigrams_threshold)
+        trigrams_model_func = make_trigrams_and_get_trigrams_model_func(dataset_copy,
+                                                                       min_bigrams_count, bigrams_threshold,
+                                                                       min_trigrams_count, trigrams_threshold)
     if lemmatize:
         dataset_copy.apply_function_to_files(lemmatize_words)
     elif stem:
@@ -339,8 +339,8 @@ def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=Tr
         remove_empty_docs(dataset_copy)
 
     if ngrams == 'bi':
-        return dataset_copy, bigram_model_func
+        return dataset_copy, bigrams_model_func
     elif ngrams == 'tri':
-        return dataset_copy, trigram_model_func
+        return dataset_copy, trigrams_model_func
     else:
         return dataset_copy

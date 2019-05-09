@@ -1,5 +1,6 @@
 import re
 import textwrap
+import warnings
 
 from topics_and_summary.datasets.common import Document
 from topics_and_summary.datasets.structured_dataset import StructuredDataset, StructuredDocument
@@ -161,11 +162,26 @@ class TwentyNewsGroupsDataset(StructuredDataset):
         the current value of the dataset path.
 
         :param name: Name of the dataset.
-        :param folder_path: Path of the folder where the dataset is stored on disk.
+        :param folder_path: Path of the folder where the dataset object is stored on disk.
         :return: The object loaded from disk.
         """
         dataset = load_obj_from_disk(name, folder_path)
+
+        # If the path to the files of the dataset has changed after the dataset object was stored,
+        # the dataset_path attribute of the loaded object is wrong, but in this class we don't know the current
+        # path of the dataset files, so the user needs to check if the path is ok or it needs to be updated.
+
+        # But here we know the default path of the dataset, so if the user didn't changed it the __init__ method
+        # when creating the saved dataset, the following line fixes the problem with the dataset_path
+        # if the dataset files where moved.
         dataset.dataset_path = cls._DATASET_PATH
+
+        warnings.warn("The dataset_path attribute of the loaded dataset object may need to be updated. "
+                      "It's current value is: {0} (the _DATASET_PATH value). If other dataset_path value "
+                      "was given in the __init__ method while creating the dataset, the dataset_path attribute "
+                      "of the loaded object is wrong."
+                      .format(dataset.dataset_path))
+
         return dataset
 
 
