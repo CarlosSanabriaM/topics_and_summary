@@ -230,9 +230,9 @@ def remove_apostrophes(text: str) -> str:
     return apostrophes_re.sub(' ', text)
 
 
-def preprocess_text(text: str, normalize=True, lowercase=True, contractions=True, vulgar_words=True,
-                    stopwords=True, emails=True, punctuation=True, ngrams='uni', ngrams_model_func: Callable = None,
-                    lemmatize=True, stem=False, apostrophes=True, chars=True) -> str:
+def preprocess_text(text: str, normalize=True, lowercase=True, stopwords=True, contractions=True, vulgar_words=True,
+                    emails=True, punctuation=True, ngrams='uni', ngrams_model_func: Callable = None, lemmatize=True,
+                    stem=False, apostrophes=True, chars=True) -> str:
     """
     Receives a str containing a text and returns a list of words after applying the specified preprocessing. \
     The original dataset is not modified.
@@ -241,9 +241,9 @@ def preprocess_text(text: str, normalize=True, lowercase=True, contractions=True
     :param text: Text to be preprocessed.
     :param normalize: Normalize words. By default is True.
     :param lowercase: Transform to lowercase. By default is True.
+    :param stopwords: Remove stopwords. By default is True.
     :param contractions: Expand contractions. By default is True.
     :param vulgar_words: Substitute vulgar words. By default is True.
-    :param stopwords: Remove stopwords. By default is True.
     :param emails: Remove emails. By default is True.
     :param punctuation: Remove punctuation. By default is True.
     :param ngrams: If 'uni' uses unigrams. If 'bi' create bigrams. If 'tri' creates trigrams. By default is 'uni'. \

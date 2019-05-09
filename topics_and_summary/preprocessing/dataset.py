@@ -1,6 +1,7 @@
+import os
 import re
 from copy import deepcopy
-from typing import Union, Set, Tuple, List
+from typing import Union, Set, Tuple, List, Callable, Dict, Any
 
 from texttable import Texttable
 
@@ -11,7 +12,8 @@ from topics_and_summary.preprocessing.ngrams import make_bigrams_and_get_bigrams
 from topics_and_summary.preprocessing.text import to_lowercase, expand_contractions, substitute_vulgar_words, \
     remove_stopwords, substitute_punctuation, lemmatize_words, stem_words, normalize_words, remove_emails, \
     remove_single_chars, remove_apostrophes
-from topics_and_summary.utils import join_paths, get_abspath_from_project_source_root, pretty_print
+from topics_and_summary.utils import join_paths, get_abspath_from_project_source_root, pretty_print, save_obj_to_disk, \
+    load_obj_from_disk, save_func_to_disk, load_func_from_disk
 
 _PREPROCESSING_FILES_DIR = get_abspath_from_project_source_root('preprocessing-files')
 _TRASH_WORDS_PATH = join_paths(_PREPROCESSING_FILES_DIR, 'trash_words.txt')
@@ -260,11 +262,11 @@ def remove_empty_docs(dataset: StructuredDataset) -> int:
     return num_empty_docs
 
 
-def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=True, lowercase=True,
-                       contractions=True, vulgar_words=True, stopwords=True, emails=True, punctuation=True,
-                       ngrams='uni', min_bigrams_count=50, bigrams_threshold=75, min_trigrams_count=100,
-                       trigrams_threshold=175, lemmatize=True, stem=False, trash_words=True, apostrophes=True,
-                       chars=True, empty_docs=True) -> StructuredDataset:
+def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=True, lowercase=True, stopwords=True,
+                       contractions=True, vulgar_words=True, emails=True, punctuation=True, ngrams='uni',
+                       min_bigrams_count=50, bigrams_threshold=75, min_trigrams_count=100, trigrams_threshold=175,
+                       lemmatize=True, stem=False, trash_words=True, apostrophes=True, chars=True, empty_docs=True) \
+        -> StructuredDataset:
     """
     Creates a copy of the given dataset and returns the copy with the specified preprocessing. \
     The original dataset is not modified.
@@ -279,9 +281,9 @@ def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=Tr
     :param trash_docs: Remove specified docs. By default is True.
     :param normalize: Normalize words. By default is True.
     :param lowercase: Transform to lowercase. By default is True.
+    :param stopwords: Remove stopwords. By default is True.
     :param contractions: Expand contractions. By default is True.
     :param vulgar_words: Substitute vulgar words. By default is True.
-    :param stopwords: Remove stopwords. By default is True.
     :param emails: Remove emails. By default is True.
     :param punctuation: Remove punctuation. By default is True.
     :param ngrams: If 'uni' uses unigrams. If 'bi' create bigrams and returns bigram function. \
@@ -296,7 +298,18 @@ def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=Tr
 
     Note that lemmatize and stem shouldn't be both True, because only one of them will be applied.
     """
-    pretty_print('Preprocessing the dataset')  # TODO: Print the options selected: lowercase, contractions, ...
+
+    # Print the options selected
+    pretty_print('Preprocessing the dataset')
+    # locals() returns all the local variables in the current function.
+    # At the top of the function the only local variables are the parameters to the function.
+    params = locals()
+    del params['dataset']  # remove the dataset param from the params list, because it's not an option
+    print('Options selected:')
+    for opt, value in params.items():
+        print('\t{0}: {1}'.format(opt, value))
+
+    # Create a copy of the dataset to avoid modifying the given dataset
     dataset_copy = deepcopy(dataset)
 
     if trash_docs:
@@ -323,8 +336,8 @@ def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=Tr
         bigrams_model_func = make_bigrams_and_get_bigrams_model_func(dataset_copy, min_bigrams_count, bigrams_threshold)
     elif ngrams == 'tri':
         trigrams_model_func = make_trigrams_and_get_trigrams_model_func(dataset_copy,
-                                                                       min_bigrams_count, bigrams_threshold,
-                                                                       min_trigrams_count, trigrams_threshold)
+                                                                        min_bigrams_count, bigrams_threshold,
+                                                                        min_trigrams_count, trigrams_threshold)
     if lemmatize:
         dataset_copy.apply_function_to_files(lemmatize_words)
     elif stem:
@@ -338,9 +351,142 @@ def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=Tr
     if empty_docs:
         remove_empty_docs(dataset_copy)
 
+    # TODO: Change this. ngrams_model_func should be included in the DatasetPreprocessingOptions object
+    #  That object must be included inside the dataset_copy object.
     if ngrams == 'bi':
         return dataset_copy, bigrams_model_func
     elif ngrams == 'tri':
         return dataset_copy, trigrams_model_func
     else:
         return dataset_copy
+
+
+class DatasetPreprocessingOptions:
+    """
+    Class that stores the preprocessing options chosen in a preprocessed dataset.
+
+    The purpose of this class is to apply the same preprocessing options (the ones chosen to preprocess the dataset)
+    to the texts given to the TopicsModel that uses the preprocessed dataset with this options. \
+    Because of that, this class only stores options that can be applied to texts. For example, this class doesn't \
+    store the option 'trash_docs', because this option is only used in the preprocess_dataset() function, and \
+    it's not used in the preprocess_text() function.
+
+    This class also stores the ngrams_model_func created when the option ngrams of the preprocess_dataset() \
+    function is 'bi' or 'tri'.
+
+    An instance of this class must be created in the preprocess_dataset() function, and stored in the \
+    preprocessing_options attribute of the Dataset object that has been preprocessed.
+    """
+
+    def __init__(self, normalize: bool, lowercase: bool, stopwords: bool, contractions: bool, vulgar_words: bool,
+                 emails: bool, punctuation: bool, ngrams: str, ngrams_model_func: Callable, lemmatize: bool, stem: bool,
+                 apostrophes: bool, chars: bool):
+        self.normalize = normalize
+        self.lowercase = lowercase
+        self.stopwords = stopwords
+        self.contractions = contractions
+        self.vulgar_words = vulgar_words
+        self.emails = emails
+        self.punctuation = punctuation
+        self.ngrams = ngrams
+        self.ngrams_model_func = ngrams_model_func
+        self.lemmatize = lemmatize
+        self.stem = stem
+        self.apostrophes = apostrophes
+        self.chars = chars
+
+    def as_dict(self) -> Dict[str, Any]:
+        """
+        Returns the attributes of this object as a dict. This simplifies how the options stored in this \
+        DatasetPreprocessingOptions are passed to the preprocess_text() function.
+
+        Instead of passing them like this: \
+        preprocess_text(text, normalize=obj.normalize, lowercase=obj.lowercase, ...)
+
+        The options should be passed like this: \
+        preprocess_text(text, **obj.as_dict())
+        """
+        return deepcopy(vars(self))
+
+    def save(self, name: str, folder_path: str = None):
+        """
+        Stores the DatasetPreprocessingOptions object attributes on disk. |
+        A folder with same name as the name parameter is created inside the folder_path folder. The folder contains:
+
+        * A file with a dict with all the attributes (except the ngrams_model_func)
+        * A file with the ngrams_model_func (even if it's None)
+
+        :param name: Name that will have the folder with the object files.
+        :param folder_path: Path of the folder where the DatasetPreprocessingOptions folder will be stored on disk.
+        """
+        # Create the directory
+        files_folder = join_paths(folder_path, name)
+        os.mkdir(files_folder)
+
+        # Save the dict with all the attributes except the ngrams_model_func
+        options_except_ngrams_model_func = self.as_dict()
+        # as_dict() returns a copy of the params, so deleting ngrams_model_func from the dict
+        # doesn't delete it from the original object
+        del options_except_ngrams_model_func['ngrams_model_func']
+        save_obj_to_disk(options_except_ngrams_model_func, name + '_options_except_ngrams_model_func', files_folder)
+
+        # Save the ngrams_model_func
+        save_func_to_disk(self.ngrams_model_func, name + '_ngrams_model_func', files_folder)
+
+    @classmethod
+    def load(cls, name: str, parent_folder_path: str = None) -> 'DatasetPreprocessingOptions':
+        """
+        Loads the options of a saved DatasetPreprocessingOptions object stored on disk.
+
+        :param name: Name of the folder that contains the DatasetPreprocessingOptions object files.
+        :param parent_folder_path: Path of the folder that contains the folder with the object files.
+        :return: The DatasetPreprocessingOptions object loaded from disk.
+        """
+        files_folder = join_paths(parent_folder_path, name)
+
+        # Load all the attributes except the ngrams_model_func (it's a dict)
+        # noinspection PyTypeChecker
+        options_except_ngrams_model_func: dict = load_obj_from_disk(name + '_options_except_ngrams_model_func',
+                                                                    files_folder)
+
+        # Load the ngrams_model_func
+        ngrams_model_func = load_func_from_disk(name + '_ngrams_model_func', files_folder)
+
+        # Join them in the same dict
+        options = options_except_ngrams_model_func
+        options['ngrams_model_func'] = ngrams_model_func
+
+        # Create an instance of this class using the dict
+        return cls(**options)
+
+    def __str__(self):
+        result = 'DatasetPreprocessingOptions object values:\n'
+        for opt, value in self.as_dict().items():
+            result += '\t{0}: {1}\n'.format(opt, value)
+
+        return result
+
+    # TODO: This __eq__ doesn't compare the functionality of the ngrams_model_func, because a good comparison
+    #  depends on the ngrams generated for a specific dataset.
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            # ngrams_model_func can be None, so we need to do this if-else to check it's equality
+            if (self.ngrams_model_func is None and other.ngrams_model_func is not None) or \
+                    (self.ngrams_model_func is not None and other.ngrams_model_func is None):
+                return False
+            else:
+                # ngrams_model_func are not compared
+                return self.normalize == other.normalize and \
+                       self.lowercase == other.lowercase and \
+                       self.stopwords == other.stopwords and \
+                       self.contractions == other.contractions and \
+                       self.vulgar_words == other.vulgar_words and \
+                       self.emails == other.emails and \
+                       self.punctuation == other.punctuation and \
+                       self.ngrams == other.ngrams and \
+                       self.lemmatize == other.lemmatize and \
+                       self.stem == other.stem and \
+                       self.apostrophes == other.apostrophes and \
+                       self.chars == other.chars
+
+        return False
