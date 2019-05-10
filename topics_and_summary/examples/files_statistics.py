@@ -6,8 +6,13 @@ from topics_and_summary.preprocessing.dataset import preprocess_dataset
 from topics_and_summary.utils import pretty_print
 
 if __name__ == '__main__':
+    """
+    This Python module generates some statistics about the number of words in each document,
+    and plot a boxplot of the results.
+    """
+
     dataset = TwentyNewsGroupsDataset()
-    dataset, trigrams_func = preprocess_dataset(dataset, ngrams='tri')
+    dataset = preprocess_dataset(dataset, ngrams='tri')
     df = dataset.as_dataframe()
 
     # Create a new column with a list of the words in each document

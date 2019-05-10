@@ -3,17 +3,16 @@ from typing import List
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.models.topics import LdaModelsList, LsaModelsList, LdaMalletModelsList, TopicsModel
 from topics_and_summary.preprocessing.dataset import preprocess_dataset
-from topics_and_summary.utils import join_paths, pretty_print, get_abspath_from_project_source_root, save_obj_to_disk, \
-    save_func_to_disk
+from topics_and_summary.utils import join_paths, pretty_print, get_abspath_from_project_source_root
 from topics_and_summary.visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
 
 
-def generate_and_store_models(path, documents, plot_first_name):
+def generate_and_store_models(path, dataset, plot_first_name):
     # region LDA
     pretty_print(plot_first_name + ' LDA')
 
     lda_path = join_paths(path, 'lda')
-    lda_models_list = LdaModelsList(documents)
+    lda_models_list = LdaModelsList(dataset)
     # Create models, compute coherence values and store a plot with the coherence values
     pretty_print('Creating models')
     lda_models, lda_coherence_values = \
@@ -32,7 +31,7 @@ def generate_and_store_models(path, documents, plot_first_name):
     pretty_print(plot_first_name + ' LSA')
 
     lsa_path = join_paths(path, 'lsa')
-    lsa_models_list = LsaModelsList(documents)
+    lsa_models_list = LsaModelsList(dataset)
     # Create models, compute coherence values and store a plot with the coherence values
     pretty_print('Creating models')
     lsa_models, lsa_coherence_values = \
@@ -50,7 +49,7 @@ def generate_and_store_models(path, documents, plot_first_name):
     pretty_print(plot_first_name + ' LDA Mallet')
 
     lda_mallet_path = join_paths(path, 'lda-mallet')
-    lda_mallet_models_list = LdaMalletModelsList(documents)
+    lda_mallet_models_list = LdaMalletModelsList(dataset)
     # Create models, compute coherence values and store a plot with the coherence values
     pretty_print('Creating models')
     lda_mallet_models, lda_mallet_coherence_values = \
@@ -93,20 +92,24 @@ def store_plots(models: List[TopicsModel], coherence_values: List[float], tsne=T
 
 if __name__ == '__main__':
     """
-   Models to be created and compared:
-   1. Unigrams
-       1.1 Models with LDA between 10 and 20 topics
-       1.2 Models with LSA between 10 and 20 topics
-       1.3 Models with LDA Mallet between 10 and 20 topics
-   2. Bigrams
-       2.1 Models with LDA between 10 and 20 topics
-       2.2 Models with LSA between 10 and 20 topics
-       2.3 Models with LDA Mallet between 10 and 20 topics
-   3. Trigrams
-       3.1 Models with LDA between 10 and 20 topics
-       3.2 Models with LSA between 10 and 20 topics
-       3.3 Models with LDA Mallet between 10 and 20 topics
-   """
+    This Python module generates a combination of different models (the ones describe below), 
+    and generates some plots based on the coherence values and the topics generated,
+    making it easier to compare models and select the best one.
+
+    Models to be created and compared:
+    1. Unigrams
+        1.1 Models with LDA between 10 and 20 topics
+        1.2 Models with LSA between 10 and 20 topics
+        1.3 Models with LDA Mallet between 10 and 20 topics
+    2. Bigrams
+        2.1 Models with LDA between 10 and 20 topics
+        2.2 Models with LSA between 10 and 20 topics
+        2.3 Models with LDA Mallet between 10 and 20 topics
+    3. Trigrams
+        3.1 Models with LDA between 10 and 20 topics
+        3.2 Models with LSA between 10 and 20 topics
+        3.3 Models with LDA Mallet between 10 and 20 topics
+    """
 
     # %%
     # Load dataset
@@ -121,26 +124,20 @@ if __name__ == '__main__':
     # Unigrams
     pretty_print('Unigrams')
     unigrams_dataset = preprocess_dataset(dataset, ngrams='uni')
-    unigrams_documents = unigrams_dataset.as_documents_content_list()
     unigrams_path = join_paths(BASE_PATH, 'unigrams')
 
-    generate_and_store_models(unigrams_path, unigrams_documents, 'Unigrams')
+    generate_and_store_models(unigrams_path, unigrams_dataset, 'Unigrams')
 
     # Bigrams
     pretty_print('Bigrams')
-    bigrams_dataset, bigrams_func = preprocess_dataset(dataset, ngrams='bi')
-    bigrams_documents = bigrams_dataset.as_documents_content_list()
+    bigrams_dataset = preprocess_dataset(dataset, ngrams='bi')
     bigrams_path = join_paths(BASE_PATH, 'bigrams')
 
-    generate_and_store_models(bigrams_path, bigrams_documents, 'Bigrams')
+    generate_and_store_models(bigrams_path, bigrams_dataset, 'Bigrams')
 
     # Trigrams
     pretty_print('Trigrams')
-    trigrams_dataset, trigrams_func = preprocess_dataset(dataset, ngrams='tri')
-    save_obj_to_disk(trigrams_dataset, 'trigrams_dataset')
-    save_func_to_disk(trigrams_func, 'trigrams_func')
-
-    trigrams_documents = trigrams_dataset.as_documents_content_list()
+    trigrams_dataset = preprocess_dataset(dataset, ngrams='tri')
     trigrams_path = join_paths(BASE_PATH, 'trigrams')
 
-    generate_and_store_models(trigrams_path, trigrams_documents, 'Trigrams')
+    generate_and_store_models(trigrams_path, trigrams_dataset, 'Trigrams')

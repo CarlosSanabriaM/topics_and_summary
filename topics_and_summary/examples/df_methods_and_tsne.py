@@ -5,6 +5,9 @@ from topics_and_summary.utils import pretty_print, RANDOM_STATE
 from topics_and_summary.visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
 
 if __name__ == '__main__':
+    """
+    This Python module shows some of the functionalities of the library.
+    """
     # %%
 
     # Load dataset and apply preprocessing
@@ -78,5 +81,3 @@ if __name__ == '__main__':
     related_docs_text1_df = model.get_related_docs_as_df(text1, num_docs=3)
     related_docs_text2_df = model.get_related_docs_as_df(text2, num_docs=3)
     related_docs_text3_df = model.get_related_docs_as_df(text3, num_docs=3)
-
-    # df = model.get_related_docs_as_df(text1, num_docs=7, ngrams='tri', ngrams_model_func=trigrams_func)

@@ -9,6 +9,10 @@ def print_sentences(sentences):
 
 
 if __name__ == '__main__':
+    """
+    This Python module compares the use of different word-embeddings in the TextRank summarization algorithm.
+    """
+
     text_rank_word2vec_300 = TextRank(embedding_model='word2vec')
     text_rank_glove_100 = TextRank(embedding_model='glove', glove_embedding_dim=100)
     text_rank_glove_300 = TextRank(embedding_model='glove', glove_embedding_dim=300)

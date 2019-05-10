@@ -165,6 +165,9 @@ class TwentyNewsGroupsDataset(StructuredDataset):
         :param parent_dir_path: Path of the folder where the dataset object is stored on disk.
         :return: The object loaded from disk.
         """
+        if parent_dir_path is None:
+            parent_dir_path = get_abspath_from_project_source_root('saved-elements/objects')
+
         # noinspection PyTypeChecker
         dataset: TwentyNewsGroupsDataset = super().load(name, parent_dir_path)
         dataset.dataset_path = cls._DATASET_PATH

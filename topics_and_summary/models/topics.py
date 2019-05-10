@@ -368,7 +368,10 @@ class TopicsModel(metaclass=abc.ABCMeta):
         # DataFrame all at once.
         rows_list = []
 
-        for doc_index, doc_as_bow in enumerate(tqdm(self.corpus)):
+        progress_bar = tqdm(self.corpus)
+        for doc_index, doc_as_bow in enumerate(progress_bar):
+            progress_bar.set_description('Generating the docs_topics_df')
+
             dominant_topic = sorted(self.model[doc_as_bow], key=lambda x: x[1], reverse=True)[0]
             dominant_topic_index = dominant_topic[0]
             dominant_topic_prob = dominant_topic[1]

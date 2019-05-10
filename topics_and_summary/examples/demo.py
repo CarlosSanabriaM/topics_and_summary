@@ -1,10 +1,13 @@
+import warnings
+
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.models.summarization import TextRank
 from topics_and_summary.models.topics import LdaMalletModel, LdaGensimModel
 from topics_and_summary.preprocessing.dataset import preprocess_dataset
-from topics_and_summary.utils import pretty_print, load_func_from_disk, \
-    get_abspath_from_project_source_root
+from topics_and_summary.utils import pretty_print, get_abspath_from_project_source_root
 from topics_and_summary.visualizations import plot_word_clouds_of_topics
+
+warnings.filterwarnings('ignore')
 
 
 def execute():
@@ -18,36 +21,44 @@ def execute():
     user_input = input('Load previously preprocessed dataset from [d]isk (quick) or '
                        'load dataset and preprocess it in the [m]oment (slow)? (D/m): ')
     if user_input.lower() != 'm':  # D option
-        dataset = TwentyNewsGroupsDataset.load('trigrams_dataset')
-        trigrams_func = load_func_from_disk('trigrams_func')
+        # Load a preprocessed 20newsgroups dataset object (with trigrams)
+        preprocessed_dataset = TwentyNewsGroupsDataset.load('trigrams_dataset')
         pretty_print("One of the files of the preprocessed dataset")
-        dataset.print_some_files(n=1, print_file_num=False)
+        preprocessed_dataset.print_some_files(n=1, print_file_num=False)
     else:  # m option
-        # Load 20 newsgroups dataset, applying the specific preprocessing
+        # Load the 20newsgroups dataset, applying the dataset specific preprocessing
+        # (remove header, remove footer and remove quotes of the documents, as specified
+        # in the __init__() default parameters).
         dataset = TwentyNewsGroupsDataset()
 
         # Prints some files
         pretty_print("One of the files of the dataset after the dataset specific preprocessing")
         dataset.print_some_files(n=1, print_file_num=False)
 
-        # Applies preprocessing, generating trigrams
-        # All the parameters except ngrams have their default value
-        dataset, trigrams_func = preprocess_dataset(dataset, ngrams='tri')
+        # Applies general preprocessing (generating trigrams):
+        #   Normalize, lowercase, remove stopwords, remove emails, ...
+        #   All this preprocessing and more is applied, as specified in the default parameters
+        #   of the preprocess_dataset() function.
+        preprocessed_dataset = preprocess_dataset(dataset, ngrams='tri')
         pretty_print("One of the files of the dataset after the preprocessing")
-        dataset.print_some_files(n=1, print_file_num=False)
+        preprocessed_dataset.print_some_files(n=1, print_file_num=False)
     # endregion
 
     # region 2. Generate LdaGensimModel or load LdaMalletModel
     pretty_print('2. Generate or load a TopicsModel')
 
     user_input = input('Load previously generated Lda[M]alletModel (quick op. and better model) or '
-                       'generate Lda[G]ensimModel in the moment (slow op. and worst model)? (M/g): ')
+                       'generate a Lda[G]ensimModel in the moment (slow op. and worst model)? (M/g): ')
     if user_input.lower() != 'g':  # M option
         model_dir_path = get_abspath_from_project_source_root('saved-elements/topics/'
                                                               'best-model/trigrams/lda-mallet')
+        # Load a LdaMalletModel stored on disk. This model is the best model found.
+        # The load() method also loads the dataset used to generate the model, it's preprocessing options,
+        # and the docs_topics_df DataFrame, which contains the dominant topic of each document in the dataset.
         model = LdaMalletModel.load('model17', TwentyNewsGroupsDataset, model_dir_path)
     else:  # g option
-        model = LdaGensimModel(dataset, num_topics=17)
+        # Generate a LdaGensimModel using the previously preprocessed dataset
+        model = LdaGensimModel(preprocessed_dataset, num_topics=17)
     # endregion
 
     # region 3. Show topics
@@ -68,12 +79,14 @@ def execute():
         model.print_topics(pretty_format=True)
     if images_format:
         pretty_print('Images')
-        print('Images are being saved in the <project-root-path>/images folder')
+        print('Images are being saved in the <project-root-path>/demo-images folder')
+        # Create a plot with the most important keywords in each topic.
+        # Plots are stored in the <project-root-path>/demo-images folder.
         plot_word_clouds_of_topics(model.get_topics(num_keywords=15), dpi=150, show_plot=False,
                                    save=True, dir_save_path=get_abspath_from_project_source_root('../demo-images'))
     # endregion
 
-    # region 4. Most repr docs of one topic
+    # region 4. Get the most representative documents of one topic
     pretty_print('4. Show the k most representative documents of the topic 16')
 
     k = input('k value (default is 2):')
@@ -82,11 +95,16 @@ def execute():
     except ValueError:
         k = 2
 
+    # Obtain a DataFrame with the k most representative documents of the topic 16
     two_most_repr_docs_topic16_df = model.get_k_most_repr_docs_of_topic_as_df(topic=16, k=k)
+
     for i in range(k):
         pretty_print('Document {0}'.format(i + 1))
+        # The 'Topic prob' column contains the topic-document probability
         print('Probability: {0}'.format(two_most_repr_docs_topic16_df['Topic prob'][i]))
+
         pretty_print('Original document content')
+        # The 'Original doc text' column contains the original text of the documents (before preprocessing)
         print(two_most_repr_docs_topic16_df['Original doc text'][i])
     # endregion
 
@@ -129,7 +147,9 @@ It is a Trinitarian feast in the Eastern Orthodox Churches."""
     print(text)
 
     pretty_print('Text-topics probability')
-    model.predict_topic_prob_on_text(text, ngrams='tri', ngrams_model_func=trigrams_func)
+    # Predict the probability of the text being related with each topic.
+    # Instead of storing the returned DataFrame, a table is printed to the standard output
+    model.predict_topic_prob_on_text(text)
     # endregion
 
     # region 6. Given a text, get k most related documents
@@ -144,13 +164,16 @@ It is a Trinitarian feast in the Eastern Orthodox Churches."""
     pretty_print('Text')
     print(text)
 
-    related_docs_df = \
-        model.get_related_docs_as_df(text, num_docs=k, ngrams='tri',
-                                     ngrams_model_func=trigrams_func)
+    # Obtain a DataFrame with the k documents more related to the given text
+    related_docs_df = model.get_related_docs_as_df(text, num_docs=k)
+
     for i in range(k):
         pretty_print('Document {0}'.format(i + 1))
+        # The 'Doc prob' column contains the document-text probability
         print('Probability: {0}'.format(related_docs_df['Doc prob'][i]))
+
         pretty_print('Original document content')
+        # The 'Original doc text' column contains the original text of the documents (before preprocessing)
         print(related_docs_df['Original doc text'][i])
     # endregion
 
@@ -167,8 +190,11 @@ It is a Trinitarian feast in the Eastern Orthodox Churches."""
     print(text)
 
     pretty_print('Summary')
+    # Create a TextRank model
     tr = TextRank()
+    # Use the created model to obtain the k sentences that better summarize the given text
     summary = tr.get_k_best_sentences_of_text(text, k)
+
     for i, sent in enumerate(summary):
         if i > 0:
             print()
@@ -177,4 +203,8 @@ It is a Trinitarian feast in the Eastern Orthodox Churches."""
 
 
 if __name__ == '__main__':
+    """
+    This Python module contains an interactive demo of the library functionality.
+    The call to the execute() method starts the demo.
+    """
     execute()
