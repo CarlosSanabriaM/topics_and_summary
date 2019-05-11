@@ -55,7 +55,6 @@ def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir
                                dir_save_path=dir_save_path, dpi=dpi, show_plot=show_plot)
 
 
-# noinspection PyTypeChecker
 def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False, all_horizontal=True,
                                save=False, dir_save_path: str = None, dpi=350, show_plot=True):
     """
@@ -117,6 +116,7 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
         # Each plot contains, as max, 4 topics
         else:
             # Each plot is formed by 4 subplots, each one containing the keywords of a topic
+            # noinspection PyTypeChecker
             fig, axes = plt.subplots(2, 2, figsize=(10, 10), dpi=dpi, sharex=True, sharey=True)
 
             for ax in axes.flatten():

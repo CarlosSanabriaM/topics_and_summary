@@ -5,7 +5,7 @@ from typing import Union, Set, Tuple, List
 from texttable import Texttable
 
 from topics_and_summary.datasets.common import Dataset
-from topics_and_summary.datasets.twenty_news_groups import StructuredDataset
+from topics_and_summary.datasets.structured_dataset import StructuredDataset
 from topics_and_summary.preprocessing.dataset_preprocessing_options import DatasetPreprocessingOptions
 from topics_and_summary.preprocessing.ngrams import make_bigrams_and_get_bigrams_model_func, \
     make_trigrams_and_get_trigrams_model_func
