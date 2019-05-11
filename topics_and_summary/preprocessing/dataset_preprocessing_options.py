@@ -45,17 +45,22 @@ class DatasetPreprocessingOptions:
         Returns the attributes of this object as a dict. This simplifies how the options stored in this \
         DatasetPreprocessingOptions are passed to the preprocess_text() function.
 
-        Instead of passing them like this: \
-        preprocess_text(text, normalize=preprocessing_options.normalize, lowercase=preprocessing_options.lowercase, ...)
+        Instead of passing them like this:
 
-        The options should be passed like this: \
-        preprocess_text(text, **preprocessing_options.as_dict())
+        >>> from topics_and_summary.preprocessing.text import preprocess_text
+        >>> text = 'This is a text'
+        >>> options: DatasetPreprocessingOptions
+        >>> preprocess_text(text, normalize=options.normalize, lowercase=options.lowercase, ...)
+
+        The options should be passed like this:
+
+        >>> preprocess_text(text, **options.as_dict())
         """
         return deepcopy(vars(self))
 
     def save(self, name: str, folder_path: str = None):
         """
-        Stores the DatasetPreprocessingOptions object attributes on disk. |
+        Stores the DatasetPreprocessingOptions object attributes on disk. \
         A folder with same name as the name parameter is created inside the folder_path folder. The folder contains:
 
         * A file with a dict with all the attributes (except the ngrams_model_func)
@@ -111,9 +116,11 @@ class DatasetPreprocessingOptions:
 
         return result
 
-    # TODO: This __eq__ doesn't compare the functionality of the ngrams_model_func, because a good comparison
-    #  depends on the ngrams generated for a specific dataset.
     def __eq__(self, other: object) -> bool:
+        """
+        **Warning:** This __eq__ doesn't compare the functionality of the ngrams_model_func, because a good comparison
+        depends on the ngrams generated for a specific dataset.
+        """
         if isinstance(other, self.__class__):
             # ngrams_model_func can be None, so we need to do this if-else to check it's equality
             if (self.ngrams_model_func is None and other.ngrams_model_func is not None) or \

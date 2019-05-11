@@ -35,15 +35,12 @@
           <div class="body" role="main">
             
   <h1>Source code for topics_and_summary.preprocessing.ngrams</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span>
-<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">filterwarnings</span>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="kn">import</span> <span class="nn">gensim</span>
 
 <span class="kn">from</span> <span class="nn">topics_and_summary.datasets.common</span> <span class="k">import</span> <span class="n">Dataset</span>
-
-<span class="c1"># Ignore Phraser warnings</span>
-<span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="create_bigram_model"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.ngrams.html#topics_and_summary.preprocessing.ngrams.create_bigram_model">[docs]</a><span class="k">def</span> <span class="nf">create_bigram_model</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">min_count</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">phrases</span><span class="o">.</span><span class="n">Phraser</span><span class="p">:</span>
@@ -55,7 +52,9 @@
 <span class="sd">    :param threshold: Represent a score threshold for forming the phrases (higher means fewer phrases).</span>
 <span class="sd">    :return: Bigram model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">bigram</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Phrases</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">as_documents_content_list</span><span class="p">(),</span> <span class="n">min_count</span><span class="o">=</span><span class="n">min_count</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">bigram</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Phrases</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">as_documents_content_list</span><span class="p">(),</span> <span class="n">min_count</span><span class="o">=</span><span class="n">min_count</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
 
     <span class="c1"># Return a Phraser, because it is much smaller and somewhat faster than using the full Phrases model</span>
     <span class="k">return</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">phrases</span><span class="o">.</span><span class="n">Phraser</span><span class="p">(</span><span class="n">bigram</span><span class="p">)</span></div>
@@ -78,8 +77,11 @@
 <span class="sd">    :return: Bigram and Trigram model. Both are needed to create trigrams.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">docs_list</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">as_documents_content_list</span><span class="p">()</span>
-    <span class="n">bigram</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Phrases</span><span class="p">(</span><span class="n">docs_list</span><span class="p">,</span> <span class="n">min_count</span><span class="o">=</span><span class="n">min_count1</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold1</span><span class="p">)</span>
-    <span class="n">trigram</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Phrases</span><span class="p">(</span><span class="n">bigram</span><span class="p">[</span><span class="n">docs_list</span><span class="p">],</span> <span class="n">min_count</span><span class="o">=</span><span class="n">min_count2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold2</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">bigram</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Phrases</span><span class="p">(</span><span class="n">docs_list</span><span class="p">,</span> <span class="n">min_count</span><span class="o">=</span><span class="n">min_count1</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold1</span><span class="p">)</span>
+        <span class="n">trigram</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">Phrases</span><span class="p">(</span><span class="n">bigram</span><span class="p">[</span><span class="n">docs_list</span><span class="p">],</span> <span class="n">min_count</span><span class="o">=</span><span class="n">min_count2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold2</span><span class="p">)</span>
 
     <span class="c1"># Return a Phraser, because it is much smaller and somewhat faster than using the full Phrases model</span>
     <span class="k">return</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">phrases</span><span class="o">.</span><span class="n">Phraser</span><span class="p">(</span><span class="n">bigram</span><span class="p">),</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">phrases</span><span class="o">.</span><span class="n">Phraser</span><span class="p">(</span><span class="n">trigram</span><span class="p">)</span></div>
@@ -97,7 +99,7 @@
     <span class="n">dataset</span><span class="o">.</span><span class="n">apply_function_to_files</span><span class="p">(</span><span class="k">lambda</span> <span class="n">doc</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ngram_model_func</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">split</span><span class="p">())))</span></div>
 
 
-<div class="viewcode-block" id="make_bigrams_and_get_bigram_model_func"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.ngrams.html#topics_and_summary.preprocessing.ngrams.make_bigrams_and_get_bigram_model_func">[docs]</a><span class="k">def</span> <span class="nf">make_bigrams_and_get_bigram_model_func</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">min_count</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<div class="viewcode-block" id="make_bigrams_and_get_bigrams_model_func"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.ngrams.html#topics_and_summary.preprocessing.ngrams.make_bigrams_and_get_bigrams_model_func">[docs]</a><span class="k">def</span> <span class="nf">make_bigrams_and_get_bigrams_model_func</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">min_count</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a bigram model based on the documents in the dataset, makes bigrams in the \</span>
 <span class="sd">    dataset using that model, and returns a function that allows to obtain bigrams \</span>
@@ -117,8 +119,8 @@
     <span class="k">return</span> <span class="n">bigram_model_func</span></div>
 
 
-<div class="viewcode-block" id="make_trigrams_and_get_trigram_model_func"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.ngrams.html#topics_and_summary.preprocessing.ngrams.make_trigrams_and_get_trigram_model_func">[docs]</a><span class="k">def</span> <span class="nf">make_trigrams_and_get_trigram_model_func</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">min_count1</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">threshold1</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span>
-                                             <span class="n">min_count2</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threshold2</span><span class="o">=</span><span class="mi">175</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<div class="viewcode-block" id="make_trigrams_and_get_trigrams_model_func"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.ngrams.html#topics_and_summary.preprocessing.ngrams.make_trigrams_and_get_trigrams_model_func">[docs]</a><span class="k">def</span> <span class="nf">make_trigrams_and_get_trigrams_model_func</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">min_count1</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">threshold1</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span>
+                                              <span class="n">min_count2</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">threshold2</span><span class="o">=</span><span class="mi">175</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a trigram model based on the documents in the dataset, makes trigrams in the \</span>
 <span class="sd">    dataset using that model, and returns a function that allows to obtain trigrams \</span>

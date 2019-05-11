@@ -37,10 +37,11 @@
   <h1>Source code for topics_and_summary.datasets.twenty_news_groups</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">textwrap</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">topics_and_summary.datasets.common</span> <span class="k">import</span> <span class="n">Document</span>
 <span class="kn">from</span> <span class="nn">topics_and_summary.datasets.structured_dataset</span> <span class="k">import</span> <span class="n">StructuredDataset</span><span class="p">,</span> <span class="n">StructuredDocument</span>
-<span class="kn">from</span> <span class="nn">topics_and_summary.utils</span> <span class="k">import</span> <span class="n">pretty_print</span><span class="p">,</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">,</span> <span class="n">load_obj_from_disk</span>
+<span class="kn">from</span> <span class="nn">topics_and_summary.utils</span> <span class="k">import</span> <span class="n">pretty_print</span><span class="p">,</span> <span class="n">get_abspath_from_project_source_root</span>
 
 
 <div class="viewcode-block" id="TwentyNewsGroupsDataset"><a class="viewcode-back" href="../../../api/topics_and_summary.datasets.twenty_news_groups.html#topics_and_summary.datasets.twenty_news_groups.TwentyNewsGroupsDataset">[docs]</a><span class="k">class</span> <span class="nc">TwentyNewsGroupsDataset</span><span class="p">(</span><span class="n">StructuredDataset</span><span class="p">):</span>
@@ -191,18 +192,29 @@
         <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="TwentyNewsGroupsDataset.load"><a class="viewcode-back" href="../../../api/topics_and_summary.datasets.twenty_news_groups.html#topics_and_summary.datasets.twenty_news_groups.TwentyNewsGroupsDataset.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">folder_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;TwentyNewsGroupsDataset&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;TwentyNewsGroupsDataset&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads a saved dataset from disk. This function must be used to load datasets,</span>
 <span class="sd">        instead of utils.the load_obj_from_disk() function, because this function updates</span>
 <span class="sd">        the current value of the dataset path.</span>
 
 <span class="sd">        :param name: Name of the dataset.</span>
-<span class="sd">        :param folder_path: Path of the folder where the dataset is stored on disk.</span>
+<span class="sd">        :param parent_dir_path: Path of the folder where the dataset object is stored on disk.</span>
 <span class="sd">        :return: The object loaded from disk.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">folder_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parent_dir_path</span> <span class="o">=</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;saved-elements/objects&#39;</span><span class="p">)</span>
+
+        <span class="c1"># noinspection PyTypeChecker</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">TwentyNewsGroupsDataset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="p">)</span>
         <span class="n">dataset</span><span class="o">.</span><span class="n">dataset_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_DATASET_PATH</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;The dataset_path attribute was updated to the value of the TwentyNewsGroupsDataset._DATASET_PATH &quot;</span>
+            <span class="s2">&quot;variable. If a dataset_path value was given in the __init__ method while creating the dataset, &quot;</span>
+            <span class="s2">&quot;the dataset_path attribute of the loaded object is wrong and needs to be changed manually.&quot;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="n">dataset</span></div></div>
 
 

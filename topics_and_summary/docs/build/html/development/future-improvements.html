@@ -42,7 +42,7 @@
 <h1>Future Improvements<a class="headerlink" href="#future-improvements" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="source-code">
 <h2>Source code<a class="headerlink" href="#source-code" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
+<ul>
 <li><p><strong>Implement a solution for the TextRank main problem</strong>: With some texts, this algorithm <strong>doesn’t converge</strong>,
 throwing a PowerIterationFailedConvergence. Maybe in this case, the first k sentences of the text can be returned.</p></li>
 <li><p><strong>Evaluate the results of the TextRank summaries</strong>: This can be done selecting some texts of the 20 newsgroups dataset,
@@ -50,24 +50,29 @@ and obtaining theirs summaries with TextRank. Once we have the summaries, we can
 on that dataset to predict the topics probabilities of the summaries. After that, we can compare the topics probabilities
 of the original selected documents and the topics probabilities of their summaries. The comparisson of those probabilities
 can be used to evaluate the TextRank algorithm. We expect that the summary of a text relates to the same topics as the
-original text.</p></li>
-<li><p><strong>Implement more summarization approaches</strong>. Some links to other alternatives can be found in the
-<a class="reference internal" href="api.html#other-summarization-alternatives"><span class="std std-ref">Other summarization alternatives</span></a> section of the Development: API page.</p></li>
-<li><p><strong>Revise the preprocessing order</strong> of the preprocess_text() and preprocess_dataset() functions.</p></li>
-<li><p><strong>Add more datasets</strong> to check the LdaMalletModel results on them, as explained in the <a class="reference internal" href="api.html#unstructured-dataset"><span class="std std-ref">Unstructured Dataset</span></a> section.</p></li>
-<li><p><strong>Implement the unstructured_dataset.py</strong> module, as explained</p></li>
-<li><p>Create equivalent .bat files for the existing .sh files</p></li>
-</ul>
+original text.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Evaluating text summaries is a very hard task, and most of the times it needs human expert intervention.
 There are some metrics, like ROUGE, but they also need an expert saying which sentences summarize better the text.</p>
 </div>
+</li>
+<li><p><strong>Implement more summarization approaches</strong>. Some links to other alternatives can be found in the
+<a class="reference internal" href="api.html#other-summarization-alternatives"><span class="std std-ref">Other summarization alternatives</span></a> section of the Development: API page.</p></li>
+<li><p><strong>Revise the preprocessing order</strong> of the preprocess_text() and preprocess_dataset() functions.</p></li>
+<li><p><strong>Add more datasets</strong> to check the LdaMalletModel results on them, as explained in the <a class="reference internal" href="api.html#unstructured-dataset"><span class="std std-ref">Unstructured Dataset</span></a> section.</p></li>
+<li><p><strong>Implement the unstructured_dataset.py</strong> module, as explained in the <a class="reference internal" href="api.html#unstructured-dataset"><span class="std std-ref">Unstructured Dataset</span></a> section of the <em>Development: API</em> page.</p></li>
+<li><p>Create equivalent .bat files for the existing .sh files</p></li>
+</ul>
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Change the <strong>API packages and modules toctree</strong> to don’t show topics_and_summary as a first item</p></li>
+<li><p>Change the <strong>API packages and modules toctree</strong> to don’t show <em>topics_and_summary package</em> as a first item</p></li>
+<li><p>Generate the documentation of each Python module or class in the same way as pandas library documentation does.
+As an example, check the <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/series.html">pandas Series class documentation</a>.
+This is done with the .. autosummary:: directive. The soure code of the pandas Series class documentation
+is available on <a class="reference external" href="https://raw.githubusercontent.com/pandas-dev/pandas/master/doc/source/reference/series.rst">this GitHub page</a>.</p></li>
 <li><p>Create equivalent .bat files for the existing .sh files used for generating the api documentation</p></li>
 <li><p>Create equivalent .bat files for the existing .sh files used for generating the requirements files</p></li>
 </ul>
@@ -89,8 +94,6 @@ There are some metrics, like ROUGE, but they also need an expert saying which se
 <li class="toctree-l1 current"><a class="reference internal" href="../development.html">Development</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installation.html">Development Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">Development: API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#start-the-sonarqube-server">Start the SonarQube server</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#launch-the-sonarqube-scanner">Launch the SonarQube scanner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="documentation.html">Development: Documentation</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Future Improvements</a></li>
 </ul>

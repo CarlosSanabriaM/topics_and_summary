@@ -228,8 +228,8 @@ because it generates a pandas DataFrame with the topic of each document of the s
 the TopicsModel methods. The problem with this method is that <strong>it needs to predict the dominant topic of each document in the dataset</strong>,
 using the predict_topic_prob_on_text() method. As said above, the predict_topic_prob_on_text() takes 5-10 seconds with LdaMallet,
 so <strong>get_dominant_topic_of_each_doc_as_df() can be extremely slow</strong>. For example, with the <strong>20 newsgroups dataset</strong>, and <strong>10 seconds per prediction</strong>,
-this method takes <strong>48 hours</strong> to generate the DataFrame. But, <strong>once generated, the DataFrame can be stored on disk</strong> using the save_obj_to_disk()
-method, and can be loaded in the __init__ method of the LdaMalletModel.</p>
+this method takes <strong>48 hours</strong> to generate the DataFrame. But, <strong>once generated, the DataFrame can be stored on disk</strong>
+alongside the rest of the model info, using the save() method of the TopicsModel class.</p>
 </div>
 <div class="section" id="lda-mallet-wrapper-communication">
 <h3>Lda Mallet Wrapper communication<a class="headerlink" href="#lda-mallet-wrapper-communication" title="Permalink to this headline">¶</a></h3>

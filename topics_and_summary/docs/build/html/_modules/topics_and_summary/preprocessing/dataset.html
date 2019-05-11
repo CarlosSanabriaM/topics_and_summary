@@ -43,8 +43,9 @@
 
 <span class="kn">from</span> <span class="nn">topics_and_summary.datasets.common</span> <span class="k">import</span> <span class="n">Dataset</span>
 <span class="kn">from</span> <span class="nn">topics_and_summary.datasets.twenty_news_groups</span> <span class="k">import</span> <span class="n">StructuredDataset</span>
-<span class="kn">from</span> <span class="nn">topics_and_summary.preprocessing.ngrams</span> <span class="k">import</span> <span class="n">make_bigrams_and_get_bigram_model_func</span><span class="p">,</span> \
-    <span class="n">make_trigrams_and_get_trigram_model_func</span>
+<span class="kn">from</span> <span class="nn">topics_and_summary.preprocessing.dataset_preprocessing_options</span> <span class="k">import</span> <span class="n">DatasetPreprocessingOptions</span>
+<span class="kn">from</span> <span class="nn">topics_and_summary.preprocessing.ngrams</span> <span class="k">import</span> <span class="n">make_bigrams_and_get_bigrams_model_func</span><span class="p">,</span> \
+    <span class="n">make_trigrams_and_get_trigrams_model_func</span>
 <span class="kn">from</span> <span class="nn">topics_and_summary.preprocessing.text</span> <span class="k">import</span> <span class="n">to_lowercase</span><span class="p">,</span> <span class="n">expand_contractions</span><span class="p">,</span> <span class="n">substitute_vulgar_words</span><span class="p">,</span> \
     <span class="n">remove_stopwords</span><span class="p">,</span> <span class="n">substitute_punctuation</span><span class="p">,</span> <span class="n">lemmatize_words</span><span class="p">,</span> <span class="n">stem_words</span><span class="p">,</span> <span class="n">normalize_words</span><span class="p">,</span> <span class="n">remove_emails</span><span class="p">,</span> \
     <span class="n">remove_single_chars</span><span class="p">,</span> <span class="n">remove_apostrophes</span>
@@ -297,14 +298,15 @@
     <span class="k">return</span> <span class="n">num_empty_docs</span></div>
 
 
-<div class="viewcode-block" id="preprocess_dataset"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.dataset.html#topics_and_summary.preprocessing.dataset.preprocess_dataset">[docs]</a><span class="k">def</span> <span class="nf">preprocess_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">StructuredDataset</span><span class="p">,</span> <span class="n">trash_docs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lowercase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                       <span class="n">contractions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vulgar_words</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stopwords</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">punctuation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                       <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;uni&#39;</span><span class="p">,</span> <span class="n">min_bigrams_count</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">bigrams_threshold</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span> <span class="n">min_trigrams_count</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                       <span class="n">trigrams_threshold</span><span class="o">=</span><span class="mi">175</span><span class="p">,</span> <span class="n">lemmatize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stem</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">trash_words</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">apostrophes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                       <span class="n">chars</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">empty_docs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StructuredDataset</span><span class="p">:</span>
+<div class="viewcode-block" id="preprocess_dataset"><a class="viewcode-back" href="../../../api/topics_and_summary.preprocessing.dataset.html#topics_and_summary.preprocessing.dataset.preprocess_dataset">[docs]</a><span class="k">def</span> <span class="nf">preprocess_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">StructuredDataset</span><span class="p">,</span> <span class="n">trash_docs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lowercase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stopwords</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">contractions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vulgar_words</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">punctuation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;uni&#39;</span><span class="p">,</span>
+                       <span class="n">min_bigrams_count</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">bigrams_threshold</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span> <span class="n">min_trigrams_count</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">trigrams_threshold</span><span class="o">=</span><span class="mi">175</span><span class="p">,</span>
+                       <span class="n">lemmatize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stem</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">trash_words</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">apostrophes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">chars</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">empty_docs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">StructuredDataset</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a copy of the given dataset and returns the copy with the specified preprocessing. \</span>
-<span class="sd">    The original dataset is not modified.</span>
+<span class="sd">    Creates a copy of the given dataset and returns the dataset copy with the specified preprocessing applied. \</span>
+<span class="sd">    The preprocessing options applied (including the ngrams_model_func if it&#39;s the case) are stored in the</span>
+<span class="sd">    preprocessing_options attribute of the returned dataset. The original dataset is not modified.</span>
 
 <span class="sd">    :param min_bigrams_count: If ngrams is &#39;bi&#39; or &#39;tri&#39;, this is the minimum number of occurrences \</span>
 <span class="sd">    of a bigram to be transformed as a bigram.</span>
@@ -316,9 +318,9 @@
 <span class="sd">    :param trash_docs: Remove specified docs. By default is True.</span>
 <span class="sd">    :param normalize: Normalize words. By default is True.</span>
 <span class="sd">    :param lowercase: Transform to lowercase. By default is True.</span>
+<span class="sd">    :param stopwords: Remove stopwords. By default is True.</span>
 <span class="sd">    :param contractions: Expand contractions. By default is True.</span>
 <span class="sd">    :param vulgar_words: Substitute vulgar words. By default is True.</span>
-<span class="sd">    :param stopwords: Remove stopwords. By default is True.</span>
 <span class="sd">    :param emails: Remove emails. By default is True.</span>
 <span class="sd">    :param punctuation: Remove punctuation. By default is True.</span>
 <span class="sd">    :param ngrams: If &#39;uni&#39; uses unigrams. If &#39;bi&#39; create bigrams and returns bigram function. \</span>
@@ -333,8 +335,21 @@
 
 <span class="sd">    Note that lemmatize and stem shouldn&#39;t be both True, because only one of them will be applied.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Preprocessing the dataset&#39;</span><span class="p">)</span>  <span class="c1"># TODO: Print the options selected: lowercase, contractions, ...</span>
+
+    <span class="c1"># Print the options selected</span>
+    <span class="n">pretty_print</span><span class="p">(</span><span class="s1">&#39;Preprocessing the dataset&#39;</span><span class="p">)</span>
+    <span class="c1"># locals() returns all the local variables in the current function.</span>
+    <span class="c1"># At the top of the function the only local variables are the parameters to the function.</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span>  <span class="c1"># remove the dataset param from the params list, because it&#39;s not an option</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Options selected:&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">opt</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{0}</span><span class="s1">: </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="c1"># Create a copy of the dataset to avoid modifying the given dataset</span>
     <span class="n">dataset_copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+    <span class="n">ngrams_model_func</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">trash_docs</span><span class="p">:</span>
         <span class="n">remove_trash_docs_specified_in_file</span><span class="p">(</span><span class="n">dataset_copy</span><span class="p">)</span>
@@ -357,9 +372,9 @@
     <span class="k">if</span> <span class="n">stopwords</span><span class="p">:</span>
         <span class="n">dataset_copy</span><span class="o">.</span><span class="n">apply_function_to_files</span><span class="p">(</span><span class="n">remove_stopwords</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ngrams</span> <span class="o">==</span> <span class="s1">&#39;bi&#39;</span><span class="p">:</span>
-        <span class="n">bigram_model_func</span> <span class="o">=</span> <span class="n">make_bigrams_and_get_bigram_model_func</span><span class="p">(</span><span class="n">dataset_copy</span><span class="p">,</span> <span class="n">min_bigrams_count</span><span class="p">,</span> <span class="n">bigrams_threshold</span><span class="p">)</span>
+        <span class="n">ngrams_model_func</span> <span class="o">=</span> <span class="n">make_bigrams_and_get_bigrams_model_func</span><span class="p">(</span><span class="n">dataset_copy</span><span class="p">,</span> <span class="n">min_bigrams_count</span><span class="p">,</span> <span class="n">bigrams_threshold</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">ngrams</span> <span class="o">==</span> <span class="s1">&#39;tri&#39;</span><span class="p">:</span>
-        <span class="n">trigram_model_func</span> <span class="o">=</span> <span class="n">make_trigrams_and_get_trigram_model_func</span><span class="p">(</span><span class="n">dataset_copy</span><span class="p">,</span>
+        <span class="n">ngrams_model_func</span> <span class="o">=</span> <span class="n">make_trigrams_and_get_trigrams_model_func</span><span class="p">(</span><span class="n">dataset_copy</span><span class="p">,</span>
                                                                       <span class="n">min_bigrams_count</span><span class="p">,</span> <span class="n">bigrams_threshold</span><span class="p">,</span>
                                                                       <span class="n">min_trigrams_count</span><span class="p">,</span> <span class="n">trigrams_threshold</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">lemmatize</span><span class="p">:</span>
@@ -375,12 +390,14 @@
     <span class="k">if</span> <span class="n">empty_docs</span><span class="p">:</span>
         <span class="n">remove_empty_docs</span><span class="p">(</span><span class="n">dataset_copy</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">ngrams</span> <span class="o">==</span> <span class="s1">&#39;bi&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">dataset_copy</span><span class="p">,</span> <span class="n">bigram_model_func</span>
-    <span class="k">elif</span> <span class="n">ngrams</span> <span class="o">==</span> <span class="s1">&#39;tri&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">dataset_copy</span><span class="p">,</span> <span class="n">trigram_model_func</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">dataset_copy</span></div>
+    <span class="c1"># Store the preprocessing options in the dataset copy object</span>
+    <span class="n">dataset_copy</span><span class="o">.</span><span class="n">preprocessing_options</span> <span class="o">=</span> <span class="n">DatasetPreprocessingOptions</span><span class="p">(</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span> <span class="n">lowercase</span><span class="o">=</span><span class="n">lowercase</span><span class="p">,</span> <span class="n">stopwords</span><span class="o">=</span><span class="n">stopwords</span><span class="p">,</span> <span class="n">contractions</span><span class="o">=</span><span class="n">contractions</span><span class="p">,</span>
+        <span class="n">vulgar_words</span><span class="o">=</span><span class="n">vulgar_words</span><span class="p">,</span> <span class="n">emails</span><span class="o">=</span><span class="n">emails</span><span class="p">,</span> <span class="n">punctuation</span><span class="o">=</span><span class="n">punctuation</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="n">ngrams</span><span class="p">,</span>
+        <span class="n">ngrams_model_func</span><span class="o">=</span><span class="n">ngrams_model_func</span><span class="p">,</span> <span class="n">lemmatize</span><span class="o">=</span><span class="n">lemmatize</span><span class="p">,</span> <span class="n">stem</span><span class="o">=</span><span class="n">stem</span><span class="p">,</span> <span class="n">apostrophes</span><span class="o">=</span><span class="n">apostrophes</span><span class="p">,</span> <span class="n">chars</span><span class="o">=</span><span class="n">chars</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dataset_copy</span></div>
 </pre></div>
 
           </div>

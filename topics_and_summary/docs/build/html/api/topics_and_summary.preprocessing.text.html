@@ -269,7 +269,7 @@
 
 <dl class="function">
 <dt id="topics_and_summary.preprocessing.text.preprocess_text">
-<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">preprocess_text</code><span class="sig-paren">(</span><em>text: str</em>, <em>normalize=True</em>, <em>lowercase=True</em>, <em>contractions=True</em>, <em>vulgar_words=True</em>, <em>stopwords=True</em>, <em>emails=True</em>, <em>punctuation=True</em>, <em>ngrams='uni'</em>, <em>ngrams_model_func: Callable = None</em>, <em>lemmatize=True</em>, <em>stem=False</em>, <em>apostrophes=True</em>, <em>chars=True</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#preprocess_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.preprocess_text" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">topics_and_summary.preprocessing.text.</code><code class="descname">preprocess_text</code><span class="sig-paren">(</span><em>text: str</em>, <em>normalize=True</em>, <em>lowercase=True</em>, <em>stopwords=True</em>, <em>contractions=True</em>, <em>vulgar_words=True</em>, <em>emails=True</em>, <em>punctuation=True</em>, <em>ngrams='uni'</em>, <em>ngrams_model_func: Callable = None</em>, <em>lemmatize=True</em>, <em>stem=False</em>, <em>apostrophes=True</em>, <em>chars=True</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/text.html#preprocess_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.text.preprocess_text" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives a str containing a text and returns a list of words after applying the specified preprocessing.     The original dataset is not modified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -277,13 +277,13 @@
 <li><p><strong>text</strong> (<em>str</em>) – Text to be preprocessed.</p></li>
 <li><p><strong>normalize</strong> – Normalize words. By default is True.</p></li>
 <li><p><strong>lowercase</strong> – Transform to lowercase. By default is True.</p></li>
+<li><p><strong>stopwords</strong> – Remove stopwords. By default is True.</p></li>
 <li><p><strong>contractions</strong> – Expand contractions. By default is True.</p></li>
 <li><p><strong>vulgar_words</strong> – Substitute vulgar words. By default is True.</p></li>
-<li><p><strong>stopwords</strong> – Remove stopwords. By default is True.</p></li>
 <li><p><strong>emails</strong> – Remove emails. By default is True.</p></li>
 <li><p><strong>punctuation</strong> – Remove punctuation. By default is True.</p></li>
 <li><p><strong>ngrams</strong> – If ‘uni’ uses unigrams. If ‘bi’ create bigrams. If ‘tri’ creates trigrams. By default is ‘uni’.     If is ‘bi’ or ‘tri’, it uses the ngrams_model_func for creating the bi/trigrams.</p></li>
-<li><p><strong>ngrams_model_func</strong> – Function that receives a list of words and returns a list of words with     possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function     is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() functions in     the preprocessing.ngrams module. If ngrams is ‘uni’ this function is not used.</p></li>
+<li><p><strong>ngrams_model_func</strong> – Function that receives a list of words and returns a list of words with     possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function     is returned by make_bigrams_and_get_bigrams_model_func() or make_trigrams_and_get_trigrams_model_func() functions in     the preprocessing.ngrams module. If ngrams is ‘uni’ this function is not used.</p></li>
 <li><p><strong>lemmatize</strong> – Lemmatize words. By default is True.</p></li>
 <li><p><strong>stem</strong> – Stemm words. By default is False.</p></li>
 <li><p><strong>apostrophes</strong> – Remove apostrophes.</p></li>
@@ -307,10 +307,14 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table of Contents</a></h3>
 <p class="caption"><span class="caption-text">Documentation contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api-reference.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api-reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-reference.html#indices-and-search">Indices and search</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api-reference.html#api-packages-and-modules">API packages and modules</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
 </ul>
 

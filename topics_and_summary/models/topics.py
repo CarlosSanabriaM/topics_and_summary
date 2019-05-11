@@ -259,7 +259,11 @@ class TopicsModel(metaclass=abc.ABCMeta):
         their probabilities, and their keywords.
         :return: Topic probability vector.
         """
-        text = preprocess_text(text, **self.dataset.preprocessing_options.as_dict())
+
+        # If the dataset was preprocessed, it's preprocessing_options attribute won't be None,
+        # so the given text is preprocessed with that same options.
+        if self.dataset.preprocessing_options is not None:
+            text = preprocess_text(text, **self.dataset.preprocessing_options.as_dict())
 
         text_as_bow = self.dictionary.doc2bow(text.split())
         topic_prob_vector = self.model[text_as_bow]

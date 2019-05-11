@@ -12,19 +12,26 @@ Source code
   of the original selected documents and the topics probabilities of their summaries. The comparisson of those probabilities
   can be used to evaluate the TextRank algorithm. We expect that the summary of a text relates to the same topics as the
   original text.
+
+  .. note:: Evaluating text summaries is a very hard task, and most of the times it needs human expert intervention.
+     There are some metrics, like ROUGE, but they also need an expert saying which sentences summarize better the text.
+
 * **Implement more summarization approaches**. Some links to other alternatives can be found in the
   :ref:`other_summarization_alternatives` section of the Development: API page.
 * **Revise the preprocessing order** of the preprocess_text() and preprocess_dataset() functions.
 * **Add more datasets** to check the LdaMalletModel results on them, as explained in the :ref:`unstructured-dataset` section.
-* **Implement the unstructured_dataset.py** module, as explained
+* **Implement the unstructured_dataset.py** module, as explained in the :ref:`unstructured-dataset` section of the *Development: API* page.
 * Create equivalent .bat files for the existing .sh files
 
-.. note:: Evaluating text summaries is a very hard task, and most of the times it needs human expert intervention.
-   There are some metrics, like ROUGE, but they also need an expert saying which sentences summarize better the text.
+
 
 Documentation
 -------------
 
-* Change the **API packages and modules toctree** to don't show topics_and_summary as a first item
+* Change the **API packages and modules toctree** to don't show *topics_and_summary package* as a first item
+* Generate the documentation of each Python module or class in the same way as pandas library documentation does.
+  As an example, check the `pandas Series class documentation <https://pandas.pydata.org/pandas-docs/stable/reference/series.html>`__.
+  This is done with the \.. autosummary:: directive. The soure code of the pandas Series class documentation
+  is available on `this GitHub page <https://raw.githubusercontent.com/pandas-dev/pandas/master/doc/source/reference/series.rst>`__.
 * Create equivalent .bat files for the existing .sh files used for generating the api documentation
 * Create equivalent .bat files for the existing .sh files used for generating the requirements files

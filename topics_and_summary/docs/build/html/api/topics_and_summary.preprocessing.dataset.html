@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="topics_and_summary.preprocessing.ngrams module" href="topics_and_summary.preprocessing.ngrams.html" />
+    <link rel="next" title="topics_and_summary.preprocessing.dataset_preprocessing_options module" href="topics_and_summary.preprocessing.dataset_preprocessing_options.html" />
     <link rel="prev" title="topics_and_summary.preprocessing package" href="topics_and_summary.preprocessing.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -27,7 +27,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="topics_and_summary.preprocessing.ngrams.html" title="topics_and_summary.preprocessing.ngrams module"
+          <a href="topics_and_summary.preprocessing.dataset_preprocessing_options.html" title="topics_and_summary.preprocessing.dataset_preprocessing_options module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="topics_and_summary.preprocessing.html" title="topics_and_summary.preprocessing package"
@@ -174,8 +174,9 @@ Words can be a simple string, representing only one word.</p>
 
 <dl class="function">
 <dt id="topics_and_summary.preprocessing.dataset.preprocess_dataset">
-<code class="descclassname">topics_and_summary.preprocessing.dataset.</code><code class="descname">preprocess_dataset</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.structured_dataset.StructuredDataset</em>, <em>trash_docs=True</em>, <em>normalize=True</em>, <em>lowercase=True</em>, <em>contractions=True</em>, <em>vulgar_words=True</em>, <em>stopwords=True</em>, <em>emails=True</em>, <em>punctuation=True</em>, <em>ngrams='uni'</em>, <em>min_bigrams_count=50</em>, <em>bigrams_threshold=75</em>, <em>min_trigrams_count=100</em>, <em>trigrams_threshold=175</em>, <em>lemmatize=True</em>, <em>stem=False</em>, <em>trash_words=True</em>, <em>apostrophes=True</em>, <em>chars=True</em>, <em>empty_docs=True</em><span class="sig-paren">)</span> &#x2192; topics_and_summary.datasets.structured_dataset.StructuredDataset<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/dataset.html#preprocess_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.dataset.preprocess_dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a copy of the given dataset and returns the copy with the specified preprocessing.     The original dataset is not modified.</p>
+<code class="descclassname">topics_and_summary.preprocessing.dataset.</code><code class="descname">preprocess_dataset</code><span class="sig-paren">(</span><em>dataset: topics_and_summary.datasets.structured_dataset.StructuredDataset</em>, <em>trash_docs=True</em>, <em>normalize=True</em>, <em>lowercase=True</em>, <em>stopwords=True</em>, <em>contractions=True</em>, <em>vulgar_words=True</em>, <em>emails=True</em>, <em>punctuation=True</em>, <em>ngrams='uni'</em>, <em>min_bigrams_count=50</em>, <em>bigrams_threshold=75</em>, <em>min_trigrams_count=100</em>, <em>trigrams_threshold=175</em>, <em>lemmatize=True</em>, <em>stem=False</em>, <em>trash_words=True</em>, <em>apostrophes=True</em>, <em>chars=True</em>, <em>empty_docs=True</em><span class="sig-paren">)</span> &#x2192; topics_and_summary.datasets.structured_dataset.StructuredDataset<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/dataset.html#preprocess_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.dataset.preprocess_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a copy of the given dataset and returns the dataset copy with the specified preprocessing applied.     The preprocessing options applied (including the ngrams_model_func if it’s the case) are stored in the
+preprocessing_options attribute of the returned dataset. The original dataset is not modified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -187,9 +188,9 @@ Words can be a simple string, representing only one word.</p>
 <li><p><strong>trash_docs</strong> – Remove specified docs. By default is True.</p></li>
 <li><p><strong>normalize</strong> – Normalize words. By default is True.</p></li>
 <li><p><strong>lowercase</strong> – Transform to lowercase. By default is True.</p></li>
+<li><p><strong>stopwords</strong> – Remove stopwords. By default is True.</p></li>
 <li><p><strong>contractions</strong> – Expand contractions. By default is True.</p></li>
 <li><p><strong>vulgar_words</strong> – Substitute vulgar words. By default is True.</p></li>
-<li><p><strong>stopwords</strong> – Remove stopwords. By default is True.</p></li>
 <li><p><strong>emails</strong> – Remove emails. By default is True.</p></li>
 <li><p><strong>punctuation</strong> – Remove punctuation. By default is True.</p></li>
 <li><p><strong>ngrams</strong> – If ‘uni’ uses unigrams. If ‘bi’ create bigrams and returns bigram function.     If ‘tri’ creates trigrams and returns trigram function. By default is ‘uni’.</p></li>
@@ -233,8 +234,8 @@ Words can be a simple string, representing only one word.</p>
   <p class="topless"><a href="topics_and_summary.preprocessing.html"
                         title="previous chapter">topics_and_summary.preprocessing package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="topics_and_summary.preprocessing.ngrams.html"
-                        title="next chapter">topics_and_summary.preprocessing.ngrams module</a></p>
+  <p class="topless"><a href="topics_and_summary.preprocessing.dataset_preprocessing_options.html"
+                        title="next chapter">topics_and_summary.preprocessing.dataset_preprocessing_options module</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -259,7 +260,7 @@ Words can be a simple string, representing only one word.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="topics_and_summary.preprocessing.ngrams.html" title="topics_and_summary.preprocessing.ngrams module"
+          <a href="topics_and_summary.preprocessing.dataset_preprocessing_options.html" title="topics_and_summary.preprocessing.dataset_preprocessing_options module"
              >next</a> |</li>
         <li class="right" >
           <a href="topics_and_summary.preprocessing.html" title="topics_and_summary.preprocessing package"

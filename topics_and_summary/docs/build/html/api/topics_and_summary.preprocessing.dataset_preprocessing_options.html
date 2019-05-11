@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>topics_and_summary.preprocessing.dataset_preprocessing_options module &#8212; Topics and Summary  documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="topics_and_summary.preprocessing.ngrams module" href="topics_and_summary.preprocessing.ngrams.html" />
+    <link rel="prev" title="topics_and_summary.preprocessing.dataset module" href="topics_and_summary.preprocessing.dataset.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="topics_and_summary.preprocessing.ngrams.html" title="topics_and_summary.preprocessing.ngrams module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="topics_and_summary.preprocessing.dataset.html" title="topics_and_summary.preprocessing.dataset module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api-reference.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" >topics_and_summary</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="topics_and_summary.preprocessing.html" accesskey="U">topics_and_summary.preprocessing package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-topics_and_summary.preprocessing.dataset_preprocessing_options">
+<span id="topics-and-summary-preprocessing-dataset-preprocessing-options-module"></span><h1>topics_and_summary.preprocessing.dataset_preprocessing_options module<a class="headerlink" href="#module-topics_and_summary.preprocessing.dataset_preprocessing_options" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="topics_and_summary.preprocessing.dataset_preprocessing_options.DatasetPreprocessingOptions">
+<em class="property">class </em><code class="descclassname">topics_and_summary.preprocessing.dataset_preprocessing_options.</code><code class="descname">DatasetPreprocessingOptions</code><span class="sig-paren">(</span><em>normalize: bool</em>, <em>lowercase: bool</em>, <em>stopwords: bool</em>, <em>contractions: bool</em>, <em>vulgar_words: bool</em>, <em>emails: bool</em>, <em>punctuation: bool</em>, <em>ngrams: str</em>, <em>ngrams_model_func: Callable</em>, <em>lemmatize: bool</em>, <em>stem: bool</em>, <em>apostrophes: bool</em>, <em>chars: bool</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/preprocessing/dataset_preprocessing_options.html#DatasetPreprocessingOptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.dataset_preprocessing_options.DatasetPreprocessingOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that stores the preprocessing options chosen in a preprocessed dataset.</p>
+<p>The purpose of this class is to apply the same preprocessing options (the ones chosen to preprocess the dataset)
+to the texts given to the TopicsModel that uses the preprocessed dataset with this options.     Because of that, this class only stores options that can be applied to texts. For example, this class doesn’t     store the option ‘trash_docs’, because this option is only used in the preprocess_dataset() function, and     it’s not used in the preprocess_text() function.</p>
+<p>This class also stores the ngrams_model_func created when the option ngrams of the preprocess_dataset()     function is ‘bi’ or ‘tri’.</p>
+<p>An instance of this class must be created at the end of the the preprocess_dataset() function,     and stored in the preprocessing_options attribute of the Dataset object that has been preprocessed.</p>
+<dl class="method">
+<dt id="topics_and_summary.preprocessing.dataset_preprocessing_options.DatasetPreprocessingOptions.as_dict">
+<code class="descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/dataset_preprocessing_options.html#DatasetPreprocessingOptions.as_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.dataset_preprocessing_options.DatasetPreprocessingOptions.as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the attributes of this object as a dict. This simplifies how the options stored in this         DatasetPreprocessingOptions are passed to the preprocess_text() function.</p>
+<p>Instead of passing them like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">topics_and_summary.preprocessing.text</span> <span class="k">import</span> <span class="n">preprocess_text</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;This is a text&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">options</span><span class="p">:</span> <span class="n">DatasetPreprocessingOptions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preprocess_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">normalize</span><span class="p">,</span> <span class="n">lowercase</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lowercase</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The options should be passed like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">preprocess_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="topics_and_summary.preprocessing.dataset_preprocessing_options.DatasetPreprocessingOptions.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>name: str</em>, <em>folder_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/preprocessing/dataset_preprocessing_options.html#DatasetPreprocessingOptions.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.dataset_preprocessing_options.DatasetPreprocessingOptions.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the DatasetPreprocessingOptions object attributes on disk.         A folder with same name as the name parameter is created inside the folder_path folder. The folder contains:</p>
+<ul class="simple">
+<li><p>A file with a dict with all the attributes (except the ngrams_model_func)</p></li>
+<li><p>A file with the ngrams_model_func (even if it’s None)</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name that will have the folder with the object files.</p></li>
+<li><p><strong>folder_path</strong> – Path of the folder where the DatasetPreprocessingOptions folder will be stored on disk.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="topics_and_summary.preprocessing.dataset_preprocessing_options.DatasetPreprocessingOptions.load">
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>name: str</em>, <em>parent_folder_path: str = None</em><span class="sig-paren">)</span> &#x2192; topics_and_summary.preprocessing.dataset_preprocessing_options.DatasetPreprocessingOptions<a class="reference internal" href="../_modules/topics_and_summary/preprocessing/dataset_preprocessing_options.html#DatasetPreprocessingOptions.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.preprocessing.dataset_preprocessing_options.DatasetPreprocessingOptions.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the options of a saved DatasetPreprocessingOptions object stored on disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name of the folder that contains the DatasetPreprocessingOptions object files.</p></li>
+<li><p><strong>parent_folder_path</strong> – Path of the folder that contains the folder with the object files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The DatasetPreprocessingOptions object loaded from disk.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Documentation contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api-reference.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api-reference.html#indices-and-search">Indices and search</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api-reference.html#api-packages-and-modules">API packages and modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="topics_and_summary.preprocessing.dataset.html"
+                        title="previous chapter">topics_and_summary.preprocessing.dataset module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="topics_and_summary.preprocessing.ngrams.html"
+                        title="next chapter">topics_and_summary.preprocessing.ngrams module</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="topics_and_summary.preprocessing.ngrams.html" title="topics_and_summary.preprocessing.ngrams module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="topics_and_summary.preprocessing.dataset.html" title="topics_and_summary.preprocessing.dataset module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Topics and Summary  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api-reference.html" >API Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="modules.html" >topics_and_summary</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="topics_and_summary.preprocessing.html" >topics_and_summary.preprocessing package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Carlos Sanabria Miranda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

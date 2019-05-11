@@ -69,7 +69,7 @@ the topics_and_summary library</strong> <a class="footnote-reference brackets" h
 <h2>How to modify the documentation<a class="headerlink" href="#how-to-modify-the-documentation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="directory-structure-and-important-files">
 <h3>Directory structure and important files<a class="headerlink" href="#directory-structure-and-important-files" title="Permalink to this headline">¶</a></h3>
-<p>All the documentation files are in the <strong>&lt;project-root-folder&gt;/topics_and_summary/docs folder</strong>. The most important elements of the folder are:</p>
+<p>All the documentation files are in the <strong>&lt;project-root-path&gt;/topics_and_summary/docs folder</strong>. The most important elements of the folder are:</p>
 <ul>
 <li><p><strong>build</strong> folder: Contains the documentation in the output formats specified with the make command (HTML, …)</p></li>
 <li><dl>
@@ -94,11 +94,11 @@ of the package files of the api, to avoid having an extra header <a class="footn
 </div>
 <div class="section" id="generate-html-files">
 <h3>Generate HTML files<a class="headerlink" href="#generate-html-files" title="Permalink to this headline">¶</a></h3>
-<p>After generating them, the HTML files will be stored in the <strong>&lt;project-root-folder&gt;/topics_and_summary/docs/build/html</strong> folder.</p>
+<p>After generating them, the HTML files will be stored in the <strong>&lt;project-root-path&gt;/topics_and_summary/docs/build/html</strong> folder.</p>
 <div class="section" id="no-changes-in-api">
 <h4>No changes in API<a class="headerlink" href="#no-changes-in-api" title="Permalink to this headline">¶</a></h4>
 <p>If there are no changes in the API source code, to generate the HTML files of the documentation follow this steps:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">&lt;</span><span class="n">project</span><span class="o">-</span><span class="n">root</span><span class="o">-</span><span class="n">folder</span><span class="o">&gt;/</span><span class="n">topics_and_summary</span><span class="o">/</span><span class="n">docs</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">&lt;</span><span class="n">project</span><span class="o">-</span><span class="n">root</span><span class="o">-</span><span class="n">path</span><span class="o">&gt;/</span><span class="n">topics_and_summary</span><span class="o">/</span><span class="n">docs</span>
 <span class="n">make</span> <span class="n">html</span>
 </pre></div>
 </div>
@@ -106,7 +106,7 @@ of the package files of the api, to avoid having an extra header <a class="footn
 <div class="section" id="changes-in-api">
 <h4>Changes in API<a class="headerlink" href="#changes-in-api" title="Permalink to this headline">¶</a></h4>
 <p>If there are changes in the API source code, to generate the HTML files of the documentation follow this steps:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">&lt;</span><span class="n">project</span><span class="o">-</span><span class="n">root</span><span class="o">-</span><span class="n">folder</span><span class="o">&gt;/</span><span class="n">topics_and_summary</span><span class="o">/</span><span class="n">docs</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">&lt;</span><span class="n">project</span><span class="o">-</span><span class="n">root</span><span class="o">-</span><span class="n">path</span><span class="o">&gt;/</span><span class="n">topics_and_summary</span><span class="o">/</span><span class="n">docs</span>
 <span class="o">./</span><span class="n">generate</span><span class="o">-</span><span class="n">api</span><span class="o">-</span><span class="n">doc</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
 </div>

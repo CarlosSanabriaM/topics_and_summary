@@ -37,7 +37,8 @@
   <h1>Source code for topics_and_summary.models.topics</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">abc</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">gensim</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -48,7 +49,8 @@
 
 <span class="kn">from</span> <span class="nn">topics_and_summary.datasets.common</span> <span class="k">import</span> <span class="n">Dataset</span>
 <span class="kn">from</span> <span class="nn">topics_and_summary.preprocessing.text</span> <span class="k">import</span> <span class="n">preprocess_text</span>
-<span class="kn">from</span> <span class="nn">topics_and_summary.utils</span> <span class="k">import</span> <span class="n">RANDOM_STATE</span><span class="p">,</span> <span class="n">now_as_str</span><span class="p">,</span> <span class="n">join_paths</span><span class="p">,</span> <span class="n">get_abspath_from_project_source_root</span>
+<span class="kn">from</span> <span class="nn">topics_and_summary.utils</span> <span class="k">import</span> <span class="n">RANDOM_STATE</span><span class="p">,</span> <span class="n">now_as_str</span><span class="p">,</span> <span class="n">join_paths</span><span class="p">,</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">,</span> \
+    <span class="n">save_obj_to_disk</span><span class="p">,</span> <span class="n">load_obj_from_disk</span>
 
 
 <div class="viewcode-block" id="prepare_corpus"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.prepare_corpus">[docs]</a><span class="k">def</span> <span class="nf">prepare_corpus</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">gensim</span><span class="o">.</span><span class="n">corpora</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]]:</span>
@@ -146,7 +148,8 @@
 
 <div class="viewcode-block" id="TopicsModel.save"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModel.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">add_metadata_to_base_name</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves the model to disk.</span>
+<span class="sd">        Saves the model to disk. Also, the coherence value is computed and saved in a txt file. \</span>
+<span class="sd">        If docs_topics_df was generated, it&#39;s also saved.</span>
 
 <span class="sd">        :param model_name: Name of the model.</span>
 <span class="sd">        :param path: Path were the models will be stored.</span>
@@ -174,24 +177,59 @@
         <span class="c1"># Save the coherence value in a .txt file</span>
         <span class="n">coherence_path</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">,</span> <span class="s2">&quot;coherence_value.txt&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">coherence_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coherence_value</span><span class="p">))</span></div>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coherence_value</span><span class="p">))</span>
+
+        <span class="c1"># If the docs_topics_df DataFrame is not None, save it inside the model folder</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">docs_topics_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">save_obj_to_disk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docs_topics_df</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;docs_topics_df&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">)</span>
+
+        <span class="c1"># Save the dataset (dataset preprocessing options are saved with the dataset)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TopicsModel.load"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModel.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">docs_topics_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads the model with the given name from the specified path, and returns a TopicsModel instance.</span>
 
 <span class="sd">        :param model_name: Model name.</span>
-<span class="sd">        :param dataset: Dataset.</span>
-<span class="sd">        :param model_dir_path: Path to the directory where the model is in.</span>
-<span class="sd">        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method \</span>
-<span class="sd">        get_dominant_topic_of_each_doc_as_df().</span>
+<span class="sd">        :param dataset_class: Dataset class of the dataset used to create the model previously. \</span>
+<span class="sd">        It must be a subclass of Dataset. \</span>
+<span class="sd">        For example, a possible value for this parameter is TwentyNewsGroupsDataset. \</span>
+<span class="sd">        The Dataset classmethod load() will be used to load the stored dataset.</span>
+<span class="sd">        :param model_parent_dir_path: Path to the directory where the model folder is in.</span>
 <span class="sd">        :return: Instance of a TopicsModel object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">model_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">model_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_SAVE_PATH</span>
+        <span class="c1"># The dataset_class param must be a subclass of Dataset</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">dataset_class</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;dataset_class param must be a subclass of the Dataset class, &#39;</span>
+                            <span class="s1">&#39;and </span><span class="si">{0}</span><span class="s1"> is not a subclass of the Dataset class.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_class</span><span class="p">))</span>
 
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_gensim_model</span><span class="p">(</span><span class="n">join_paths</span><span class="p">(</span><span class="n">model_dir_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_name</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">model_parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_parent_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_SAVE_PATH</span>
+
+        <span class="c1"># Path to the folder that contains the model files</span>
+        <span class="n">model_dir_path</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="n">model_parent_dir_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+        <span class="c1"># Path to the file inside the model folder that has the same name as the model name</span>
+        <span class="n">model_file_path</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="n">model_dir_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+
+        <span class="c1"># Load the gensim model</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_gensim_model</span><span class="p">(</span><span class="n">model_file_path</span><span class="p">)</span>
+
+        <span class="c1"># Load the docs_topics_df. If it wasn&#39;t saved, show a warning message to the user.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">docs_topics_df</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;docs_topics_df&#39;</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">docs_topics_df</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Warning: docs_topics_df was not loaded into the model object, &#39;</span>
+                          <span class="s1">&#39;because no </span><span class="si">{0}</span><span class="s1"> file was found in </span><span class="si">{1}</span><span class="s1">. This means that the first call to the &#39;</span>
+                          <span class="s1">&#39;get_dominant_topic_of_each_doc_as_df() method will be slow.&#39;</span>
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;docs_topics_df&#39;</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">))</span>
+
+        <span class="c1"># Load the dataset</span>
+        <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;dataset&#39;</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset_class</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="o">=</span><span class="n">model_dir_path</span><span class="p">)</span>
+
+        <span class="c1"># Create an instance of the LdaMalletModel class</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">num_topics</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
                    <span class="n">docs_topics_df</span><span class="o">=</span><span class="n">docs_topics_df</span><span class="p">)</span></div>
 
@@ -245,8 +283,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Topic</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">show_topic</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">num_keywords</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="TopicsModel.predict_topic_prob_on_text"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModel.predict_topic_prob_on_text">[docs]</a>    <span class="k">def</span> <span class="nf">predict_topic_prob_on_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_best_topics</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                   <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;uni&#39;</span><span class="p">,</span> <span class="n">ngrams_model_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">print_table</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> \
+<div class="viewcode-block" id="TopicsModel.predict_topic_prob_on_text"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModel.predict_topic_prob_on_text">[docs]</a>    <span class="k">def</span> <span class="nf">predict_topic_prob_on_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_best_topics</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">print_table</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Predicts the probability of each topic to be related to the given text. \</span>
@@ -255,19 +292,15 @@
 
 <span class="sd">        :param text: Text.</span>
 <span class="sd">        :param num_best_topics: Number of topics to return. If is None, returns all the topics that the model returns.</span>
-<span class="sd">        :param preprocess: If true, applies preprocessing to the given text using preprocessing.text.preprocess_text().</span>
-<span class="sd">        :param ngrams: If &#39;uni&#39;, uses unigrams. If &#39;bi&#39;, create bigrams. If &#39;tri&#39;, creates trigrams. \</span>
-<span class="sd">        By default is &#39;uni&#39;. If is &#39;bi&#39; or &#39;tri&#39;, it uses the ngrams_model_func for creating the bi/trigrams.</span>
-<span class="sd">        :param ngrams_model_func: Function that receives a list of words and returns a list of words with \</span>
-<span class="sd">        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \</span>
-<span class="sd">        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() \</span>
-<span class="sd">        functions in the preprocessing.ngrams module. If ngrams is &#39;uni&#39; this function is not used.</span>
 <span class="sd">        :param print_table: If True, this method also prints a table with the topics indices, \</span>
 <span class="sd">        their probabilities, and their keywords.</span>
 <span class="sd">        :return: Topic probability vector.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">preprocess</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">preprocess_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="n">ngrams</span><span class="p">,</span> <span class="n">ngrams_model_func</span><span class="o">=</span><span class="n">ngrams_model_func</span><span class="p">)</span>
+
+        <span class="c1"># If the dataset was preprocessed, it&#39;s preprocessing_options attribute won&#39;t be None,</span>
+        <span class="c1"># so the given text is preprocessed with that same options.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">preprocessing_options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">preprocess_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">preprocessing_options</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span>
 
         <span class="n">text_as_bow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span><span class="o">.</span><span class="n">doc2bow</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
         <span class="n">topic_prob_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="n">text_as_bow</span><span class="p">]</span>
@@ -294,8 +327,7 @@
 
         <span class="k">return</span> <span class="n">topic_prob_vector</span><span class="p">[:</span><span class="n">num_best_topics</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="TopicsModel.get_related_docs_as_df"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModel.get_related_docs_as_df">[docs]</a>    <span class="k">def</span> <span class="nf">get_related_docs_as_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_docs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="s1">&#39;uni&#39;</span><span class="p">,</span>
-                               <span class="n">ngrams_model_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="TopicsModel.get_related_docs_as_df"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModel.get_related_docs_as_df">[docs]</a>    <span class="k">def</span> <span class="nf">get_related_docs_as_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_docs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Given a text, this method returns a df with the index and the content of the most similar documents \</span>
 <span class="sd">        in the corpus. The similar/related documents are obtained as follows:</span>
@@ -309,21 +341,13 @@
 
 <span class="sd">        :param text: String.</span>
 <span class="sd">        :param num_docs: Number of related documents to retrieve.</span>
-<span class="sd">        :param preprocess: If True, apply preprocessing to the text.</span>
-<span class="sd">        :param ngrams: If &#39;uni&#39;, uses unigrams. If &#39;bi&#39;, create bigrams. If &#39;tri&#39;, creates trigrams. \</span>
-<span class="sd">        By default is &#39;uni&#39;. If is &#39;bi&#39; or &#39;tri&#39;, it uses the ngrams_model_func for creating the bi/trigrams.</span>
-<span class="sd">        :param ngrams_model_func: Function that receives a list of words and returns a list of words with \</span>
-<span class="sd">        possible bigrams/trigrams, based on the bigram/trigram model trained in the given dataset. This function \</span>
-<span class="sd">        is returned by make_bigrams_and_get_bigram_model_func() or make_trigrams_and_get_trigram_model_func() \</span>
-<span class="sd">        functions in the preprocessing.ngrams module. If ngrams is &#39;uni&#39; this function is not used.</span>
 <span class="sd">        :param remove_duplicates: If True, duplicate documents are not present in the returned DataFrame. \</span>
 <span class="sd">        Even so, num_docs documents are returned, obtained from below of the removed documents (the documents are \</span>
 <span class="sd">        ordered descending).</span>
 <span class="sd">        :return: The pandas DataFrame.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># 1. Obtain the list of topics more related with the text</span>
-        <span class="n">topic_prob_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_topic_prob_on_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="n">preprocess</span><span class="p">,</span> <span class="n">ngrams</span><span class="o">=</span><span class="n">ngrams</span><span class="p">,</span>
-                                                            <span class="n">ngrams_model_func</span><span class="o">=</span><span class="n">ngrams_model_func</span><span class="p">,</span> <span class="n">print_table</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">topic_prob_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_topic_prob_on_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">print_table</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="n">topics</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">topic_prob_vector</span><span class="p">))</span>  <span class="c1"># Stores the indices of the topics</span>
 
@@ -385,7 +409,10 @@
         <span class="c1"># DataFrame all at once.</span>
         <span class="n">rows_list</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">doc_index</span><span class="p">,</span> <span class="n">doc_as_bow</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="p">)):</span>
+        <span class="n">progress_bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corpus</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">doc_index</span><span class="p">,</span> <span class="n">doc_as_bow</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">progress_bar</span><span class="p">):</span>
+            <span class="n">progress_bar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="s1">&#39;Generating the docs_topics_df&#39;</span><span class="p">)</span>
+
             <span class="n">dominant_topic</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="n">doc_as_bow</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">dominant_topic_index</span> <span class="o">=</span> <span class="n">dominant_topic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">dominant_topic_prob</span> <span class="o">=</span> <span class="n">dominant_topic</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -720,7 +747,8 @@
 <span class="sd">        :param mallet_path: Path tho the mallet source code.</span>
 <span class="sd">        :return: The gensim.models.wrappers.LdaMallet model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">LdaMallet</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="c1"># noinspection PyTypeChecker</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">LdaMallet</span> <span class="o">=</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">LdaMallet</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="c1"># Save path in the prefix attribute of the mallet model, because it&#39;s needed to access the files</span>
         <span class="n">model</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">path</span>
         <span class="c1"># Save mallet path in the mallet_path attribute</span>
@@ -742,31 +770,70 @@
 
         <span class="n">coherence_path</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">,</span> <span class="s2">&quot;coherence_value.txt&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">coherence_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coherence_value</span><span class="p">))</span></div>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coherence_value</span><span class="p">))</span>
+
+        <span class="c1"># If the docs_topics_df DataFrame is not None, save it inside the model folder</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">docs_topics_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">save_obj_to_disk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docs_topics_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;docs_topics_df&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">)</span>
+
+        <span class="c1"># Save the dataset (dataset preprocessing options are saved with the dataset)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LdaMalletModel.load"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.LdaMalletModel.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
-             <span class="n">model_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mallet_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">docs_topics_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mallet_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads the model with the given name from the specified path, and returns a LdaMalletModel instance.</span>
+<span class="sd">        Loads the model with the given name from the specified path, and returns a LdaMalletModel instance. \</span>
+<span class="sd">        The dataset used to create the model and the docs_topics_df (if exists) will be loaded from the model directory.</span>
 
 <span class="sd">        :param model_name: Model name.</span>
-<span class="sd">        :param dataset: Dataset used to create the model previously.</span>
-<span class="sd">        :param model_dir_path: Path to the directory where the model is in.</span>
+<span class="sd">        :param dataset_class: Dataset class of the dataset used to create the model previously. \</span>
+<span class="sd">        It must be a subclass of Dataset. \</span>
+<span class="sd">        For example, a possible value for this parameter is TwentyNewsGroupsDataset. \</span>
+<span class="sd">        The Dataset classmethod load() will be used to load the stored dataset.</span>
+<span class="sd">        :param model_parent_dir_path: Path to the directory where the model folder is in.</span>
 <span class="sd">        :param mallet_path: Path to the mallet source code.</span>
-<span class="sd">        :param docs_topics_df: DataFrame with the dominant topic of each document, previously created with the method \</span>
-<span class="sd">        get_dominant_topic_of_each_doc_as_df().</span>
 <span class="sd">        :return: Instance of a LdaMalletModel object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">model_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">model_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MALLET_SAVED_MODELS_PATH</span>
+        <span class="c1"># The dataset_class param must be a subclass of Dataset</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">dataset_class</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;dataset_class param must be a subclass of the Dataset class, &#39;</span>
+                            <span class="s1">&#39;and </span><span class="si">{0}</span><span class="s1"> is not a subclass of the Dataset class.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_class</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">model_parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_parent_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MALLET_SAVED_MODELS_PATH</span>
 
         <span class="k">if</span> <span class="n">mallet_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">mallet_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MALLET_SOURCE_CODE_PATH</span>
 
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_gensim_model</span><span class="p">(</span><span class="n">join_paths</span><span class="p">(</span><span class="n">model_dir_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_name</span><span class="p">),</span> <span class="n">mallet_path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">num_topics</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
-                   <span class="n">docs_topics_df</span><span class="o">=</span><span class="n">docs_topics_df</span><span class="p">)</span></div>
+        <span class="c1"># Path to the folder that contains the model files</span>
+        <span class="n">model_dir_path</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="n">model_parent_dir_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+        <span class="c1"># Path to the file inside the model folder that has the same name as the model name</span>
+        <span class="n">model_file_path</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="n">model_dir_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+
+        <span class="c1"># Load the gensim.models.wrappers.LdaMallet model</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_gensim_model</span><span class="p">(</span><span class="n">model_file_path</span><span class="p">,</span> <span class="n">mallet_path</span><span class="p">)</span>
+
+        <span class="c1"># Load the docs_topics_df. If it wasn&#39;t saved, show a warning message to the user.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">docs_topics_df</span> <span class="o">=</span> <span class="n">load_obj_from_disk</span><span class="p">(</span><span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;docs_topics_df&#39;</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">docs_topics_df</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Warning: docs_topics_df was not loaded into the model object, &#39;</span>
+                          <span class="s1">&#39;because no </span><span class="si">{0}</span><span class="s1"> file was found in </span><span class="si">{1}</span><span class="s1">. This means that the first call to the &#39;</span>
+                          <span class="s1">&#39;get_dominant_topic_of_each_doc_as_df() method will be slow.&#39;</span>
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;docs_topics_df&#39;</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">))</span>
+
+        <span class="c1"># Load the dataset</span>
+        <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;dataset&#39;</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset_class</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="o">=</span><span class="n">model_dir_path</span><span class="p">)</span>
+
+        <span class="c1"># Create an instance of the LdaMalletModel class</span>
+        <span class="n">mallet_obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">num_topics</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+                         <span class="n">docs_topics_df</span><span class="o">=</span><span class="n">docs_topics_df</span><span class="p">)</span>
+        <span class="c1"># Update the path to the directory that contains the model files</span>
+        <span class="n">mallet_obj</span><span class="o">.</span><span class="n">dir_path</span> <span class="o">=</span> <span class="n">model_dir_path</span>
+
+        <span class="k">return</span> <span class="n">mallet_obj</span></div>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
@@ -815,11 +882,11 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">LdaGensimModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">add_metadata_to_base_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LdaGensimModel.load"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.LdaGensimModel.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">docs_topics_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">model_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">model_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_LDA_SAVED_MODELS_PATH</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">model_parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_parent_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_LDA_SAVED_MODELS_PATH</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LdaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">,</span> <span class="n">docs_topics_df</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LdaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">:</span>
@@ -870,11 +937,11 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">LsaGensimModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">add_metadata_to_base_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LsaGensimModel.load"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.LsaGensimModel.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">docs_topics_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">model_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">model_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_LSA_SAVED_MODELS_PATH</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">model_parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_parent_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_LSA_SAVED_MODELS_PATH</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LsaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">,</span> <span class="n">docs_topics_df</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LsaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LsiModel</span><span class="p">:</span>
@@ -890,7 +957,8 @@
 <div class="viewcode-block" id="TopicsModelsList"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModelsList">[docs]</a><span class="k">class</span> <span class="nc">TopicsModelsList</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for easily creating, comparing and storing a list of topics models.&quot;&quot;&quot;</span>
 
-    <span class="n">_SAVE_MODELS_PATH</span> <span class="o">=</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;saved-elements/topics/&#39;</span><span class="p">)</span>  <span class="c1"># Path where the models will be saved</span>
+    <span class="n">_SAVE_MODELS_PATH</span> <span class="o">=</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">(</span>
+        <span class="s1">&#39;saved-elements/topics/&#39;</span><span class="p">)</span>  <span class="c1"># Path where the models will be saved</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>

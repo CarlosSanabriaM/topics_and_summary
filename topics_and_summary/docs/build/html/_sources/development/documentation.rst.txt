@@ -37,7 +37,7 @@ How to modify the documentation
 Directory structure and important files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-All the documentation files are in the **<project-root-folder>/topics_and_summary/docs folder**. The most important elements of the folder are:
+All the documentation files are in the **<project-root-path>/topics_and_summary/docs folder**. The most important elements of the folder are:
 
 * **build** folder: Contains the documentation in the output formats specified with the make command (HTML, ...)
 * **source** folder: Contains the source files of the documentation.
@@ -57,7 +57,7 @@ All the documentation files are in the **<project-root-folder>/topics_and_summar
 Generate HTML files
 ^^^^^^^^^^^^^^^^^^^
 
-After generating them, the HTML files will be stored in the **<project-root-folder>/topics_and_summary/docs/build/html** folder.
+After generating them, the HTML files will be stored in the **<project-root-path>/topics_and_summary/docs/build/html** folder.
 
 No changes in API
 """""""""""""""""
@@ -66,7 +66,7 @@ If there are no changes in the API source code, to generate the HTML files of th
 
 ::
 
-    cd <project-root-folder>/topics_and_summary/docs
+    cd <project-root-path>/topics_and_summary/docs
     make html
 
 Changes in API
@@ -76,7 +76,7 @@ If there are changes in the API source code, to generate the HTML files of the d
 
 ::
 
-    cd <project-root-folder>/topics_and_summary/docs
+    cd <project-root-path>/topics_and_summary/docs
     ./generate-api-doc.sh
 
 .. note:: **If a new python package is added** to the source code (i.e. a topics_and_summary.package folder with __init__.py file),

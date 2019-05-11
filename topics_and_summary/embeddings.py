@@ -66,7 +66,7 @@ class Word2VecModel(EmbeddingsModel):
         """
         Returns the index of the specified word.
 
-        :param word:
+        :param word: Word.
         :return: Index of the specified word. If the word isn't in the vocabulary of the model, \
         returns the index of the UNK token.
         """

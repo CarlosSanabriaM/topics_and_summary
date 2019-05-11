@@ -50,11 +50,11 @@ def execute():
     user_input = input('Load previously generated Lda[M]alletModel (quick op. and better model) or '
                        'generate a Lda[G]ensimModel in the moment (slow op. and worst model)? (M/g): ')
     if user_input.lower() != 'g':  # M option
-        model_dir_path = get_abspath_from_project_source_root('saved-elements/topics/'
-                                                              'best-model/trigrams/lda-mallet')
-        # Load a LdaMalletModel stored on disk. This model is the best model found.
-        # The load() method also loads the dataset used to generate the model, it's preprocessing options,
-        # and the docs_topics_df DataFrame, which contains the dominant topic of each document in the dataset.
+        model_dir_path = get_abspath_from_project_source_root(
+            'saved-elements/topics/best-model/trigrams/lda-mallet')
+        # Load a LdaMalletModel stored on disk (the best model found for this dataset)
+        # The load() method also loads the dataset used to generate the model, the preprocessing options,
+        # and the docs_topics_df DataFrame (contains the dominant topic of each document in the dataset).
         model = LdaMalletModel.load('model17', TwentyNewsGroupsDataset, model_dir_path)
     else:  # g option
         # Generate a LdaGensimModel using the previously preprocessed dataset
@@ -82,8 +82,9 @@ def execute():
         print('Images are being saved in the <project-root-path>/demo-images folder')
         # Create a plot with the most important keywords in each topic.
         # Plots are stored in the <project-root-path>/demo-images folder.
-        plot_word_clouds_of_topics(model.get_topics(num_keywords=15), dpi=150, show_plot=False,
-                                   save=True, dir_save_path=get_abspath_from_project_source_root('../demo-images'))
+        plot_word_clouds_of_topics(
+            model.get_topics(num_keywords=15), dpi=150, show_plot=False, save=True,
+            dir_save_path=get_abspath_from_project_source_root('../demo-images'))
     # endregion
 
     # region 4. Get the most representative documents of one topic
@@ -104,7 +105,8 @@ def execute():
         print('Probability: {0}'.format(two_most_repr_docs_topic16_df['Topic prob'][i]))
 
         pretty_print('Original document content')
-        # The 'Original doc text' column contains the original text of the documents (before preprocessing)
+        # The 'Original doc text' column contains the original text of the documents
+        # (the text of the documents before the general preprocessing)
         print(two_most_repr_docs_topic16_df['Original doc text'][i])
     # endregion
 
@@ -173,7 +175,8 @@ It is a Trinitarian feast in the Eastern Orthodox Churches."""
         print('Probability: {0}'.format(related_docs_df['Doc prob'][i]))
 
         pretty_print('Original document content')
-        # The 'Original doc text' column contains the original text of the documents (before preprocessing)
+        # The 'Original doc text' column contains the original text of the documents
+        # (the text of the documents before the general preprocessing)
         print(related_docs_df['Original doc text'][i])
     # endregion
 
@@ -190,7 +193,7 @@ It is a Trinitarian feast in the Eastern Orthodox Churches."""
     print(text)
 
     pretty_print('Summary')
-    # Create a TextRank model
+    # Create a TextRank model (by default it uses Glove word-embeddings)
     tr = TextRank()
     # Use the created model to obtain the k sentences that better summarize the given text
     summary = tr.get_k_best_sentences_of_text(text, k)
