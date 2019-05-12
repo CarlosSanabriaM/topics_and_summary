@@ -39,8 +39,8 @@ def plot_distribution_of_doc_word_counts(documents: List[List[str]]):
     plt.show()
 
 
-def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir_save_path: str = None, dpi=350,
-                              show_plot=True):
+def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir_save_path: str = None,
+                              save_base_name='wordcloud', dpi=350, show_plot=True):
     """
     Plots the specified topic and it's keywords as a word-cloud.
 
@@ -48,15 +48,17 @@ def plot_word_clouds_of_topic(topic: Topic, all_horizontal=True, save=False, dir
     :param all_horizontal: If True, all the keywords are plotted in horizontal.
     :param save: If true, the plots are saved to disk.
     :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
+    :param save_base_name: Base name for the image file saved. It's name will be <base-name>0.
     :param dpi: Dots per inches for the images.
     :param show_plot: If true, shows the plot while executing.
     """
     plot_word_clouds_of_topics([topic], single_plot_per_topic=True, all_horizontal=all_horizontal, save=save,
-                               dir_save_path=dir_save_path, dpi=dpi, show_plot=show_plot)
+                               dir_save_path=dir_save_path, save_base_name=save_base_name, dpi=dpi, show_plot=show_plot)
 
 
 def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False, all_horizontal=True,
-                               save=False, dir_save_path: str = None, dpi=350, show_plot=True):
+                               save=False, dir_save_path: str = None, save_base_name='wordcloud',
+                               dpi=350, show_plot=True):
     """
     Plots the specified topics and it's keywords as word-clouds.
 
@@ -66,6 +68,8 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
     :param all_horizontal: If True, all the keywords are plotted in horizontal.
     :param save: If true, the plots are saved to disk.
     :param dir_save_path: If save is True, this is the path of the directory where the plots will be saved.
+    :param save_base_name: Base name for the image files saved. Their names will be <base-name>x, where x is an int
+    starting from zero and ending in num_plots-1.
     :param dpi: Dots per inches for the images.
     :param show_plot: If true, shows the plot while executing.
     """
@@ -147,7 +151,7 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
             plt.tight_layout()
 
         if save:
-            save_name = 'wordcloud{}.png'.format(i)
+            save_name = '{0}{1}.png'.format(save_base_name, i)
             plot_path = join_paths(dir_save_path, save_name)
             plt.savefig(plot_path, dpi=dpi)
 
