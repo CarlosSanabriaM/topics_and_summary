@@ -97,7 +97,9 @@ def plot_word_clouds_of_topics(topics: List[Topic], single_plot_per_topic=False,
     num_topics_plotted = 0
     num_iterations = len(topics) if single_plot_per_topic else math.ceil(len(topics) / 4)
 
-    for i in range(num_iterations):
+    progress_bar = tqdm(range(num_iterations))
+    for i in progress_bar:
+        progress_bar.set_description('Generating plots')
         # Each topic is plotted in a separate plot
         if single_plot_per_topic:
             topic = topics[num_topics_plotted]
