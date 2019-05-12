@@ -44,7 +44,8 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">topics_and_summary.preprocessing.dataset_preprocessing_options</span> <span class="k">import</span> <span class="n">DatasetPreprocessingOptions</span>
-<span class="kn">from</span> <span class="nn">topics_and_summary.utils</span> <span class="k">import</span> <span class="n">join_paths</span><span class="p">,</span> <span class="n">load_obj_from_disk</span><span class="p">,</span> <span class="n">save_obj_to_disk</span>
+<span class="kn">from</span> <span class="nn">topics_and_summary.utils</span> <span class="k">import</span> <span class="n">join_paths</span><span class="p">,</span> <span class="n">load_obj_from_disk</span><span class="p">,</span> <span class="n">save_obj_to_disk</span><span class="p">,</span> \
+    <span class="n">get_abspath_from_project_source_root</span>
 
 
 <div class="viewcode-block" id="get_file_content"><a class="viewcode-back" href="../../../api/topics_and_summary.datasets.common.html#topics_and_summary.datasets.common.get_file_content">[docs]</a><span class="k">def</span> <span class="nf">get_file_content</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -140,15 +141,33 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">preprocessing_options</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_preprocessing_options&#39;</span><span class="p">,</span> <span class="n">files_folder</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Dataset.load"><a class="viewcode-back" href="../../../api/topics_and_summary.datasets.common.html#topics_and_summary.datasets.common.Dataset.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Dataset&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Dataset&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads a saved dataset from disk. This function must be used to load datasets, \</span>
-<span class="sd">        instead of utils.the load_obj_from_disk() function.</span>
+<span class="sd">        Loads a saved dataset object from disk.</span>
 
-<span class="sd">        :param name: Name of the folder where the dataset files are stored.</span>
-<span class="sd">        :param parent_dir_path: Path of the folder where the dataset folder is stored on disk.</span>
+<span class="sd">        :param name: Name of the folder where the dataset object files are stored.</span>
+<span class="sd">        :param parent_dir_path: Path to the folder where the dataset object folder is stored on disk.</span>
+<span class="sd">        :param dataset_path: Path to the folder that contains the original dataset documents.</span>
 <span class="sd">        :return: The dataset loaded from disk.</span>
+
+<span class="sd">        For example, consider the following directory structure:</span>
+
+<span class="sd">        * stored-datasets-objects/dataset_obj_1/dataset_obj_1_preprocessing_options/...</span>
+<span class="sd">        * stored-datasets-objects/dataset_obj_1/dataset_obj_1__except_preprocessing_options.pickle</span>
+<span class="sd">        * datasets/20_newsgroups</span>
+
+<span class="sd">        Where 20_newsgroups contains the original 20_newsgroups dataset documents and dataset_obj_1 contains |</span>
+<span class="sd">        the files of a previously stored dataset object (with the save() method).</span>
+
+<span class="sd">        To load the dataset_obj_1 dataset object that contains a dataset object of the 20 newsgroups dataset, \</span>
+<span class="sd">        this method should be called this way:</span>
+
+<span class="sd">        &gt;&gt;&gt; from topics_and_summary.datasets.common import Dataset</span>
+<span class="sd">        &gt;&gt;&gt; dataset = Dataset.load(&#39;dataset_obj_1&#39;, &#39;path/to/stored-datasets-objects&#39;, &#39;path/to/datasets&#39;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parent_dir_path</span> <span class="o">=</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;saved-elements/objects&#39;</span><span class="p">)</span>
+
         <span class="n">files_folder</span> <span class="o">=</span> <span class="n">join_paths</span><span class="p">(</span><span class="n">parent_dir_path</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
         <span class="c1"># Load the dataset (except the preprocessing options)</span>
@@ -163,14 +182,21 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dataset</span><span class="o">.</span><span class="n">preprocessing_options</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1"># If the path to the files of the dataset has changed after the dataset object was stored,</span>
-        <span class="c1"># the dataset_path attribute of the loaded object is wrong, but in this class we don&#39;t know the current</span>
-        <span class="c1"># path of the dataset files, so the user needs to check if the path is ok or it needs to be updated</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The dataset_path attribute of the loaded dataset object may need to be updated. &quot;</span>
-                      <span class="s2">&quot;It&#39;s current value is: </span><span class="si">{0}</span><span class="s2">. If the path to the files of the dataset has changed after &quot;</span>
-                      <span class="s2">&quot;the dataset object was stored, the dataset_path attribute of the loaded object is wrong &quot;</span>
-                      <span class="s2">&quot;and needs to be changed manually.&quot;</span>
-                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">))</span>
+        <span class="c1"># Update the dataset_path of the object if a value is given</span>
+        <span class="k">if</span> <span class="n">dataset_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">dataset_path</span> <span class="o">=</span> <span class="n">dataset_path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If the path to the files of the dataset has changed after the dataset object was stored,</span>
+            <span class="c1"># the dataset_path attribute of the loaded object is wrong, but in this class we don&#39;t know the current</span>
+            <span class="c1"># path of the dataset files, so the user needs to check if the path is ok or it needs to be updated</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The dataset_path attribute of the loaded dataset object may need to be updated. &quot;</span>
+                          <span class="s2">&quot;It&#39;s current value is: </span><span class="si">{0}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                          <span class="s2">&quot;If the path to the files of the dataset has changed after the dataset object was stored, &quot;</span>
+                          <span class="s2">&quot;the dataset_path attribute of the loaded object is wrong and needs to be changed manually.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                          <span class="s2">&quot;There are 2 ways to update the dataset path:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                          <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">1. Change it directly in the loaded model: dataset_obj.dataset_path = &lt;path&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                          <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">2. Load the dataset again with load(), specifying the path in the dataset_path parameter&quot;</span>
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">dataset</span></div>
 

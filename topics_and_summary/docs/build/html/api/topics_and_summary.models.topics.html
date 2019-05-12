@@ -113,14 +113,14 @@
 
 <dl class="classmethod">
 <dt id="topics_and_summary.models.topics.TopicsModel.load">
-<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>dataset_class: type</em>, <em>model_parent_dir_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#TopicsModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.TopicsModel.load" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>model_parent_dir_path: str = None</em>, <em>dataset_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#TopicsModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.TopicsModel.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the model with the given name from the specified path, and returns a TopicsModel instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model_name</strong> – Model name.</p></li>
-<li><p><strong>dataset_class</strong> – Dataset class of the dataset used to create the model previously.         It must be a subclass of Dataset.         For example, a possible value for this parameter is TwentyNewsGroupsDataset.         The Dataset classmethod load() will be used to load the stored dataset.</p></li>
 <li><p><strong>model_parent_dir_path</strong> – Path to the directory where the model folder is in.</p></li>
+<li><p><strong>dataset_path</strong> – Path to the folder that contains the original dataset documents.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -361,14 +361,14 @@ It’s used for data transfer.</p>
 
 <dl class="classmethod">
 <dt id="topics_and_summary.models.topics.LdaMalletModel.load">
-<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>dataset_class: type</em>, <em>model_parent_dir_path: str = None</em>, <em>mallet_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LdaMalletModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LdaMalletModel.load" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>model_parent_dir_path: str = None</em>, <em>dataset_path: str = None</em>, <em>mallet_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LdaMalletModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LdaMalletModel.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the model with the given name from the specified path, and returns a LdaMalletModel instance.         The dataset used to create the model and the docs_topics_df (if exists) will be loaded from the model directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model_name</strong> – Model name.</p></li>
-<li><p><strong>dataset_class</strong> – Dataset class of the dataset used to create the model previously.         It must be a subclass of Dataset.         For example, a possible value for this parameter is TwentyNewsGroupsDataset.         The Dataset classmethod load() will be used to load the stored dataset.</p></li>
 <li><p><strong>model_parent_dir_path</strong> – Path to the directory where the model folder is in.</p></li>
+<li><p><strong>dataset_path</strong> – Path to the folder that contains the original dataset documents.</p></li>
 <li><p><strong>mallet_path</strong> – Path to the mallet source code.</p></li>
 </ul>
 </dd>
@@ -402,14 +402,14 @@ It’s used for data transfer.</p>
 
 <dl class="classmethod">
 <dt id="topics_and_summary.models.topics.LdaGensimModel.load">
-<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>dataset_class: type</em>, <em>model_parent_dir_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LdaGensimModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LdaGensimModel.load" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>model_parent_dir_path: str = None</em>, <em>dataset_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LdaGensimModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LdaGensimModel.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the model with the given name from the specified path, and returns a TopicsModel instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model_name</strong> – Model name.</p></li>
-<li><p><strong>dataset_class</strong> – Dataset class of the dataset used to create the model previously.         It must be a subclass of Dataset.         For example, a possible value for this parameter is TwentyNewsGroupsDataset.         The Dataset classmethod load() will be used to load the stored dataset.</p></li>
 <li><p><strong>model_parent_dir_path</strong> – Path to the directory where the model folder is in.</p></li>
+<li><p><strong>dataset_path</strong> – Path to the folder that contains the original dataset documents.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -442,14 +442,14 @@ It’s used for data transfer.</p>
 
 <dl class="classmethod">
 <dt id="topics_and_summary.models.topics.LsaGensimModel.load">
-<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>dataset_class: type</em>, <em>model_parent_dir_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LsaGensimModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LsaGensimModel.load" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_name: str</em>, <em>model_parent_dir_path: str = None</em>, <em>dataset_path: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/topics_and_summary/models/topics.html#LsaGensimModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.models.topics.LsaGensimModel.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the model with the given name from the specified path, and returns a TopicsModel instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model_name</strong> – Model name.</p></li>
-<li><p><strong>dataset_class</strong> – Dataset class of the dataset used to create the model previously.         It must be a subclass of Dataset.         For example, a possible value for this parameter is TwentyNewsGroupsDataset.         The Dataset classmethod load() will be used to load the stored dataset.</p></li>
 <li><p><strong>model_parent_dir_path</strong> – Path to the directory where the model folder is in.</p></li>
+<li><p><strong>dataset_path</strong> – Path to the folder that contains the original dataset documents.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

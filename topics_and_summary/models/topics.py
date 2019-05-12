@@ -150,23 +150,15 @@ class TopicsModel(metaclass=abc.ABCMeta):
         self.dataset.save(model_name + 'dataset', self.dir_path)
 
     @classmethod
-    def load(cls, model_name: str, dataset_class: type, model_parent_dir_path: str = None):
+    def load(cls, model_name: str, model_parent_dir_path: str = None, dataset_path: str = None):
         """
         Loads the model with the given name from the specified path, and returns a TopicsModel instance.
 
         :param model_name: Model name.
-        :param dataset_class: Dataset class of the dataset used to create the model previously. \
-        It must be a subclass of Dataset. \
-        For example, a possible value for this parameter is TwentyNewsGroupsDataset. \
-        The Dataset classmethod load() will be used to load the stored dataset.
         :param model_parent_dir_path: Path to the directory where the model folder is in.
+        :param dataset_path: Path to the folder that contains the original dataset documents.
         :return: Instance of a TopicsModel object.
         """
-        # The dataset_class param must be a subclass of Dataset
-        if not issubclass(dataset_class, Dataset):
-            raise Exception('dataset_class param must be a subclass of the Dataset class, '
-                            'and {0} is not a subclass of the Dataset class.'.format(dataset_class))
-
         if model_parent_dir_path is None:
             model_parent_dir_path = cls._SAVE_PATH
 
@@ -190,7 +182,7 @@ class TopicsModel(metaclass=abc.ABCMeta):
 
         # Load the dataset
         dataset_name = model_name + 'dataset'
-        dataset = dataset_class.load(name=dataset_name, parent_dir_path=model_dir_path)
+        dataset = Dataset.load(name=dataset_name, parent_dir_path=model_dir_path, dataset_path=dataset_path)
 
         # Create an instance of the LdaMalletModel class
         return cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
@@ -743,25 +735,18 @@ class LdaMalletModel(TopicsModel):
         self.dataset.save(self.model_name + 'dataset', self.dir_path)
 
     @classmethod
-    def load(cls, model_name: str, dataset_class: type, model_parent_dir_path: str = None, mallet_path: str = None):
+    def load(cls, model_name: str, model_parent_dir_path: str = None, dataset_path: str = None,
+             mallet_path: str = None):
         """
         Loads the model with the given name from the specified path, and returns a LdaMalletModel instance. \
         The dataset used to create the model and the docs_topics_df (if exists) will be loaded from the model directory.
 
         :param model_name: Model name.
-        :param dataset_class: Dataset class of the dataset used to create the model previously. \
-        It must be a subclass of Dataset. \
-        For example, a possible value for this parameter is TwentyNewsGroupsDataset. \
-        The Dataset classmethod load() will be used to load the stored dataset.
         :param model_parent_dir_path: Path to the directory where the model folder is in.
+        :param dataset_path: Path to the folder that contains the original dataset documents.
         :param mallet_path: Path to the mallet source code.
         :return: Instance of a LdaMalletModel object.
         """
-        # The dataset_class param must be a subclass of Dataset
-        if not issubclass(dataset_class, Dataset):
-            raise Exception('dataset_class param must be a subclass of the Dataset class, '
-                            'and {0} is not a subclass of the Dataset class.'.format(dataset_class))
-
         if model_parent_dir_path is None:
             model_parent_dir_path = cls._MALLET_SAVED_MODELS_PATH
 
@@ -788,7 +773,7 @@ class LdaMalletModel(TopicsModel):
 
         # Load the dataset
         dataset_name = model_name + 'dataset'
-        dataset = dataset_class.load(name=dataset_name, parent_dir_path=model_dir_path)
+        dataset = Dataset.load(name=dataset_name, parent_dir_path=model_dir_path, dataset_path=dataset_path)
 
         # Create an instance of the LdaMalletModel class
         mallet_obj = cls(dataset, num_topics=model.num_topics, model=model, model_name=model_name,
@@ -845,11 +830,11 @@ class LdaGensimModel(TopicsModel):
         super(LdaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
 
     @classmethod
-    def load(cls, model_name: str, dataset_class: type, model_parent_dir_path: str = None):
+    def load(cls, model_name: str, model_parent_dir_path: str = None, dataset_path: str = None):
         if model_parent_dir_path is None:
             model_parent_dir_path = cls._LDA_SAVED_MODELS_PATH
 
-        return super(LdaGensimModel, cls).load(model_name, dataset_class, model_parent_dir_path)
+        return super(LdaGensimModel, cls).load(model_name, model_parent_dir_path, dataset_path)
 
     @classmethod
     def _load_gensim_model(cls, path: str) -> gensim.models.LdaModel:
@@ -900,11 +885,11 @@ class LsaGensimModel(TopicsModel):
         super(LsaGensimModel, self).save(model_name, path, add_metadata_to_base_name)
 
     @classmethod
-    def load(cls, model_name: str, dataset_class: type, model_parent_dir_path: str = None):
+    def load(cls, model_name: str, model_parent_dir_path: str = None, dataset_path: str = None):
         if model_parent_dir_path is None:
             model_parent_dir_path = cls._LSA_SAVED_MODELS_PATH
 
-        return super(LsaGensimModel, cls).load(model_name, dataset_class, model_parent_dir_path)
+        return super(LsaGensimModel, cls).load(model_name, model_parent_dir_path, dataset_path)
 
     @classmethod
     def _load_gensim_model(cls, path: str) -> gensim.models.LsiModel:

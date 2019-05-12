@@ -88,6 +88,11 @@ the dataset object. This options will be used by the TopicsModel when receiving 
 preprocessed with the same options.</p>
 <p>The ngrams=’tri’ option means that trigrams will be generated on words that appear together many times. For example,
 ‘disk’, ‘operating’ and ‘system’ appears together many times, so a trigram ‘disk_operating_system’ will be generated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">emphasize-lines-in-source-code</dt>
+<dd class="field-odd"><p>25,32,42 &lt;– -19+1 = 7,14,24</p>
+</dd>
+</dl>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>19
 20
 21
@@ -159,6 +164,11 @@ LsaGensimModel, but LdaMalletModel can take more than 5 seconds to make a predic
 documents (as it should have), then get_dominant_topic_of_each_doc_as_df() is extremely slow with LdaMalletModel.</p>
 <p>So, for this reason, the docs_topics_df is created once, and then it’s stored on disk when the save() method of the
 TopicsModel is called. After that, there is no need to recalculate the predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">emphasize-lines-in-source-code</dt>
+<dd class="field-odd"><p>53,54,58,61 &lt;– -48+1 = 6-10,12</p>
+</dd>
+</dl>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>48
 49
 50
@@ -182,7 +192,7 @@ TopicsModel is called. After that, there is no need to recalculate the predictio
 </span>        <span class="c1"># Load a LdaMalletModel stored on disk (the best model found for this dataset)</span>
         <span class="c1"># The load() method also loads the dataset used to generate the model, the preprocessing options,</span>
         <span class="c1"># and the docs_topics_df DataFrame (contains the dominant topic of each document in the dataset).</span>
-<span class="hll">        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;model17&#39;</span><span class="p">,</span> <span class="n">TwentyNewsGroupsDataset</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">)</span>
+<span class="hll">        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaMalletModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;model17&#39;</span><span class="p">,</span> <span class="n">model_dir_path</span><span class="p">)</span>
 </span>    <span class="k">else</span><span class="p">:</span>  <span class="c1"># g option</span>
         <span class="c1"># Generate a LdaGensimModel using the previously preprocessed dataset</span>
 <span class="hll">        <span class="n">model</span> <span class="o">=</span> <span class="n">LdaGensimModel</span><span class="p">(</span><span class="n">preprocessed_dataset</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
@@ -201,6 +211,11 @@ more structured way. If is false, each topic is printed in one line, as gensim d
 This is done with the plot_word_clouds_of_topics() function of the visualizations module, that receives a List[Topic],
 that can be obtained with the get_topics() method of the TopicsModel class.</p></li>
 </ul>
+<dl class="field-list simple">
+<dt class="field-odd">emphasize-lines-in-source-code</dt>
+<dd class="field-odd"><p>79,85-87 &lt;– -65+1 = 15,21-23</p>
+</dd>
+</dl>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>65
 66
 67
@@ -257,6 +272,11 @@ This function uses the docs_topics_df. If the get_dominant_topic_of_each_doc_as_
 it is stored internally in the docs_topics_df attribute of the TopicsModel instance.</p>
 <p>get_k_most_repr_docs_of_topic_as_df() returns a pandas DataFrame (ordered by document-topic probability),
 with the k most representative documents of the specified topic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">emphasize-lines-in-source-code</dt>
+<dd class="field-odd"><p>100,105,110 &lt;– -91+1  = 10,15,20</p>
+</dd>
+</dl>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 91
  92
  93
@@ -315,6 +335,11 @@ ngrams option was ‘bi’ or ‘tri’, the ngrams_model_func is also passed as
 the same bigrams/trigrams as the ones generated on the dataset documents).</p>
 <p>The purpose of this is to apply the same preprocessing to new texts as the one applied to the dataset documents,
 because if they are not preprocessed in the same way, the results won’t be as expected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">emphasize-lines-in-source-code</dt>
+<dd class="field-odd"><p>154 &lt;– -114+1 = 41</p>
+</dd>
+</dl>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>114
 115
 116
@@ -405,6 +430,11 @@ because if they are not preprocessed in the same way, the results won’t be as 
 <p>This is done with the get_related_docs_as_df() method of the TopicsModel class.
 This method calls the predict_topic_prob_on_text() and the  get_k_most_repr_docs_per_topic_as_df() methods,
 so it needs the docs_topics_df.</p>
+<dl class="field-list simple">
+<dt class="field-odd">emphasize-lines-in-source-code</dt>
+<dd class="field-odd"><p>170,175,190 &lt;– -158+1 = 13,18,23</p>
+</dd>
+</dl>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>158
 159
 160
@@ -460,6 +490,11 @@ so it needs the docs_topics_df.</p>
 get_k_best_sentences_of_text(), that returns the k best sentences of the given text
 (the ones that summarizes it the most). It performs, therefore, an extractive summary.</p>
 <p>Internally, the get_k_best_sentences_of_text() method uses word embeddings (either GloVe or Word2Vec).</p>
+<dl class="field-list simple">
+<dt class="field-odd">emphasize-lines-in-source-code</dt>
+<dd class="field-odd"><p>197,199 &lt;– -184+1 = 14,16</p>
+</dd>
+</dl>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>184
 185
 186

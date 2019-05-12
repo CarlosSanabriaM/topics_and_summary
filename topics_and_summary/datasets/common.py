@@ -7,7 +7,8 @@ from typing import List, Callable
 import pandas as pd
 
 from topics_and_summary.preprocessing.dataset_preprocessing_options import DatasetPreprocessingOptions
-from topics_and_summary.utils import join_paths, load_obj_from_disk, save_obj_to_disk
+from topics_and_summary.utils import join_paths, load_obj_from_disk, save_obj_to_disk, \
+    get_abspath_from_project_source_root
 
 
 def get_file_content(file_path: str, encoding: str = None) -> str:
@@ -103,15 +104,33 @@ class Dataset(metaclass=abc.ABCMeta):
             self.preprocessing_options.save(name + '_preprocessing_options', files_folder)
 
     @classmethod
-    def load(cls, name: str, parent_dir_path: str = None) -> 'Dataset':
+    def load(cls, name: str, parent_dir_path: str = None, dataset_path: str = None) -> 'Dataset':
         """
-        Loads a saved dataset from disk. This function must be used to load datasets, \
-        instead of utils.the load_obj_from_disk() function.
+        Loads a saved dataset object from disk.
 
-        :param name: Name of the folder where the dataset files are stored.
-        :param parent_dir_path: Path of the folder where the dataset folder is stored on disk.
+        :param name: Name of the folder where the dataset object files are stored.
+        :param parent_dir_path: Path to the folder where the dataset object folder is stored on disk.
+        :param dataset_path: Path to the folder that contains the original dataset documents.
         :return: The dataset loaded from disk.
+
+        For example, consider the following directory structure:
+
+        * stored-datasets-objects/dataset_obj_1/dataset_obj_1_preprocessing_options/...
+        * stored-datasets-objects/dataset_obj_1/dataset_obj_1__except_preprocessing_options.pickle
+        * datasets/20_newsgroups
+
+        Where 20_newsgroups contains the original 20_newsgroups dataset documents and dataset_obj_1 contains |
+        the files of a previously stored dataset object (with the save() method).
+
+        To load the dataset_obj_1 dataset object that contains a dataset object of the 20 newsgroups dataset, \
+        this method should be called this way:
+
+        >>> from topics_and_summary.datasets.common import Dataset
+        >>> dataset = Dataset.load('dataset_obj_1', 'path/to/stored-datasets-objects', 'path/to/datasets')
         """
+        if parent_dir_path is None:
+            parent_dir_path = get_abspath_from_project_source_root('saved-elements/objects')
+
         files_folder = join_paths(parent_dir_path, name)
 
         # Load the dataset (except the preprocessing options)
@@ -126,14 +145,21 @@ class Dataset(metaclass=abc.ABCMeta):
         else:
             dataset.preprocessing_options = None
 
-        # If the path to the files of the dataset has changed after the dataset object was stored,
-        # the dataset_path attribute of the loaded object is wrong, but in this class we don't know the current
-        # path of the dataset files, so the user needs to check if the path is ok or it needs to be updated
-        warnings.warn("The dataset_path attribute of the loaded dataset object may need to be updated. "
-                      "It's current value is: {0}. If the path to the files of the dataset has changed after "
-                      "the dataset object was stored, the dataset_path attribute of the loaded object is wrong "
-                      "and needs to be changed manually."
-                      .format(dataset.dataset_path))
+        # Update the dataset_path of the object if a value is given
+        if dataset_path is not None:
+            dataset.dataset_path = dataset_path
+        else:
+            # If the path to the files of the dataset has changed after the dataset object was stored,
+            # the dataset_path attribute of the loaded object is wrong, but in this class we don't know the current
+            # path of the dataset files, so the user needs to check if the path is ok or it needs to be updated
+            warnings.warn("\nThe dataset_path attribute of the loaded dataset object may need to be updated. "
+                          "It's current value is: {0}.\n"
+                          "If the path to the files of the dataset has changed after the dataset object was stored, "
+                          "the dataset_path attribute of the loaded object is wrong and needs to be changed manually.\n"
+                          "There are 2 ways to update the dataset path:\n"
+                          "\t1. Change it directly in the loaded model: dataset_obj.dataset_path = <path>\n"
+                          "\t2. Load the dataset again with load(), specifying the path in the dataset_path parameter"
+                          .format(dataset.dataset_path))
 
         return dataset
 

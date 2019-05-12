@@ -16,7 +16,8 @@ class TestTwentyNewsGroupsDataset(unittest.TestCase):
 
     def test_create_dataset(self):
         # Obtain the dataset stored in disk
-        expected_dataset = TwentyNewsGroupsDataset.load('dataset', SAVED_OBJECTS_PATH)
+        expected_dataset = TwentyNewsGroupsDataset.load('dataset', SAVED_OBJECTS_PATH,
+                                                        TwentyNewsGroupsDataset.DATASET_PATH)
 
         self.assertEqual(expected_dataset, self.dataset)
 
@@ -46,7 +47,8 @@ are the cause of a bad situation of another party."""
         self.dataset.save('test_dataset', SAVED_OBJECTS_PATH)
 
         # Load the dataset from disk
-        dataset_from_disk = TwentyNewsGroupsDataset.load('test_dataset', SAVED_OBJECTS_PATH)
+        dataset_from_disk = TwentyNewsGroupsDataset.load('test_dataset', SAVED_OBJECTS_PATH,
+                                                         TwentyNewsGroupsDataset.DATASET_PATH)
 
         # Remove the dataset previously stored on disk
         rmtree(join_paths(SAVED_OBJECTS_PATH, 'test_dataset'))
@@ -67,7 +69,8 @@ are the cause of a bad situation of another party."""
         dataset.save('test_dataset', SAVED_OBJECTS_PATH)
 
         # Load the dataset from disk
-        dataset_from_disk = TwentyNewsGroupsDataset.load('test_dataset', SAVED_OBJECTS_PATH)
+        dataset_from_disk = TwentyNewsGroupsDataset.load('test_dataset', SAVED_OBJECTS_PATH,
+                                                         TwentyNewsGroupsDataset.DATASET_PATH)
 
         # Remove the dataset previously stored on disk
         rmtree(join_paths(SAVED_OBJECTS_PATH, 'test_dataset'))

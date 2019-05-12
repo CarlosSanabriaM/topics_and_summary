@@ -71,18 +71,19 @@
 <span class="sd">    PowerIterationFailedConvergence is raised.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_model</span><span class="o">=</span><span class="s1">&#39;glove&#39;</span><span class="p">,</span> <span class="n">glove_embedding_dim</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_model</span><span class="o">=</span><span class="s1">&#39;glove&#39;</span><span class="p">,</span> <span class="n">embeddings_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">glove_embedding_dim</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a TextRank object that uses the specified embedding model to create the sentence vectors.</span>
 
 <span class="sd">        :param embedding_model: Embedding model used to create the sentence vectors. \</span>
 <span class="sd">        Possible values are: &#39;glove&#39; or &#39;word2vec&#39;.</span>
+<span class="sd">        :param embeddings_path: Path of the word embeddings stored on disk.</span>
 <span class="sd">        :param glove_embedding_dim: Dimension of the embedding word vectors.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">embedding_model</span> <span class="o">==</span> <span class="s1">&#39;glove&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">embeddings_model</span> <span class="o">=</span> <span class="n">Glove</span><span class="p">(</span><span class="n">glove_embedding_dim</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embeddings_model</span> <span class="o">=</span> <span class="n">Glove</span><span class="p">(</span><span class="n">glove_embedding_dim</span><span class="p">,</span> <span class="n">embeddings_path</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">embeddings_model</span> <span class="o">=</span> <span class="n">Word2VecModel</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embeddings_model</span> <span class="o">=</span> <span class="n">Word2VecModel</span><span class="p">(</span><span class="n">embeddings_path</span><span class="p">)</span>
 
     <span class="c1"># TODO: Sometimes it can&#39;t converge, so it throws an Exception</span>
 <div class="viewcode-block" id="TextRank.get_k_best_sentences_of_text"><a class="viewcode-back" href="../../../api/topics_and_summary.models.summarization.html#topics_and_summary.models.summarization.TextRank.get_k_best_sentences_of_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_k_best_sentences_of_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_best_sentences</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>

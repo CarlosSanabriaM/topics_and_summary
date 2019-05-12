@@ -36,6 +36,6 @@ setup(name='topics_and_summary',
             'scikit_learn>=0.20.3',
             'typing>=3.6.6'
       ],
-      packages=find_packages(exclude=('tests', 'docs')),
+      packages=find_packages(),
       include_package_data=True,
       zip_safe=False)

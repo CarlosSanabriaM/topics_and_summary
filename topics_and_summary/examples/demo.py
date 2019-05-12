@@ -55,7 +55,7 @@ def execute():
         # Load a LdaMalletModel stored on disk (the best model found for this dataset)
         # The load() method also loads the dataset used to generate the model, the preprocessing options,
         # and the docs_topics_df DataFrame (contains the dominant topic of each document in the dataset).
-        model = LdaMalletModel.load('model17', TwentyNewsGroupsDataset, model_dir_path)
+        model = LdaMalletModel.load('model17', model_dir_path)
     else:  # g option
         # Generate a LdaGensimModel using the previously preprocessed dataset
         model = LdaGensimModel(preprocessed_dataset, num_topics=17)

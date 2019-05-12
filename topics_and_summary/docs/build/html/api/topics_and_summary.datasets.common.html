@@ -143,19 +143,33 @@
 
 <dl class="classmethod">
 <dt id="topics_and_summary.datasets.common.Dataset.load">
-<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>name: str</em>, <em>parent_dir_path: str = None</em><span class="sig-paren">)</span> &#x2192; topics_and_summary.datasets.common.Dataset<a class="reference internal" href="../_modules/topics_and_summary/datasets/common.html#Dataset.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.datasets.common.Dataset.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads a saved dataset from disk. This function must be used to load datasets,         instead of utils.the load_obj_from_disk() function.</p>
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>name: str</em>, <em>parent_dir_path: str = None</em>, <em>dataset_path: str = None</em><span class="sig-paren">)</span> &#x2192; topics_and_summary.datasets.common.Dataset<a class="reference internal" href="../_modules/topics_and_summary/datasets/common.html#Dataset.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#topics_and_summary.datasets.common.Dataset.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a saved dataset object from disk.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> – Name of the folder where the dataset files are stored.</p></li>
-<li><p><strong>parent_dir_path</strong> – Path of the folder where the dataset folder is stored on disk.</p></li>
+<li><p><strong>name</strong> – Name of the folder where the dataset object files are stored.</p></li>
+<li><p><strong>parent_dir_path</strong> – Path to the folder where the dataset object folder is stored on disk.</p></li>
+<li><p><strong>dataset_path</strong> – Path to the folder that contains the original dataset documents.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The dataset loaded from disk.</p>
 </dd>
 </dl>
+<p>For example, consider the following directory structure:</p>
+<ul class="simple">
+<li><p>stored-datasets-objects/dataset_obj_1/dataset_obj_1_preprocessing_options/…</p></li>
+<li><p>stored-datasets-objects/dataset_obj_1/dataset_obj_1__except_preprocessing_options.pickle</p></li>
+<li><p>datasets/20_newsgroups</p></li>
+</ul>
+<p>Where 20_newsgroups contains the original 20_newsgroups dataset documents and dataset_obj_1 contains |
+the files of a previously stored dataset object (with the save() method).</p>
+<p>To load the dataset_obj_1 dataset object that contains a dataset object of the 20 newsgroups dataset,         this method should be called this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">topics_and_summary.datasets.common</span> <span class="k">import</span> <span class="n">Dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;dataset_obj_1&#39;</span><span class="p">,</span> <span class="s1">&#39;path/to/stored-datasets-objects&#39;</span><span class="p">,</span> <span class="s1">&#39;path/to/datasets&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>

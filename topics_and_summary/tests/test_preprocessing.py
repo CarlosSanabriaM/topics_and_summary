@@ -28,7 +28,8 @@ class TestPreprocessing(unittest.TestCase):
         preprocessed_dataset = preprocess_dataset(dataset, ngrams='tri')
 
         # Obtain the dataset stored in disk (it has been preprocessed too, with the same options)
-        expected_preprocessed_dataset = TwentyNewsGroupsDataset.load('trigrams_dataset', SAVED_OBJECTS_PATH)
+        expected_preprocessed_dataset = TwentyNewsGroupsDataset.load('trigrams_dataset', SAVED_OBJECTS_PATH,
+                                                                     TwentyNewsGroupsDataset.DATASET_PATH)
 
         self.assertEqual(expected_preprocessed_dataset, preprocessed_dataset)
 

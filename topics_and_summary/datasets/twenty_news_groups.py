@@ -1,6 +1,5 @@
 import re
 import textwrap
-import warnings
 
 from topics_and_summary.datasets.common import Document
 from topics_and_summary.datasets.structured_dataset import StructuredDataset, StructuredDocument
@@ -13,7 +12,7 @@ class TwentyNewsGroupsDataset(StructuredDataset):
     This class can apply a first specific preprocessing on the dataset files.
     """
 
-    _DATASET_PATH = get_abspath_from_project_source_root('../datasets/20_newsgroups')
+    DATASET_PATH = get_abspath_from_project_source_root('../datasets/20_newsgroups')
     _DATASET_ENCODING = 'latin1'
 
     def __init__(self, remove_header=True, remove_footer=True, remove_quotes=True, dataset_path=None):
@@ -24,7 +23,7 @@ class TwentyNewsGroupsDataset(StructuredDataset):
         :param dataset_path: Path to the dataset.
         """
         if dataset_path is None:
-            dataset_path = self._DATASET_PATH
+            dataset_path = self.DATASET_PATH
 
         super().__init__(dataset_path, self._DATASET_ENCODING)
 
@@ -153,32 +152,6 @@ class TwentyNewsGroupsDataset(StructuredDataset):
                    self.remove_footer == other.remove_footer and \
                    self.remove_quotes == other.remove_quotes
         return False
-
-    @classmethod
-    def load(cls, name: str, parent_dir_path: str = None) -> 'TwentyNewsGroupsDataset':
-        """
-        Loads a saved dataset from disk. This function must be used to load datasets,
-        instead of utils.the load_obj_from_disk() function, because this function updates
-        the current value of the dataset path.
-
-        :param name: Name of the dataset.
-        :param parent_dir_path: Path of the folder where the dataset object is stored on disk.
-        :return: The object loaded from disk.
-        """
-        if parent_dir_path is None:
-            parent_dir_path = get_abspath_from_project_source_root('saved-elements/objects')
-
-        # noinspection PyTypeChecker
-        dataset: TwentyNewsGroupsDataset = super().load(name, parent_dir_path)
-        dataset.dataset_path = cls._DATASET_PATH
-
-        warnings.warn(
-            "The dataset_path attribute was updated to the value of the TwentyNewsGroupsDataset._DATASET_PATH "
-            "variable. If a dataset_path value was given in the __init__ method while creating the dataset, "
-            "the dataset_path attribute of the loaded object is wrong and needs to be changed manually."
-                .format(dataset.dataset_path))
-
-        return dataset
 
 
 class TwentyNewsGroupsDocument(StructuredDocument):

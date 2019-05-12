@@ -1,3 +1,22 @@
-include MANIFEST.in
-include README.md
-include setup.py
+# Include all files in topics_and_summary folder
+graft topics_and_summary
+
+# Exclude the documentation files
+prune topics_and_summary/docs
+
+# Exclude the tests
+prune topics_and_summary/tests
+
+# Only include the best model
+prune topics_and_summary/saved-elements
+graft topics_and_summary/saved-elements/topics/best-model
+
+# Exclude Jupyter Notebooks files
+global-exclude *.ipynb .ipynb_checkpoints
+
+# Exclude Mac files
+global-exclude .DS_Store
+
+# Exclude python compiled files
+global-exclude __pycache__
+global-exclude *.py[co]

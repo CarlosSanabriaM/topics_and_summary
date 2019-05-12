@@ -189,33 +189,7 @@
                    <span class="bp">self</span><span class="o">.</span><span class="n">remove_header</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">remove_header</span> <span class="ow">and</span> \
                    <span class="bp">self</span><span class="o">.</span><span class="n">remove_footer</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">remove_footer</span> <span class="ow">and</span> \
                    <span class="bp">self</span><span class="o">.</span><span class="n">remove_quotes</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">remove_quotes</span>
-        <span class="k">return</span> <span class="kc">False</span>
-
-<div class="viewcode-block" id="TwentyNewsGroupsDataset.load"><a class="viewcode-back" href="../../../api/topics_and_summary.datasets.twenty_news_groups.html#topics_and_summary.datasets.twenty_news_groups.TwentyNewsGroupsDataset.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;TwentyNewsGroupsDataset&#39;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads a saved dataset from disk. This function must be used to load datasets,</span>
-<span class="sd">        instead of utils.the load_obj_from_disk() function, because this function updates</span>
-<span class="sd">        the current value of the dataset path.</span>
-
-<span class="sd">        :param name: Name of the dataset.</span>
-<span class="sd">        :param parent_dir_path: Path of the folder where the dataset object is stored on disk.</span>
-<span class="sd">        :return: The object loaded from disk.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">parent_dir_path</span> <span class="o">=</span> <span class="n">get_abspath_from_project_source_root</span><span class="p">(</span><span class="s1">&#39;saved-elements/objects&#39;</span><span class="p">)</span>
-
-        <span class="c1"># noinspection PyTypeChecker</span>
-        <span class="n">dataset</span><span class="p">:</span> <span class="n">TwentyNewsGroupsDataset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="p">)</span>
-        <span class="n">dataset</span><span class="o">.</span><span class="n">dataset_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_DATASET_PATH</span>
-
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;The dataset_path attribute was updated to the value of the TwentyNewsGroupsDataset._DATASET_PATH &quot;</span>
-            <span class="s2">&quot;variable. If a dataset_path value was given in the __init__ method while creating the dataset, &quot;</span>
-            <span class="s2">&quot;the dataset_path attribute of the loaded object is wrong and needs to be changed manually.&quot;</span>
-                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="n">dataset</span></div></div>
+        <span class="k">return</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="TwentyNewsGroupsDocument"><a class="viewcode-back" href="../../../api/topics_and_summary.datasets.twenty_news_groups.html#topics_and_summary.datasets.twenty_news_groups.TwentyNewsGroupsDocument">[docs]</a><span class="k">class</span> <span class="nc">TwentyNewsGroupsDocument</span><span class="p">(</span><span class="n">StructuredDocument</span><span class="p">):</span>

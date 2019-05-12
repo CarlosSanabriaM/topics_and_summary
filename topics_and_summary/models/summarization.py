@@ -34,18 +34,19 @@ class TextRank(SummarizationModel):
     PowerIterationFailedConvergence is raised.
     """
 
-    def __init__(self, embedding_model='glove', glove_embedding_dim=100):
+    def __init__(self, embedding_model='glove', embeddings_path=None, glove_embedding_dim=100):
         """
         Creates a TextRank object that uses the specified embedding model to create the sentence vectors.
 
         :param embedding_model: Embedding model used to create the sentence vectors. \
         Possible values are: 'glove' or 'word2vec'.
+        :param embeddings_path: Path of the word embeddings stored on disk.
         :param glove_embedding_dim: Dimension of the embedding word vectors.
         """
         if embedding_model == 'glove':
-            self.embeddings_model = Glove(glove_embedding_dim)
+            self.embeddings_model = Glove(glove_embedding_dim, embeddings_path)
         else:
-            self.embeddings_model = Word2VecModel()
+            self.embeddings_model = Word2VecModel(embeddings_path)
 
     # TODO: Sometimes it can't converge, so it throws an Exception
     def get_k_best_sentences_of_text(self, text: str, num_best_sentences=5) -> List[str]:

@@ -187,23 +187,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TopicsModel.load"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.TopicsModel.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads the model with the given name from the specified path, and returns a TopicsModel instance.</span>
 
 <span class="sd">        :param model_name: Model name.</span>
-<span class="sd">        :param dataset_class: Dataset class of the dataset used to create the model previously. \</span>
-<span class="sd">        It must be a subclass of Dataset. \</span>
-<span class="sd">        For example, a possible value for this parameter is TwentyNewsGroupsDataset. \</span>
-<span class="sd">        The Dataset classmethod load() will be used to load the stored dataset.</span>
 <span class="sd">        :param model_parent_dir_path: Path to the directory where the model folder is in.</span>
+<span class="sd">        :param dataset_path: Path to the folder that contains the original dataset documents.</span>
 <span class="sd">        :return: Instance of a TopicsModel object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># The dataset_class param must be a subclass of Dataset</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">dataset_class</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;dataset_class param must be a subclass of the Dataset class, &#39;</span>
-                            <span class="s1">&#39;and </span><span class="si">{0}</span><span class="s1"> is not a subclass of the Dataset class.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_class</span><span class="p">))</span>
-
         <span class="k">if</span> <span class="n">model_parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model_parent_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_SAVE_PATH</span>
 
@@ -227,7 +219,7 @@
 
         <span class="c1"># Load the dataset</span>
         <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;dataset&#39;</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset_class</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="o">=</span><span class="n">model_dir_path</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="o">=</span><span class="n">model_dir_path</span><span class="p">,</span> <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">)</span>
 
         <span class="c1"># Create an instance of the LdaMalletModel class</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">num_topics</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
@@ -780,25 +772,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LdaMalletModel.load"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.LdaMalletModel.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mallet_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">mallet_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads the model with the given name from the specified path, and returns a LdaMalletModel instance. \</span>
 <span class="sd">        The dataset used to create the model and the docs_topics_df (if exists) will be loaded from the model directory.</span>
 
 <span class="sd">        :param model_name: Model name.</span>
-<span class="sd">        :param dataset_class: Dataset class of the dataset used to create the model previously. \</span>
-<span class="sd">        It must be a subclass of Dataset. \</span>
-<span class="sd">        For example, a possible value for this parameter is TwentyNewsGroupsDataset. \</span>
-<span class="sd">        The Dataset classmethod load() will be used to load the stored dataset.</span>
 <span class="sd">        :param model_parent_dir_path: Path to the directory where the model folder is in.</span>
+<span class="sd">        :param dataset_path: Path to the folder that contains the original dataset documents.</span>
 <span class="sd">        :param mallet_path: Path to the mallet source code.</span>
 <span class="sd">        :return: Instance of a LdaMalletModel object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># The dataset_class param must be a subclass of Dataset</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">dataset_class</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;dataset_class param must be a subclass of the Dataset class, &#39;</span>
-                            <span class="s1">&#39;and </span><span class="si">{0}</span><span class="s1"> is not a subclass of the Dataset class.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset_class</span><span class="p">))</span>
-
         <span class="k">if</span> <span class="n">model_parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model_parent_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MALLET_SAVED_MODELS_PATH</span>
 
@@ -825,7 +810,7 @@
 
         <span class="c1"># Load the dataset</span>
         <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;dataset&#39;</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset_class</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="o">=</span><span class="n">model_dir_path</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">parent_dir_path</span><span class="o">=</span><span class="n">model_dir_path</span><span class="p">,</span> <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">)</span>
 
         <span class="c1"># Create an instance of the LdaMalletModel class</span>
         <span class="n">mallet_obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">num_topics</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
@@ -882,11 +867,11 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">LdaGensimModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">add_metadata_to_base_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LdaGensimModel.load"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.LdaGensimModel.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">model_parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model_parent_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_LDA_SAVED_MODELS_PATH</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LdaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LdaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">:</span>
@@ -937,11 +922,11 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">LsaGensimModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">add_metadata_to_base_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LsaGensimModel.load"><a class="viewcode-back" href="../../../api/topics_and_summary.models.topics.html#topics_and_summary.models.topics.LsaGensimModel.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">model_parent_dir_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model_parent_dir_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_LSA_SAVED_MODELS_PATH</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LsaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">dataset_class</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LsaGensimModel</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">model_parent_dir_path</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_load_gensim_model</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gensim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">LsiModel</span><span class="p">:</span>
