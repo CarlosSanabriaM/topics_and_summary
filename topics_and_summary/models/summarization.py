@@ -27,7 +27,7 @@ class SummarizationModel(metaclass=abc.ABCMeta):
 class TextRank(SummarizationModel):
     """Summarization class using the TextRank algorithm"""
 
-    _MAX_NUM_ITERATIONS = 500
+    _MAX_NUM_ITERATIONS = 100
     """
     Max number of iterations in the power method eigenvalue solver. If the algorithm fails to converge to the
     specified tolerance within the specified number of iterations of the power iteration method, the
