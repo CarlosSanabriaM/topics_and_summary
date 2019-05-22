@@ -31,10 +31,10 @@ The packages for **using** the library are listed in the **requirements.txt** fi
 They can be installed using `pip <https://pypi.org/project/pip/>`__ or
 `conda <https://conda.io>`__.
 
-The packages should be installed into an **enviroment**,
+The packages should be installed into an **environment**,
 using either `virtualenv <https://virtualenv.pypa.io/en/latest/>`__
-or `conda enviroments <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`__,
-but conda is prefered.
+or `conda environments <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`__,
+but conda is preferred.
 
 
 Install dependencies using pip
@@ -63,41 +63,41 @@ In a new virtualenv
 
 Install dependencies using conda
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In a new conda enviroment
+In a new conda environment
 """""""""""""""""""""""""
 ::
 
-    # Create the enviroment with the packages needed to use the library
-    conda create --name=<enviroment-name> --file=<path-to-project-root-folder>/requirements.txt --channel conda-forge
-    # Packages will be installed in the <enviroment-name> enviroment, avoiding conflicts with other enviroments
+    # Create the environment with the packages needed to use the library
+    conda create --name=<environment-name> --file=<path-to-project-root-folder>/requirements.txt --channel conda-forge
+    # Packages will be installed in the <environment-name> environment, avoiding conflicts with other environments
 
-    # Change the current conda enviroment to the new enviroment
-    conda activate <enviroment-name>
-    # (<enviroment-name>) should appear at the beginning of the prompt, instead of (base)
+    # Change the current conda environment to the new environment
+    conda activate <environment-name>
+    # (<environment-name>) should appear at the beginning of the prompt, instead of (base)
 
 ::
 
-    # To leave the conda enviroment run:
+    # To leave the conda environment run:
     conda deactivate
-    # (base) should appear at the beginning of the prompt, instead of (<enviroment-name>)
+    # (base) should appear at the beginning of the prompt, instead of (<environment-name>)
 
-In an existing conda enviroment
+In an existing conda environment
 """""""""""""""""""""""""""""""
 ::
 
-    # Change the current conda enviroment to the existing enviroment
-    conda activate <enviroment-name>
-    # (<enviroment-name>) should appear at the beginning of the prompt, instead of (base)
+    # Change the current conda environment to the existing environment
+    conda activate <environment-name>
+    # (<environment-name>) should appear at the beginning of the prompt, instead of (base)
 
     # Install the required packages to use the library
     conda install --file=<path-to-project-root-folder>/requirements.txt --channel conda-forge
-    # Packages will be installed in the <enviroment-name> enviroment, avoiding conflicts with other enviroments
+    # Packages will be installed in the <environment-name> environment, avoiding conflicts with other environments
 
 ::
 
-    # To leave the conda enviroment run:
+    # To leave the conda environment run:
     conda deactivate
-    # (base) should appear at the beginning of the prompt, instead of (<enviroment-name>)
+    # (base) should appear at the beginning of the prompt, instead of (<environment-name>)
 
 
 .. _usage-installation-library:
@@ -109,7 +109,7 @@ In an existing conda enviroment
 Install the library
 -------------------
 
-Execute the following command inside the venv or conda enviroment:
+Execute the following command inside the venv or conda environment:
 
 ::
 
@@ -143,7 +143,7 @@ The following NLTK resources are required by the preprocessing package:
 * stopwords
 * wordnet
 
-To install them, follow this steps from the command line, inside the venv or conda enviroment:
+To install them, follow this steps from the command line, inside the venv or conda environment:
 
 ::
 

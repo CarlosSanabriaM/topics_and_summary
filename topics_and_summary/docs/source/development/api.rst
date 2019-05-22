@@ -154,7 +154,7 @@ This library is also vey important, because a lot of the functionality of this l
 Directory structure and important files
 ---------------------------------------
 
-* **datasets** folder: Here is where the dataset have to be stored, each dataset in it's own folder.
+* **datasets** folder: Here is where the datasets have to be stored, each dataset in it's own folder.
 * **embeddings** folder: Here is where the pretrained word embeddings have to be stored. It must have the following folders:
 
    * glove: Contains the glove.6B folder, obtained after decompressing the glove.6B.zip file.

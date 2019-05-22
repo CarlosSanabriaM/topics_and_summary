@@ -1,5 +1,5 @@
 # All the files and folder specified in this file won't be added to the docker build context
-# That means that those files won't be able to be used by the dockerfile commmands COPY and ADD
+# That means that those files won't be able to be used by the dockerfile commands COPY and ADD
 
 ### JupyterNotebook ###
 .ipynb_checkpoints

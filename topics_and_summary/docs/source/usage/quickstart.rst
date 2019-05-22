@@ -229,7 +229,7 @@ Execute the demo using a docker container
 
 A docker image can be created using the Dockerfile. **Docker must be installed.** See the `docker web page <https://www.docker.com>`__.
 
-This allows to install all the dependencies in a separeted "enviroment" (a docker container).
+This allows to install all the dependencies in a separeted "environment" (a docker container).
 
 .. warning:: The Dockerfile expects that the **20 newsgroups dataset, the glove embeddings, and the mallet source
    have been download by the user**.
