@@ -69,6 +69,9 @@ If there are no changes in the API source code, to generate the HTML files of th
     cd <project-root-path>/topics_and_summary/docs
     make html
 
+.. note:: If there are no changes in the API, the instructions in the section below can also be used,
+   but is more correct to use the ones explained in this section.
+
 Changes in API
 """"""""""""""
 

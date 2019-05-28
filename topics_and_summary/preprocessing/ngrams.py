@@ -55,7 +55,7 @@ def make_ngrams(dataset: Dataset, ngram_model_func: Callable):
     Applies the given ngram model function to the documents in the given dataset.
 
     :param dataset: Dataset where ngrams will be created.
-    :param ngram_model_func: Function where an n-gram model is accesed with the indexing operators []. \
+    :param ngram_model_func: Function where an n-gram model is accessed with the indexing operators []. \
     It could be bigram, trigram, ... Example of function: 'lambda x: bigram_model[x]' or \
     'lambda x: trigram_model[bigram_model[x]]'.
     """

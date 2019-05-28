@@ -21,17 +21,17 @@ Source code
 * **Revise the preprocessing order** of the preprocess_text() and preprocess_dataset() functions.
 * **Add more datasets** to check the LdaMalletModel results on them, as explained in the :ref:`unstructured-dataset` section.
 * **Implement the unstructured_dataset.py** module, as explained in the :ref:`unstructured-dataset` section of the *Development: API* page.
-* Create equivalent .bat files for the existing .sh files
+* Create equivalent .bat files for the existing .sh files.
 
 
 
 Documentation
 -------------
 
-* Change the **API packages and modules toctree** to don't show *topics_and_summary package* as a first item
+* Change the **API packages and modules toctree** to don't show *topics_and_summary package* as a first item.
 * Generate the documentation of each Python module or class in the same way as pandas library documentation does.
   As an example, check the `pandas Series class documentation <https://pandas.pydata.org/pandas-docs/stable/reference/series.html>`__.
   This is done with the \.. autosummary:: directive. The soure code of the pandas Series class documentation
   is available on `this GitHub page <https://raw.githubusercontent.com/pandas-dev/pandas/master/doc/source/reference/series.rst>`__.
-* Create equivalent .bat files for the existing .sh files used for generating the api documentation
-* Create equivalent .bat files for the existing .sh files used for generating the requirements files
+* Create equivalent .bat files for the existing .sh files used for generating the api documentation.
+* Create equivalent .bat files for the existing .sh files used for generating the requirements files.

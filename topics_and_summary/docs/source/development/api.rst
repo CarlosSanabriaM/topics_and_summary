@@ -174,9 +174,9 @@ Directory structure and important files
    * **preprocessing-files** folder: Contains files used in the preprocessing.text.py module.
    * **saved-elements** folder: Contains functions, objects and models stored on disk.
    * **tests** folder: Python package with all the unit tests.
-   * **embeddings** folder: Python module with the Glove and the Word2Vec classes.
-   * **utils** folder: Python module with some utilities: paths and save/load objects and functions.
-   * **visualizations** folder: Python module that plots the wordclouds and generates the tsne visualization of the topics.
+   * **embeddings.py**: Python module with the Glove and the Word2Vec classes.
+   * **utils.py**: Python module with some utilities: paths and save/load objects and functions.
+   * **visualizations.py**: Python module that plots the wordclouds and generates the tsne visualization of the topics.
 
 * **generate-development-requirements.sh**: Creates the development-requirements.txt file based on the libraries used in the source code.
 * **generate-usage-requirements.sh**: Creates the requirements.txt file based on the libraries used in the source code.
