@@ -41,3 +41,7 @@ embeddings/glove/glove.6B.zip
 ## Word2Vec ##
 # Only Glove is used in the demo
 embeddings/word2vec
+
+## Demo-images ##
+# This folder will be a shared folder
+topics_and_summary/demo-images
