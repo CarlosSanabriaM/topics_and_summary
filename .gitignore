@@ -39,3 +39,6 @@ datasets/20_newsgroups/
 
 ## Files for packaging ##
 topics_and_summary.egg-info
+
+## Vagrant ##
+.vagrant

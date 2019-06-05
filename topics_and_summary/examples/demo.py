@@ -1,3 +1,4 @@
+import sys
 import warnings
 
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
@@ -10,9 +11,11 @@ from topics_and_summary.visualizations import plot_word_clouds_of_topics
 warnings.filterwarnings('ignore')
 
 
-def execute():
+def execute(dataset_path: str):
     """
     Demo of the library functionality.
+
+    :param dataset_path: Path to the 20_newsgroups dataset folder.
     """
 
     # region 1. Load dataset and preprocessing
@@ -22,7 +25,7 @@ def execute():
                        'load dataset and preprocess it in the [m]oment (slow)? (D/m): ')
     if user_input.lower() != 'm':  # D option
         # Load a preprocessed 20newsgroups dataset object (with trigrams)
-        preprocessed_dataset = TwentyNewsGroupsDataset.load('trigrams_dataset')
+        preprocessed_dataset = TwentyNewsGroupsDataset.load('trigrams_dataset', dataset_path=dataset_path)
         pretty_print("One of the files of the preprocessed dataset")
         preprocessed_dataset.print_some_files(n=1, print_file_num=False)
     else:  # m option
@@ -55,7 +58,7 @@ def execute():
         # Load a LdaMalletModel stored on disk (the best model found for this dataset)
         # The load() method also loads the dataset used to generate the model, the preprocessing options,
         # and the docs_topics_df DataFrame (contains the dominant topic of each document in the dataset).
-        model = LdaMalletModel.load('model17', model_dir_path)
+        model = LdaMalletModel.load('model17', model_dir_path, dataset_path=dataset_path)
     else:  # g option
         # Generate a LdaGensimModel using the previously preprocessed dataset
         model = LdaGensimModel(preprocessed_dataset, num_topics=17)
@@ -210,4 +213,12 @@ if __name__ == '__main__':
     This Python module contains an interactive demo of the library functionality.
     The call to the execute() method starts the demo.
     """
-    execute()
+
+    # Check that the demo is called with one argument
+    # sys.argv[0] is the path to the demo.py file, and sys.argv[1] should be the dataset_path
+    if len(sys.argv) != 2:
+        print("The demo must be called with one argument, the path to the 20_newsgroups dataset folder.")
+        sys.exit(1)
+
+    # Get the dataset_path argument from the command line and pass it to execute
+    execute(dataset_path=sys.argv[1])
