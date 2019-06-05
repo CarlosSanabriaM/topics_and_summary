@@ -5,7 +5,6 @@ VOLUME /topics_and_summary/demo-images
 #  $ docker run --name topics_and_summary -v $PWD/demo-images:/topics_and_summary/demo-images -i -t topics_and_summary:latest
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV PATH /opt/conda/bin:$PATH
 # add /topics_and_summary to the PYTHONPATH. This is needed to import topics_and_summary without installing it.
 ENV PYTHONPATH=/topics_and_summary
 
