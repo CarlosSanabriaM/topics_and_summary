@@ -257,10 +257,11 @@ Internally, the get_k_best_sentences_of_text() method uses word embeddings (eith
 
 .. _demo-docker:
 
-Execute the demo using a docker container
-------------------------------------------
+Execute the demo using a Docker container
+-----------------------------------------
 
-A docker image can be created using the Dockerfile. **Docker must be installed.** See the `docker web page <https://www.docker.com>`__.
+A docker image can be created using the Dockerfile. **Docker must be installed.**
+See the `docker web page <https://www.docker.com>`__.
 
 This allows to install all the dependencies in a separeted "environment" (a docker container).
 
@@ -337,6 +338,81 @@ To remove the docker image, execute the following command:
 
    docker image rm topics_and_summary:latest
 
+
+
+
+.. _demo-vagrant:
+
+Execute the demo using a Vagrant virtual machine
+------------------------------------------------
+
+A vagrant virtual machine can be created using the Vagrantfile. **Vagrant must be installed.**
+See the `vagrant web page <https://www.vagrantup.com>`__.
+
+This allows to install all the dependencies in a separeted "environment": a virtual machine that install Docker
+inside it and uses the Dockerfile to create a docker image.
+
+The **main advantage** of this approach is that you don't need to install Docker. Docker is installed inside the
+virtual machine that Vagrant creates. There are some cases where docker can't be installed in the host machine,
+due to problems with virtual machine providers, like VirtualBox, or for other reasons.
+In those cases, Vagrant can be very helpful.
+
+.. warning:: As explained in the docker section, the Vagrantfile expects that the **20 newsgroups dataset,
+   the glove embeddings, and the mallet source have been download by the user**.
+
+   * The topics_and_summary/datasets folder must contain the 20_newsgroups.
+   * The topics_and_summary/embeddings folder must contain the glove folder.
+   * The mallet-2.0.8 folder must contain the mallet source code.
+
+   The :ref:`download-other-elements` section of the Usage Installation page explains how to download this files.
+
+   The **word2vec embeddings are not needed**, because they are not used in the demo.
+
+The steps are the following:
+
+1. Create a virtual machine that install docker and creates the topics_and_summary docker container
+2. Connect to the running virtual machine
+3. Execute the demo from inside the virtual machine
+
+Creating the virtual machine
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Execute the following commands to create the virtual machine with docker and the topics_and_summary docker container:
+
+   ::
+
+      cd <project-root-path>
+      vagrant up
+
+.. note:: This is the step that takes most time to execute. 10-20 minutes, depending on your system.
+
+Connect to the running virtual machine
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Execute the following commands to connect to the running virtual machine via ssh:
+
+::
+
+   cd <project-root-path>
+   vagrant ssh
+
+Execute the demo from inside the virtual machine
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Execute the following commands to execute the demo from inside the virtual machine:
+
+::
+
+   # Start the docker container with the demo
+   docker start -i topics_and_summary
+
+
+After executing this command, the demo will start. When the demo finishes, the container will stop.
+To execute the demo again, execute the same command to run the container.
+
+The demo images will be saved in the /vagrant/demo-images folder of the virtual machine, and also in the
+<project-root-folder>/demo-images folder of the host, because Vagrant creates a shared folder between the
+folder of the host that contains the Vagrantfile and the /vagrant folder of the virtual machine.
 
 
 

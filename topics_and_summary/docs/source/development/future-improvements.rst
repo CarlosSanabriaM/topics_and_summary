@@ -34,6 +34,9 @@ Source code
 Documentation
 -------------
 
+* **Fix the following warning**: *WARNING: Explicit markup ends without a blank line; unexpected unindent.*
+  This warning is caused by the comments. The second line of the comments need to be indented with at least 2 spaces,
+  but the PyCharm IDE removes those spaces after reformating the code.
 * Change the **API packages and modules toctree** to don't show *topics_and_summary package* as a first item.
 * Generate the documentation of each Python module or class in the same way as pandas library documentation does.
   As an example, check the `pandas Series class documentation <https://pandas.pydata.org/pandas-docs/stable/reference/series.html>`__.
