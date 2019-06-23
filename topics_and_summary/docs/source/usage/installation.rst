@@ -64,7 +64,7 @@ In a new virtualenv
 Install dependencies using conda
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In a new conda environment
-"""""""""""""""""""""""""
+""""""""""""""""""""""""""
 ::
 
     # Create the environment with the packages needed to use the library
@@ -82,7 +82,7 @@ In a new conda environment
     # (base) should appear at the beginning of the prompt, instead of (<environment-name>)
 
 In an existing conda environment
-"""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""
 ::
 
     # Change the current conda environment to the existing environment

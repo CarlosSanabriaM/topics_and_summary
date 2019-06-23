@@ -20,6 +20,7 @@ def execute(conf_ini_file_path: str):
     If the demo is executed with docker, the path to the demo-docker-conf.ini must be passed instead.
     """
 
+    # region 0. Obtain variables from configuration file
     # Path to the 20_newsgroups dataset folder.
     dataset_path = get_param_value_from_conf_ini_file(conf_ini_file_path, 'DATASETS', 'TWENTY_NEWS_GROUPS_DIR_PATH')
     # Path to the directory where the 'trigrams_dataset' object folder is stored.
@@ -42,6 +43,7 @@ def execute(conf_ini_file_path: str):
     # Path to the directory where the wordcloud images will be saved.
     wordcloud_images_dir_save_path = \
         get_param_value_from_conf_ini_file(conf_ini_file_path, 'WORDCLOUD_IMAGES', 'DIRECTORY_PATH')
+    # endregion
 
     # region 1. Load dataset and preprocessing
     pretty_print('1. Load dataset and preprocessing')
@@ -52,7 +54,7 @@ def execute(conf_ini_file_path: str):
         # Load a preprocessed 20newsgroups dataset object (with trigrams)
         preprocessed_dataset = TwentyNewsGroupsDataset.load(
             'trigrams_dataset',  # name of the dataset object
-            parent_dir_path=dataset_obj_parent_dir_path,  # path to the dataset object parent dir
+            parent_dir_path=dataset_obj_parent_dir_path,  # path to dataset obj parent dir
             dataset_path=dataset_path  # path to the dataset files
         )
         pretty_print("One of the files of the preprocessed dataset")

@@ -6,6 +6,10 @@ The module **examples.demo.py** contains a **demo of the main functionality** of
 How to execute the demo
 -----------------------
 
+First of all, the <project-root-path>/**demo-conf.ini** file must be modified. This file contains some configuration
+to execute the demo, for example, paths to the models and the dataset. It must be modified with absolute paths
+that point to the current location of those files in the machine where the demo is executed.
+
 The demo can be executed in 2 ways:
 
 a. If the library is installed, can be executed as follows:
@@ -14,27 +18,46 @@ a. If the library is installed, can be executed as follows:
 
       python
       >>> from topics_and_summary.examples import demo
-      >>> demo.execute()
+      >>> demo.execute("<project-root-path>/demo-conf.ini")
 
-   .. warning:: Executing the demo this way sometimes leads to problems due to Python pickle objects stored in
-      the saved-elements folder (that are used in the demo).
 
-      This can happen if the library was installed like this: *pip install <project-root-path>*.
+   .. warning:: In MacOS, the following matplotlib error can appear:
 
-      A possible solution is to install the library this way: *pip install -e <project-root-path>*. This fixes the problem
-      because it doesn't copy any files. Rather, it points to the source code folder. A broader explanation is present in the
-      :ref:`development-installation-install-the-library` section of the Development Installation page.
+      *"ImportError: Python is not installed as a framework. The Mac OS X backend will not be able to function correctly
+      if Python is not installed as a framework. See the Python documentation for more information on installing Python
+      as a framework on Mac OS X. Please either reinstall Python as a framework, or try one of the other backends.
+      If you are using (Ana)Conda please install python.app and replace the use of 'python' with 'pythonw'.
+      See 'Working with Matplotlib on OSX' in the Matplotlib FAQ for more information."*
 
-      Another solution is to execute the demo without installing the library, as explained below.
+      To fix this issue, import matplotlib and change the backend (before importing the demo)
+      with the following instructions inside the python interpreter:
+
+      >>> import matplotlib
+      >>> matplotlib.use('TkAgg')
 
 b. If the library isn't installed, but the source code is available, it can be executed as follows:
 
    ::
 
-      python
-      >>> import sys
-      >>> sys.path.extend(['<project-root-path>'])
-      >>> exec(open("<project-root-path>/topics_and_summary/examples/demo.py").read())
+      python <project-root-path>/topics_and_summary/examples/demo.py <project-root-path>/demo-conf.ini
+
+
+   .. warning:: In MacOS, the matplotlib error described in the *option a* can appear. One possible approach to
+      fix this issue and execute the demo without installing the library could be using the exec function.
+      The problem is that the demo.py file expects 1 argument, and this argument can't be passed with this approach:
+
+      ::
+
+            python
+            >>> import sys
+            >>> sys.path.extend(['<project-root-path>'])
+            >>> exec(open("<project-root-path>/topics_and_summary/examples/demo.py").read())
+
+
+      So, for the moment, the only solution to execute the demo in MacOS is installing the library and executing the
+      demo as explained in the *option a*.
+      Another solution can be executing the demo using Docker, as explained in the :ref:`demo-docker` section.
+
 
 Demo content
 ------------
@@ -51,17 +74,19 @@ using the save() method. The preprocessing options specified when the dataset wa
 the dataset object. This options will be used by the TopicsModel when receiving a text, because the text will be
 preprocessed with the same options.
 
-The ngrams='tri' option means that trigrams will be generated on words that appear together many times. For example,
-'disk', 'operating' and 'system' appears together many times, so a trigram 'disk_operating_system' will be generated.
+The ngrams='tri' option of the preprocess_dataset() function means that trigrams will be generated on words
+that appear together many times. For example, 'disk', 'operating' and 'system' appears together many times,
+so a trigram 'disk_operating_system' will be generated.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 25,32,42 <-- -19+1 = 7,14,24
+:emphasize-lines-in-source-code: 55-59,66,76 <-- -49+1 = 7-11,18,28
+
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 19
+    :lineno-start: 49
     :language: python
-    :lines: 19-44
-    :emphasize-lines: 7,14,24
+    :lines: 49-78
+    :emphasize-lines: 7-11,18,28
 
 
 
@@ -89,13 +114,14 @@ So, for this reason, the docs_topics_df is created once, and then it's stored on
 TopicsModel is called. After that, there is no need to recalculate the predictions.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 53,54,58,61 <-- -48+1 = 6-10,12
+:emphasize-lines-in-source-code: 93-96,99 <-- -82+1 = 12-15,18
+
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 48
+    :lineno-start: 82
     :language: python
-    :lines: 48-61
-    :emphasize-lines: 6,7,11,14
+    :lines: 82-99
+    :emphasize-lines: 12-15,18
 
 
 
@@ -114,13 +140,14 @@ The topics can be showed in 2 ways:
   that can be obtained with the get_topics() method of the TopicsModel class.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 79,85-87 <-- -65+1 = 15,21-23
+:emphasize-lines-in-source-code: 117,123-126 <-- -103+1 = 15,21-24
+
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 65
+    :lineno-start: 103
     :language: python
-    :lines: 65-87
-    :emphasize-lines: 15,21-23
+    :lines: 103-126
+    :emphasize-lines: 15,21-24
 
 
 
@@ -137,12 +164,13 @@ get_k_most_repr_docs_of_topic_as_df() returns a pandas DataFrame (ordered by doc
 with the k most representative documents of the specified topic.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 100,105,110 <-- -91+1  = 10,15,20
+:emphasize-lines-in-source-code: 139,144,149 <-- -130+1  = 10,15,20
+
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 91
+    :lineno-start: 130
     :language: python
-    :lines: 91-110
+    :lines: 130-149
     :emphasize-lines: 10,15,20
 
 
@@ -171,12 +199,13 @@ The purpose of this is to apply the same preprocessing to new texts as the one a
 because if they are not preprocessed in the same way, the results won't be as expected.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 154 <-- -114+1 = 41
+:emphasize-lines-in-source-code: 193 <-- -153+1 = 41
+
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 114
+    :lineno-start: 153
     :language: python
-    :lines: 114-154
+    :lines: 153-193
     :emphasize-lines: 41
 
 
@@ -191,12 +220,13 @@ This method calls the predict_topic_prob_on_text() and the  get_k_most_repr_docs
 so it needs the docs_topics_df.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 170,175,190 <-- -158+1 = 13,18,23
+:emphasize-lines-in-source-code: 209,214,219 <-- -197+1 = 13,18,23
+
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 158
+    :lineno-start: 197
     :language: python
-    :lines: 158-180
+    :lines: 197-219
     :emphasize-lines: 13,18,23
 
 
@@ -213,16 +243,19 @@ get_k_best_sentences_of_text(), that returns the k best sentences of the given t
 Internally, the get_k_best_sentences_of_text() method uses word embeddings (either GloVe or Word2Vec).
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 197,199 <-- -184+1 = 14,16
+:emphasize-lines-in-source-code: 236,241 <-- -223+1 = 14,19
+
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
-    :lineno-start: 184
+    :lineno-start: 223
     :language: python
-    :lines: 184-204
-    :emphasize-lines: 14,16
+    :lines: 223-246
+    :emphasize-lines: 14,19
 
 
 
+
+.. _demo-docker:
 
 Execute the demo using a docker container
 ------------------------------------------
@@ -270,6 +303,8 @@ Execute the following commands to create and run a docker container using the pr
    docker run --name topics_and_summary -v $PWD/demo-images:/topics_and_summary/demo-images -i -t topics_and_summary:latest
 
 After executing this command, the demo will start. When the demo finishes, the container will stop.
+The demo images will be saved in the <project-root-folder>/demo-images folder of the host.
+
 To execute the demo more than one time, see the section below.
 
 .. note:: This step is much faster than the previous one.
