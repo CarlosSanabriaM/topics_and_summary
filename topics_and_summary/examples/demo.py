@@ -5,18 +5,43 @@ from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDatas
 from topics_and_summary.models.summarization import TextRank
 from topics_and_summary.models.topics import LdaMalletModel, LdaGensimModel
 from topics_and_summary.preprocessing.dataset import preprocess_dataset
-from topics_and_summary.utils import pretty_print, get_abspath_from_project_source_root
+from topics_and_summary.utils import pretty_print, get_param_value_from_conf_ini_file
 from topics_and_summary.visualizations import plot_word_clouds_of_topics
 
 warnings.filterwarnings('ignore')
 
 
-def execute(dataset_path: str):
+def execute(conf_ini_file_path: str):
     """
     Demo of the library functionality.
 
-    :param dataset_path: Path to the 20_newsgroups dataset folder.
+    :param conf_ini_file_path: Path to the demo-conf.ini configuration file. \
+    This file contains some configuration to execute the demo, for example, absolute paths. \
+    If the demo is executed with docker, the path to the demo-docker-conf.ini must be passed instead.
     """
+
+    # Path to the 20_newsgroups dataset folder.
+    dataset_path = get_param_value_from_conf_ini_file(conf_ini_file_path, 'DATASETS', 'TWENTY_NEWS_GROUPS_DIR_PATH')
+    # Path to the directory where the 'trigrams_dataset' object folder is stored.
+    dataset_obj_parent_dir_path = \
+        get_param_value_from_conf_ini_file(conf_ini_file_path, 'DATASETS', 'TRIGRAMS_DATASET_OBJECT_PARENT_DIR_PATH')
+
+    # Name of the best lda mallet model
+    best_lda_mallet_model_name = \
+        get_param_value_from_conf_ini_file(conf_ini_file_path, 'MODELS', 'BEST_LDA_MALLET_MODEL_NAME')
+    # Path to the directory where the best mallet model folder (called best_lda_mallet_model_name) is stored in.
+    mallet_model_parent_dir_path = \
+        get_param_value_from_conf_ini_file(conf_ini_file_path, 'MODELS', 'BEST_LDA_MALLET_MODEL_PARENT_DIR_PATH')
+
+    # Path to the mallet source code.
+    mallet_source_code_path = get_param_value_from_conf_ini_file(conf_ini_file_path, 'MALLET', 'SOURCE_CODE_PATH')
+
+    # Path where the glove directory is located.
+    glove_embeddings_path = get_param_value_from_conf_ini_file(conf_ini_file_path, 'EMBEDDINGS', 'GLOVE_PATH')
+
+    # Path to the directory where the wordcloud images will be saved.
+    wordcloud_images_dir_save_path = \
+        get_param_value_from_conf_ini_file(conf_ini_file_path, 'WORDCLOUD_IMAGES', 'DIRECTORY_PATH')
 
     # region 1. Load dataset and preprocessing
     pretty_print('1. Load dataset and preprocessing')
@@ -25,7 +50,11 @@ def execute(dataset_path: str):
                        'load dataset and preprocess it in the [m]oment (slow)? (D/m): ')
     if user_input.lower() != 'm':  # D option
         # Load a preprocessed 20newsgroups dataset object (with trigrams)
-        preprocessed_dataset = TwentyNewsGroupsDataset.load('trigrams_dataset', dataset_path=dataset_path)
+        preprocessed_dataset = TwentyNewsGroupsDataset.load(
+            'trigrams_dataset',  # name of the dataset object
+            parent_dir_path=dataset_obj_parent_dir_path,  # path to the dataset object parent dir
+            dataset_path=dataset_path  # path to the dataset files
+        )
         pretty_print("One of the files of the preprocessed dataset")
         preprocessed_dataset.print_some_files(n=1, print_file_num=False)
     else:  # m option
@@ -50,15 +79,19 @@ def execute(dataset_path: str):
     # region 2. Generate LdaGensimModel or load LdaMalletModel
     pretty_print('2. Generate or load a TopicsModel')
 
-    user_input = input('Load previously generated Lda[M]alletModel (quick op. and better model) or '
-                       'generate a Lda[G]ensimModel in the moment (slow op. and worst model)? (M/g): ')
+    user_input = input(
+        'Load previously generated Lda[M]alletModel (quick op. and better model) or '
+        'generate a Lda[G]ensimModel in the moment (slow op. and worst model)? (M/g): '
+    )
     if user_input.lower() != 'g':  # M option
-        model_dir_path = get_abspath_from_project_source_root(
-            'saved-elements/topics/best-model/trigrams/lda-mallet')
         # Load a LdaMalletModel stored on disk (the best model found for this dataset)
-        # The load() method also loads the dataset used to generate the model, the preprocessing options,
-        # and the docs_topics_df DataFrame (contains the dominant topic of each document in the dataset).
-        model = LdaMalletModel.load('model17', model_dir_path, dataset_path=dataset_path)
+        # The load() method also loads the dataset used to generate the model,
+        # the preprocessing options, and the docs_topics_df DataFrame
+        # (contains the dominant topic of each document in the dataset).
+        model = LdaMalletModel.load(best_lda_mallet_model_name,
+                                    model_parent_dir_path=mallet_model_parent_dir_path,
+                                    dataset_path=dataset_path,
+                                    mallet_path=mallet_source_code_path)
     else:  # g option
         # Generate a LdaGensimModel using the previously preprocessed dataset
         model = LdaGensimModel(preprocessed_dataset, num_topics=17)
@@ -87,7 +120,8 @@ def execute(dataset_path: str):
         # Plots are stored in the <project-root-path>/demo-images folder.
         plot_word_clouds_of_topics(
             model.get_topics(num_keywords=15), dpi=150, show_plot=False, save=True,
-            dir_save_path=get_abspath_from_project_source_root('../demo-images'))
+            dir_save_path=wordcloud_images_dir_save_path
+        )
     # endregion
 
     # region 4. Get the most representative documents of one topic
@@ -195,10 +229,13 @@ It is a Trinitarian feast in the Eastern Orthodox Churches."""
     pretty_print('Text')
     print(text)
 
-    pretty_print('Summary')
-    # Create a TextRank model (by default it uses Glove word-embeddings)
-    tr = TextRank()
+    # Create a TextRank model (using Glove word embeddings)
+    pretty_print('Loading the Glove word embeddings')
+    tr = TextRank(embedding_model='glove', embeddings_path=glove_embeddings_path)
+
     # Use the created model to obtain the k sentences that better summarize the given text
+    pretty_print('Generating the summary with the Text Rank algorithm')
+    pretty_print('Summary')
     summary = tr.get_k_best_sentences_of_text(text, k)
 
     for i, sent in enumerate(summary):
@@ -214,11 +251,15 @@ if __name__ == '__main__':
     The call to the execute() method starts the demo.
     """
 
-    # Check that the demo is called with one argument
-    # sys.argv[0] is the path to the demo.py file, and sys.argv[1] should be the dataset_path
-    if len(sys.argv) != 2:
-        print("The demo must be called with one argument, the path to the 20_newsgroups dataset folder.")
+    # Check that the demo is called with the correct number of arguments
+    NUM_EXPECTED_ARGS = 1
+    # sys.argv[0] is the path to the demo.py file, and sys.argv[1] should be the conf_ini_file_path
+    if len(sys.argv) != NUM_EXPECTED_ARGS + 1:
+        print(
+            "The demo must be called with exactly one argument: The path to the demo-conf.ini configuration file. "
+            "If the demo is executed with docker, the path to the demo-docker-conf.ini must be passed instead."
+        )
         sys.exit(1)
 
-    # Get the dataset_path argument from the command line and pass it to execute
-    execute(dataset_path=sys.argv[1])
+    # Pass the arguments from the command line to the execute method
+    execute(conf_ini_file_path=sys.argv[1])

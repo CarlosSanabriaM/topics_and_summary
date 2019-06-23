@@ -1,3 +1,4 @@
+import configparser
 import pickle
 from datetime import datetime
 from os import path
@@ -106,3 +107,32 @@ def load_func_from_disk(name: str, folder_path: str = None) -> Callable:
 
     with open(func_path, 'rb') as f:
         return dill.load(f)
+
+
+def get_param_value_from_conf_ini_file(conf_ini_file_path: str, section: str, param: str) -> str:
+    """
+    Returns the value of the specified param from the specified .ini configuration file.
+
+    :param conf_ini_file_path: Path to the .ini configuration file.
+    :param section: Name of the section in the .ini file. For example: '[MALLET]'.
+    :param param: Name of the param inside that section. For example: 'SOURCE_CODE_PATH'.
+    :return: A str with the value specified in the .ini file for that param.
+
+    Example:
+
+    ; demo-conf.ini
+
+    [MALLET]
+
+    SOURCE_CODE_PATH = /path/to/mallet
+
+    To access that value, execute:
+
+    >>> get_param_value_from_conf_ini_file('MALLET', 'SOURCE_CODE_PATH')
+
+    """
+
+    config = configparser.ConfigParser()
+    config.read(conf_ini_file_path)
+
+    return config[section][param]

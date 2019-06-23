@@ -9,12 +9,18 @@
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
+build/
+dist/
 
 ### PyCharm ###
 .idea/
 
 ### Mac files ###
 .DS_Store
+
+## Git files ##
+.gitignore
+.git
 
 ### SonarQube ###
 .scannerwork
@@ -44,4 +50,11 @@ embeddings/word2vec
 
 ## Demo-images ##
 # This folder will be a shared folder
-topics_and_summary/demo-images
+demo-images
+
+## Configuration file to execute the demo without Docker ##
+demo-conf.ini
+
+## Vagrant ##
+.vagrant
+Vagrantfile
