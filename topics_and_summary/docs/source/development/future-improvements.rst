@@ -21,6 +21,12 @@ Source code
 * **Revise the preprocessing order** of the preprocess_text() and preprocess_dataset() functions.
 * **Add more datasets** to check the LdaMalletModel results on them, as explained in the :ref:`unstructured-dataset` section.
 * **Implement the unstructured_dataset.py** module, as explained in the :ref:`unstructured-dataset` section of the *Development: API* page.
+* **Extract all the paths and constant values in the source code to a configuration file**, similar to what the demo does
+  with the demo-conf.ini file.
+* **Modify the .dockerignore file** to ignore everything at the beginning and then include all the needed files.
+* **Find a way to use the Java mallet library without all the source code.** A Java JAR file should be created.
+* **Change the global .gitignore and use .gitkeep files** instead of including a .gitignore file in the empty folders
+  that need to be kept in git.
 * Create equivalent .bat files for the existing .sh files.
 
 
