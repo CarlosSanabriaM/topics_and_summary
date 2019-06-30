@@ -39,3 +39,7 @@ topics_and_summary.egg-info
 
 ## Vagrant ##
 .vagrant
+
+## Code coverage ##
+.coverage
+coverage.xml

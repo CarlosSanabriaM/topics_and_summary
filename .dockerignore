@@ -58,3 +58,7 @@ demo-conf.ini
 ## Vagrant ##
 .vagrant
 Vagrantfile
+
+## Code coverage ##
+.coverage
+coverage.xml
