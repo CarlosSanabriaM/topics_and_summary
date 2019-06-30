@@ -332,6 +332,10 @@ Generate tests code coverage
 
 To see the tests coverage in SonarQube you need to follow the steps described in this section.
 
+
+.. note:: If a new Python package is added to the topics_and_summary folder, it's relative path must be specified
+   in the '*source*' option of the '*coverage run*' command executed in the **generate-tests-coverage.sh** file.
+
 First install `Coverage.py <https://coverage.readthedocs.io/en/latest/>`__:
 
 ::
