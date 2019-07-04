@@ -101,7 +101,7 @@ class TextRank(SummarizationModel):
         # 5. Transform the similarity matrix into a graph
         nx_graph = nx.from_numpy_array(similarity_matrix)
 
-        # 6. Apply TextRank to the graph
+        # 6. Apply PageRank to the graph
         sentence_scores = nx.pagerank(nx_graph, max_iter=self._MAX_NUM_ITERATIONS)
 
         # 7. Order sentences by the Page Rank score
