@@ -16,8 +16,5 @@
 * **Obtain the documents of the collection more related with a given text document.**
 * **Create an extractive summary of a given text document.**
 
-## Where to get it
-The source code is currently hosted on GitLab at: [madbd1000.accenture.com:8081/carlos.sanabria/topic_and_extractivesummary](madbd1000.accenture.com:8081/carlos.sanabria/topic_and_extractivesummary)
-
 ## Dependencies, Installation and Usage
-All this information and more is present in the [documentation](topics_and_summary/docs/build/html/index.html).
+All this information and more is present in the **documentation**.
