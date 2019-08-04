@@ -17,4 +17,11 @@
 * **Create an extractive summary of a given text document.**
 
 ## Dependencies, Installation and Usage
-All this information and more is present in the **documentation**.
+All this information and more is present in the **documentation**. To generate it, execute:
+
+```bash
+cd topics_and_summary/docs
+./generate-api-doc.sh
+```
+
+The documentation will be generated in HTML format in the folder `topics_and_summary/docs/build/html`. The index.html file is the main page of the documentation.
