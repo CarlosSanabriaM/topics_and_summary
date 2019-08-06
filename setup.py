@@ -14,14 +14,15 @@ setup(name='topics_and_summary',
       long_description_content_type="text/markdown",
       keywords="topics summarization text NLP lda lsa textrank",
 
-      url='madbd1000.accenture.com:8081/carlos.sanabria/topic_and_extractivesummary',
+      url='https://github.com/CarlosSanabriaM/topics_and_summary',
       project_urls={
-          "Source Code": "madbd1000.accenture.com:8081/carlos.sanabria/topic_and_extractivesummary",
-          "Documentation": "madbd1000.accenture.com:8081/carlos.sanabria/topic_and_extractivesummary/docs"
+          "Source Code": "https://github.com/CarlosSanabriaM/topics_and_summary",
+          # TODO: Update when the doc is in ReadTheDocs
+          # "Documentation": "<URL>"
       },
 
       author='Carlos Sanabria Miranda',
-      author_email='carlos.sanabria@accenture.com',
+      author_email='uo250707@uniovi.es',
 
       install_requires=[
           'numpy==1.15.4',
