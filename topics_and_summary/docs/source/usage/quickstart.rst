@@ -79,7 +79,6 @@ that appear together many times. For example, 'disk', 'operating' and 'system' a
 so a trigram 'disk_operating_system' will be generated.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 55-59,66,76 <-- -49+1 = 7-11,18,28
 
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
@@ -114,7 +113,6 @@ So, for this reason, the docs_topics_df is created once, and then it's stored on
 TopicsModel is called. After that, there is no need to recalculate the predictions.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 93-96,99 <-- -82+1 = 12-15,18
 
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
@@ -140,7 +138,6 @@ The topics can be showed in 2 ways:
   that can be obtained with the get_topics() method of the TopicsModel class.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 117,123-126 <-- -103+1 = 15,21-24
 
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
@@ -164,7 +161,6 @@ get_k_most_repr_docs_of_topic_as_df() returns a pandas DataFrame (ordered by doc
 with the k most representative documents of the specified topic.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 139,144,149 <-- -130+1  = 10,15,20
 
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
@@ -199,7 +195,6 @@ The purpose of this is to apply the same preprocessing to new texts as the one a
 because if they are not preprocessed in the same way, the results won't be as expected.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 193 <-- -153+1 = 41
 
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
@@ -220,7 +215,6 @@ This method calls the predict_topic_prob_on_text() and the  get_k_most_repr_docs
 so it needs the docs_topics_df.
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 209,214,219 <-- -197+1 = 13,18,23
 
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
@@ -243,7 +237,6 @@ get_k_best_sentences_of_text(), that returns the k best sentences of the given t
 Internally, the get_k_best_sentences_of_text() method uses word embeddings (either GloVe or Word2Vec).
 
 .. emphasize-lines counts from 1, not from the number specified in :lineno-start:
-:emphasize-lines-in-source-code: 236,241 <-- -223+1 = 14,19
 
 .. literalinclude:: ../../../examples/demo.py
     :linenos:
