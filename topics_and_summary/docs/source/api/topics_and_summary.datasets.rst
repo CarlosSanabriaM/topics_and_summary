@@ -6,4 +6,5 @@ topics\_and\_summary.datasets package
    topics_and_summary.datasets.common
    topics_and_summary.datasets.structured_dataset
    topics_and_summary.datasets.twenty_news_groups
+   topics_and_summary.datasets.unstructured_dataset
 

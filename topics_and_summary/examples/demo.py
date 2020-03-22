@@ -4,7 +4,7 @@ import warnings
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.models.summarization import TextRank
 from topics_and_summary.models.topics import LdaMalletModel, LdaGensimModel
-from topics_and_summary.preprocessing.dataset import preprocess_dataset
+from topics_and_summary.preprocessing.dataset.structured import preprocess_dataset
 from topics_and_summary.utils import pretty_print, get_param_value_from_conf_ini_file
 from topics_and_summary.visualizations import plot_word_clouds_of_topics
 

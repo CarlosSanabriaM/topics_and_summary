@@ -2,7 +2,7 @@ import unittest
 from shutil import rmtree
 
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
-from topics_and_summary.preprocessing.dataset import preprocess_dataset, DatasetPreprocessingOptions
+from topics_and_summary.preprocessing.dataset.structured import preprocess_dataset, DatasetPreprocessingOptions
 from topics_and_summary.preprocessing.text import preprocess_text
 from topics_and_summary.tests.paths import SAVED_FUNCS_PATH, SAVED_OBJECTS_PATH
 from topics_and_summary.utils import load_func_from_disk, join_paths

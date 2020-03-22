@@ -245,7 +245,7 @@ TwentyNewsGroupsDataset specific preprocessing
 The **TwentyNewsGroupsDataset** class applies **specific preprocessing** to it's files, before the general preprocessing is applied.
 This is because the documents of this dataset contain header and footer that tells too much information or unuseful information,
 and also contain replies between users. All this info can be removed (and should be removed), setting the parameters of the
-__init__ metthod to True (is the default value).
+__init__ method to True (is the default value).
 
 
 
@@ -277,7 +277,12 @@ The steps to add a new dataset are the following:
 
    b. If the dataset is **divided in folders**, and **specific preprocessing** of the dataset is required,
       see the :ref:`structured-dataset-subclass` section.
-   c. If the dataset is **not divided in folders** see the :ref:`unstructured-dataset` section.
+   c. If the dataset is **not divided in folders**, and **no specific preprocessing** of the dataset is required
+      (see :ref:`20_newsgroups_specific_preprocessing` for an example of when specific preprocessing is needed),
+      an object of the UnstructuredDataset class can be created, specifying the path of the dataset and the encoding.
+   d. If the dataset is **not divided in folders**, and **specific preprocessing** of the dataset is required,
+      see the :ref:`unstructured-dataset-subclass` section.
+
 
 .. _structured-dataset-subclass:
 
@@ -294,29 +299,17 @@ Create a python module with the following content:
 .. note:: The twenty_news_groups.py module can be used as an example.
 
 
-.. _unstructured-dataset:
+.. _unstructured-dataset-subclass:
 
-Unstructured Dataset
-""""""""""""""""""""
+Unstructured Dataset subclass
+"""""""""""""""""""""""""""""
 
 If the dataset is NOT divided in folders (instead, the dataset only consists on a folder with all the documents inside):
 
-* A **unstructured_dataset.py** module must be created, with the UnstructuredDataset class, which inherits from the Dataset class.
-  **The UnstructuredDataset must represent a dataset with a list of files.**
-* The <dataset-name>Dataset class must inherit from the UnstructuredDataset class
-* The <dataset-name>Document class must inherit from the Document class
+Create a python module with the following content:
 
-Preprocessing unstructured datasets
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If an unstructured dataset is created, preprocessing.dataset.py module must be converted into a package,
-with the following modules:
-
-* **preprocessing.dataset.structured.py**: with the same content of the current preprocessing.dataset.py module
-* **preprocessing.dataset.unstructured.py**: with the same content of the current preprocessing.dataset.py module, but
-  adapting all the functions that receive a StructuredDataset to use an UnstructuredDataset.
-
-.. note:: This is because current preprocessing only can be used with StructuredDataset.
+   a. A <dataset-name>Dataset class: must inherit from the UnstructuredDataset class
+   b. A <dataset-name>Document class: must inherit from the UnstructuredDocument class
 
 Recommended IDE
 ^^^^^^^^^^^^^^^
