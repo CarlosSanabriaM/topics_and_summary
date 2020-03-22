@@ -2,7 +2,7 @@ from typing import List
 
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.models.topics import LdaModelsList, LsaModelsList, LdaMalletModelsList, TopicsModel
-from topics_and_summary.preprocessing.dataset import preprocess_dataset
+from topics_and_summary.preprocessing.dataset.structured import preprocess_dataset
 from topics_and_summary.utils import join_paths, pretty_print, get_abspath_from_project_source_root
 from topics_and_summary.visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
 

@@ -1,6 +1,6 @@
 from topics_and_summary.datasets.twenty_news_groups import TwentyNewsGroupsDataset
 from topics_and_summary.models.topics import LdaGensimModel
-from topics_and_summary.preprocessing.dataset import preprocess_dataset
+from topics_and_summary.preprocessing.dataset.structured import preprocess_dataset
 from topics_and_summary.utils import pretty_print, RANDOM_STATE
 from topics_and_summary.visualizations import plot_word_clouds_of_topics, tsne_clustering_chart
 

@@ -1,11 +1,11 @@
 import re
 from copy import deepcopy
-from typing import Union, Set, Tuple, List
+from typing import Union, Set, List
 
 from texttable import Texttable
 
 from topics_and_summary.datasets.common import Dataset
-from topics_and_summary.datasets.structured_dataset import StructuredDataset
+from topics_and_summary.datasets.unstructured_dataset import UnstructuredDataset
 from topics_and_summary.preprocessing.dataset_preprocessing_options import DatasetPreprocessingOptions
 from topics_and_summary.preprocessing.ngrams import make_bigrams_and_get_bigrams_model_func, \
     make_trigrams_and_get_trigrams_model_func
@@ -59,11 +59,10 @@ def print_words_that_contain_elem(dataset: Dataset, elem: str):
     print(" Num words with the elem " + elem + ":", num_words_contain_elem)
 
 
-def print_docs_that_contain_word(dataset: StructuredDataset, word: str, num_chars_preview=70):
+def print_docs_that_contain_word(dataset: UnstructuredDataset, word: str, num_chars_preview=70):
     """
     Prints a table with the following properties of all documents in the dataset that contain the given word:
-        - Category name
-        - Index inside the document list of that category (in the dataset.files_dic)
+        - Index inside the document list (in the dataset.files_list)
         - Number of words of that document
         - Number of occurrences of the word in that document
         - Document name in the dataset
@@ -75,77 +74,72 @@ def print_docs_that_contain_word(dataset: StructuredDataset, word: str, num_char
     """
     # Create table for better printing
     table = Texttable()
-    table.set_cols_width([30, 15, 10, 15, 10, num_chars_preview])
-    table.set_cols_align(['c', 'c', 'c', 'c', 'c', 'l'])
+    table.set_cols_width([15, 10, 15, 10, num_chars_preview])
+    table.set_cols_align(['c', 'c', 'c', 'c', 'l'])
 
     # Specify header
-    table.set_header_align(['c', 'c', 'c', 'c', 'c', 'c'])
-    table.header(['Category name', 'Doc index inside category list of docs',
-                  'Num words', 'Num occurrences of given word', 'Document name', 'Content preview'])
+    table.set_header_align(['c', 'c', 'c', 'c', 'c'])
+    table.header(['Doc index', 'Num words', 'Num occurrences of given word', 'Document name', 'Content preview'])
 
     num_docs_contain_word = 0
-    for category_name, category_docs in dataset.files_dict.items():
-        doc_index_in_category = 0
-        for doc in category_docs:
-            doc_words = doc.content.split()
-            if word in doc_words:
-                num_docs_contain_word += 1
-                num_words_in_doc = len(doc_words)
-                num_word_occurences_in_doc = doc_words.count(word)
-                # Add row for each doc that contain the given word
-                table.add_row(
-                    [category_name, doc_index_in_category,
-                     num_words_in_doc, num_word_occurences_in_doc,
-                     doc.name,
-                     # TODO: Instead of showing the first k characters, it would be better to show text around the word
-                     doc.content[:num_chars_preview]])
-            doc_index_in_category += 1
+    doc_index = 0
+    for doc in dataset.files_list:
+        doc_words = doc.content.split()
+        if word in doc_words:
+            num_docs_contain_word += 1
+            num_words_in_doc = len(doc_words)
+            num_word_occurences_in_doc = doc_words.count(word)
+            # Add row for each doc that contain the given word
+            table.add_row(
+                [doc_index,
+                 num_words_in_doc, num_word_occurences_in_doc,
+                 doc.name,
+                 # TODO: Instead of showing the first k characters, it would be better to show text around the word
+                 doc.content[:num_chars_preview]])
+        doc_index += 1
 
     print(table.draw())
     print(" Num docs with the word " + word + ":", num_docs_contain_word)
 
 
-def print_empty_docs(dataset: StructuredDataset):
+def print_empty_docs(dataset: UnstructuredDataset):
     """
     Prints the empty documents in the given dataset.
     """
     # Create table for better printing
     table = Texttable()
-    table.set_cols_width([30, 15, 10, 10, 10])
-    table.set_cols_align(['c', 'c', 'c', 'c', 'l'])
+    table.set_cols_width([15, 10, 10, 10])
+    table.set_cols_align(['c', 'c', 'c', 'l'])
     # Specify header
-    table.set_header_align(['c', 'c', 'c', 'c', 'c'])
-    table.header(['Category name', 'Doc index inside category list of docs',
-                  'Num words', 'Document name', 'Content preview'])
+    table.set_header_align(['c', 'c', 'c', 'c'])
+    table.header(['Doc index', 'Num words', 'Document name', 'Content preview'])
+
     num_empty_docs = 0
-    for category_name, category_docs in dataset.files_dict.items():
-        doc_index_in_category = 0
-        for doc in category_docs:
-            doc_words = doc.content.split()
-            if len(doc_words) == 0:
-                num_empty_docs += 1
-                num_words_in_doc = len(doc_words)
-                # Add row for each doc that contain the given word
-                table.add_row(
-                    [category_name, doc_index_in_category,
-                     num_words_in_doc,
-                     doc.name,
-                     doc.content])
-            doc_index_in_category += 1
+    doc_index = 0
+    for doc in dataset.files_list:
+        doc_words = doc.content.split()
+        if len(doc_words) == 0:
+            num_empty_docs += 1
+            num_words_in_doc = len(doc_words)
+            # Add row for each doc that contain the given word
+            table.add_row(
+                [doc_index,
+                 num_words_in_doc,
+                 doc.name,
+                 doc.content])
+        doc_index += 1
+
     print(table.draw())
     print(" Num empty docs:", num_empty_docs)
 
 
-def get_docs_that_contain_any_of_the_words(dataset: StructuredDataset, words: Union[str, Set[str]]) \
-        -> List[Tuple[str, int]]:
+def get_docs_that_contain_any_of_the_words(dataset: UnstructuredDataset, words: Union[str, Set[str]]) -> List[int]:
     """
-    Returns a list of tuples with the category and index of the docs containing any of the given words.
+    Returns a list with the indeces of the docs containing any of the given words.
     Words can be a simple string, representing only one word.
 
     :param dataset: Dataset.
     :param words: It can be a string representing a single word or a set of strings representing one or more words.
-    :return: List of tuples, where tuple[0] contains the category of the doc with the any of the given words \
-    and tuple[1] contains the index inside the category of the doc with any of the given words.
     """
 
     # If words is a str, we convert it to a set
@@ -156,20 +150,19 @@ def get_docs_that_contain_any_of_the_words(dataset: StructuredDataset, words: Un
         raise TypeError('words must be of type str or set.')
 
     list_docs_with_any_of_the_words = []
-    for category_name, category_docs in dataset.files_dict.items():
-        doc_index_in_category = 0
-        for doc in category_docs:
-            doc_words = doc.content.split()
-            # If any of the words is in the document, that document is added to the list
-            if any(word in doc_words for word in words):
-                # Add to the list the docs with any of the words
-                list_docs_with_any_of_the_words.append((category_name, doc_index_in_category))
-            doc_index_in_category += 1
+    doc_index = 0
+    for doc in dataset.files_list:
+        doc_words = doc.content.split()
+        # If any of the words is in the document, that document is added to the list
+        if any(word in doc_words for word in words):
+            # Add to the list the docs with any of the words
+            list_docs_with_any_of_the_words.append(doc_index)
+        doc_index += 1
 
     return list_docs_with_any_of_the_words
 
 
-def remove_docs_that_contain_any_of_the_given_words(dataset: StructuredDataset, words: Union[str, Set[str]]):
+def remove_docs_that_contain_any_of_the_given_words(dataset: UnstructuredDataset, words: Union[str, Set[str]]):
     """
     Removes from the given dataset the documents that contain one or more of the given words. \
     Words can be a simple string, representing only one word.
@@ -182,22 +175,20 @@ def remove_docs_that_contain_any_of_the_given_words(dataset: StructuredDataset, 
         raise TypeError('words must be of type str or set.')
 
     docs_with_any_of_the_words = \
-        get_docs_that_contain_any_of_the_words(dataset, words)  # List of tuple (category, index_in_category)
+        get_docs_that_contain_any_of_the_words(dataset, words)  # List of indices
 
-    # Indices of the same category must be in descendant order to avoid changing
-    # the index of the following docs to delete in that category.
+    # Indices must be in descendant order to avoid changing
+    # the index of the following docs to delete.
 
-    # First we order the elements on the list, based on the index
-    docs_with_any_of_the_words.sort(key=lambda _tuple: _tuple[1], reverse=True)
-    # Then we order the elements on the list, based on the category
-    docs_with_any_of_the_words.sort(key=lambda _tuple: _tuple[0], reverse=True)
+    # Order the elements on the list, based on the index
+    docs_with_any_of_the_words.sort(key=lambda index: index, reverse=True)
 
-    # For each document that contains any of the words, we delete it
-    for category, index_in_category in docs_with_any_of_the_words:
-        dataset.remove_document(category, index_in_category)
+    # For each document that contains any of the words, delete it
+    for index in docs_with_any_of_the_words:
+        dataset.remove_document(index)
 
 
-def remove_docs_that_contain_any_of_the_words_in_file(dataset: StructuredDataset, file_path: str = None):
+def remove_docs_that_contain_any_of_the_words_in_file(dataset: UnstructuredDataset, file_path: str = None):
     """
     Removes from the given dataset the documents that contain one or more of the words in the specified file.
 
@@ -213,34 +204,32 @@ def remove_docs_that_contain_any_of_the_words_in_file(dataset: StructuredDataset
     remove_docs_that_contain_any_of_the_given_words(dataset, words)
 
 
-def remove_trash_docs_specified_in_file(dataset: StructuredDataset, file_path: str = None, file_sep=' '):
+def remove_trash_docs_specified_in_file(dataset: UnstructuredDataset, file_path: str = None):
     """
     Removes from the given dataset the documents specified in a file.
 
     :param dataset: Dataset where docs will be removed. The dataset is modified.
-    :param file_path: Path to the file where the trash docs are specified. The file must contain in each line \
-    the category and then the name of the file to be removed. Category and name must be separated by \
-    the element specified in 'file_sep' parameter.
-    :param file_sep: Separator of the category and the name in the file.
+    :param file_path: Path to the file where the trash docs are specified. \
+    The file must contain in each line the name of the file to be removed.
     """
     if file_path is None:
         file_path = _TRASH_DOCS_PATH
 
     with open(file_path) as f:
-        docs_list = [line.strip().split(file_sep) for line in f]
+        docs_list = [line.strip() for line in f]
 
-    for category, doc_name in docs_list:
-        # Obtain the index inside the category of the doc with the given name
-        index_in_category = dataset.get_document_index(category, doc_name)
+    for doc_name in docs_list:
+        # Obtain the index of the doc with the given name
+        index = dataset.get_document_index(doc_name)
         # If the file doesn't exists, we omit it
-        if index_in_category == -1:
+        if index == -1:
             continue
 
-        # Remove the document of that category with that index
-        dataset.remove_document(category, index_in_category)
+        # Remove the document with that index
+        dataset.remove_document(index)
 
 
-def remove_empty_docs(dataset: StructuredDataset) -> int:
+def remove_empty_docs(dataset: UnstructuredDataset) -> int:
     """
     Removes the empty documents of the given dataset.
 
@@ -248,24 +237,24 @@ def remove_empty_docs(dataset: StructuredDataset) -> int:
     :return: The number of documents removed (is the same as the number of empty documents in the dataset).
     """
     num_empty_docs = 0
-    for category_name, category_docs in dataset.files_dict.items():
-        # Iterate backwards to avoid problems removing while iterating
-        doc_index_in_category = len(category_docs) - 1
-        for doc in reversed(category_docs):
-            doc_words = doc.content.split()
-            if len(doc_words) == 0:
-                dataset.remove_document(category_name, doc_index_in_category)
-                num_empty_docs += 1
-            doc_index_in_category -= 1
+
+    # Iterate backwards to avoid problems removing while iterating
+    doc_index = len(dataset.files_list) - 1
+    for doc in reversed(dataset.files_list):
+        doc_words = doc.content.split()
+        if len(doc_words) == 0:
+            dataset.remove_document(doc_index)
+            num_empty_docs += 1
+        doc_index -= 1
 
     return num_empty_docs
 
 
-def preprocess_dataset(dataset: StructuredDataset, trash_docs=True, normalize=True, lowercase=True, stopwords=True,
+def preprocess_dataset(dataset: UnstructuredDataset, trash_docs=True, normalize=True, lowercase=True, stopwords=True,
                        contractions=True, vulgar_words=True, emails=True, punctuation=True, ngrams='uni',
                        min_bigrams_count=50, bigrams_threshold=75, min_trigrams_count=100, trigrams_threshold=175,
                        lemmatize=True, stem=False, trash_words=True, apostrophes=True, chars=True, empty_docs=True) \
-        -> StructuredDataset:
+        -> UnstructuredDataset:
     """
     Creates a copy of the given dataset and returns the dataset copy with the specified preprocessing applied. \
     The preprocessing options applied (including the ngrams_model_func if it's the case) are stored in the
