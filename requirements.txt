@@ -1,4 +1,4 @@
-nltk==3.3
+nltk==3.4.5
 networkx==2.2
 dill==0.2.9
 bokeh==1.0.4
