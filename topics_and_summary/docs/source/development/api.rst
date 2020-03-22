@@ -311,18 +311,6 @@ Create a python module with the following content:
    a. A <dataset-name>Dataset class: must inherit from the UnstructuredDataset class
    b. A <dataset-name>Document class: must inherit from the UnstructuredDocument class
 
-Preprocessing unstructured datasets
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If an unstructured dataset is created, preprocessing.dataset.py module must be converted into a package,
-with the following modules:
-
-* **preprocessing.dataset.structured.py**: with the same content of the current preprocessing.dataset.py module
-* **preprocessing.dataset.unstructured.py**: with the same content of the current preprocessing.dataset.py module, but
-  adapting all the functions that receive a StructuredDataset to use an UnstructuredDataset.
-
-.. note:: This is because current preprocessing only can be used with StructuredDataset.
-
 Recommended IDE
 ^^^^^^^^^^^^^^^
 
