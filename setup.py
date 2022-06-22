@@ -25,7 +25,7 @@ setup(name='topics_and_summary',
       author_email='uo250707@uniovi.es',
 
       install_requires=[
-          'numpy==1.15.4',
+          'numpy==1.22.0',
           'gensim==3.4.0',
           'matplotlib==3.0.2',
           'seaborn==0.9.0',
